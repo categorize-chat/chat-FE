@@ -30,7 +30,7 @@ export default function MessageInput(props: MessageInputProps) {
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
         <Textarea
-          placeholder="Type something here…"
+          placeholder="보낼 메세지를 입력해주세요..."
           aria-label="Message"
           ref={textAreaRef}
           onChange={(e) => {
@@ -73,7 +73,7 @@ export default function MessageInput(props: MessageInputProps) {
                 endDecorator={<SendRoundedIcon />}
                 onClick={handleClick}
               >
-                Send
+                보내기
               </Button>
             </Stack>
           }
