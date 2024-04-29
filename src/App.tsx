@@ -5,10 +5,11 @@ import Box from '@mui/joy/Box';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import MyMessages from './components/MyMessages';
+import { customTheme } from './style';
 
 export default function JoyMessagesTemplate() {
   return (
-    <CssVarsProvider disableTransitionOnChange>
+    <CssVarsProvider disableTransitionOnChange theme={customTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
         <Sidebar />

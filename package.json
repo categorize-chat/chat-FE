@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.15.14",
     "@mui/joy": "^5.0.0-beta.32",
     "@mui/material": "^5.15.14",
+    "pretendard": "^1.3.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
