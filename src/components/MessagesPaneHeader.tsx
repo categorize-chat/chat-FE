@@ -63,7 +63,7 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
                   }
                   slotProps={{ root: { component: 'span' } }}
                 >
-                  Online
+                  온라인
                 </Chip>
               ) : undefined
             }
@@ -83,7 +83,7 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
             display: { xs: 'none', md: 'inline-flex' },
           }}
         >
-          Call
+          전화하기
         </Button>
         <Button
           color="neutral"
@@ -93,7 +93,7 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
             display: { xs: 'none', md: 'inline-flex' },
           }}
         >
-          View profile
+          프로필 보기
         </Button>
         <IconButton size="sm" variant="plain" color="neutral">
           <MoreVertRoundedIcon />

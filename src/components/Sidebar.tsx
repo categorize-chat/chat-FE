@@ -107,7 +107,7 @@ export default function Sidebar() {
             <ListItemButton>
               <HomeRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Home</Typography>
+                <Typography level="title-sm">홈</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -115,7 +115,7 @@ export default function Sidebar() {
             <ListItemButton selected>
               <QuestionAnswerRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Messages</Typography>
+                <Typography level="title-sm">메세지</Typography>
               </ListItemContent>
               <Chip size="sm" color="primary" variant="solid">
                 4
@@ -126,7 +126,7 @@ export default function Sidebar() {
             <ListItemButton>
               <GroupRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Friends</Typography>
+                <Typography level="title-sm">친구</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -144,13 +144,13 @@ export default function Sidebar() {
           <ListItem>
             <ListItemButton>
               <SupportRoundedIcon />
-              Support
+              문의
             </ListItemButton>
           </ListItem>
           <ListItem>
             <ListItemButton>
               <SettingsRoundedIcon />
-              Settings
+              설정
             </ListItemButton>
           </ListItem>
         </List>
