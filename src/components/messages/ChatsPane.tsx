@@ -8,8 +8,8 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
-import { ChatProps } from '../types';
-import { toggleMessagesPane } from '../utils';
+import { ChatProps } from '../../types';
+import { toggleMessagesPane } from '../../utils';
 
 type ChatsPaneProps = {
   chats: ChatProps[];
