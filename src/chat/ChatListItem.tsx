@@ -1,34 +1,45 @@
-import * as React from 'react';
+import { useCallback, Fragment } from 'react';
 import Box from '@mui/joy/Box';
 import ListDivider from '@mui/joy/ListDivider';
 import ListItem from '@mui/joy/ListItem';
-import ListItemButton, { ListItemButtonProps } from '@mui/joy/ListItemButton';
+import ListItemButton from '@mui/joy/ListItemButton';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
-import AvatarWithStatus from './AvatarWithStatus';
-import { ChatProps, MessageProps, UserProps } from '../types';
+import AvatarWithStatus from '../common/AvatarWithStatus';
+import { MessageProps, UserProps } from '../types';
 import { toggleMessagesPane } from '../utils';
+import { useChatStore } from '../state/store';
+import { useNavigate } from 'react-router-dom';
 
-type ChatListItemProps = ListItemButtonProps & {
-  id: string;
+type ChatListItemProps = {
+  id: number;
   unread?: boolean;
   sender: UserProps;
   messages: MessageProps[];
-  selectedChatId?: string;
-  setSelectedChat: (chat: ChatProps) => void;
 };
 
 export default function ChatListItem(props: ChatListItemProps) {
-  const { id, sender, messages, selectedChatId, setSelectedChat } = props;
-  const selected = selectedChatId === id;
+  const { id, sender, messages } = props;
+  const navigate = useNavigate();
+
+  const selectedId = useChatStore((state) => state.selectedId);
+  const selected = selectedId === id;
+
+  const chatListClick = useCallback(
+    (id: number) => {
+      navigate(`/chat/${id}`);
+    },
+    [navigate],
+  );
+
   return (
-    <React.Fragment>
+    <Fragment>
       <ListItem>
         <ListItemButton
           onClick={() => {
             toggleMessagesPane();
-            setSelectedChat({ id, sender, messages });
+            chatListClick(id);
           }}
           selected={selected}
           color="neutral"
@@ -77,6 +88,6 @@ export default function ChatListItem(props: ChatListItemProps) {
         </ListItemButton>
       </ListItem>
       <ListDivider sx={{ margin: 0 }} />
-    </React.Fragment>
+    </Fragment>
   );
 }
