@@ -6,6 +6,7 @@ import Sidebar from './common/Sidebar';
 import Header from './common/Header';
 import MyMessages from './chat/MyMessages';
 import { Route, Routes } from 'react-router-dom';
+import { customTheme } from './style';
 
 export default function App() {
   return (
