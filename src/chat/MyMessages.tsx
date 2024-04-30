@@ -1,14 +1,27 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import Sheet from '@mui/joy/Sheet';
 
 import MessagesPane from './MessagesPane';
 import ChatsPane from './ChatsPane';
-import { ChatProps } from '../../types';
-import { chats } from '../../data';
-import { Outlet } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useChatStore } from '../state/store';
 
-export default function MyProfile() {
-  const [selectedChat, setSelectedChat] = React.useState<ChatProps>(chats[0]);
+export default function MyMessages() {
+  const chats = useChatStore((state) => state.chats);
+  const setSelectedId = useChatStore((state) => state.setSelectedId);
+  const setSelectedChat = useChatStore((state) => state.setSelectedChat);
+
+  const chatParams = useParams();
+  const chatId = Number(chatParams.id);
+
+  useEffect(() => {
+    if (chatId === undefined) return;
+
+    // 해당하는 채팅 찾기
+    setSelectedChat(chats.find((chat) => chat.id === chatId));
+    setSelectedId(Number(chatId));
+  }, [chatId, setSelectedId, chats, setSelectedChat]);
+
   return (
     <Sheet
       sx={{
@@ -36,14 +49,9 @@ export default function MyProfile() {
           top: 52,
         }}
       >
-        <ChatsPane
-          chats={chats}
-          selectedChatId={selectedChat.id}
-          setSelectedChat={setSelectedChat}
-        />
+        <ChatsPane />
       </Sheet>
-      <Outlet />
-      {/* <MessagesPane chat={selectedChat} /> */}
+      {chatId ? <MessagesPane /> : <></>}
     </Sheet>
   );
 }

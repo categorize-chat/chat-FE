@@ -2,25 +2,23 @@ import * as React from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
-import AvatarWithStatus from '../AvatarWithStatus';
+import AvatarWithStatus from '../common/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { ChatProps, MessageProps } from '../../types';
-import AiPannel from '../AiPannel';
+import { MessageProps } from '../types';
+import AiPannel from './AiPannel';
+import { useChatStore } from '../state/store';
 
-type MessagesPaneProps = {
-  chat: ChatProps;
-};
-
-export default function MessagesPane(props: MessagesPaneProps) {
-  const { chat } = props;
-  const [chatMessages, setChatMessages] = React.useState(chat.messages);
+export default function MessagesPane() {
+  const chats = useChatStore((state) => state.chats);
+  const selectedChat = useChatStore((state) => state.selectedChat) ?? chats[0];
+  const [chatMessages, setChatMessages] = React.useState(selectedChat.messages);
   const [textAreaValue, setTextAreaValue] = React.useState('');
 
   React.useEffect(() => {
-    setChatMessages(chat.messages);
-  }, [chat.messages]);
+    setChatMessages(selectedChat.messages);
+  }, [selectedChat.messages]);
 
   return (
     <Sheet
@@ -31,7 +29,7 @@ export default function MessagesPane(props: MessagesPaneProps) {
         backgroundColor: 'background.level1',
       }}
     >
-      <MessagesPaneHeader sender={chat.sender} />
+      <MessagesPaneHeader sender={selectedChat.sender} />
       <Box
         sx={{
           display: 'grid',
@@ -88,11 +86,10 @@ export default function MessagesPane(props: MessagesPaneProps) {
             setTextAreaValue={setTextAreaValue}
             onSubmit={() => {
               const newId = chatMessages.length + 1;
-              const newIdString = newId.toString();
               setChatMessages([
                 ...chatMessages,
                 {
-                  id: newIdString,
+                  id: newId,
                   sender: 'You',
                   content: textAreaValue,
                   timestamp: 'Just now',

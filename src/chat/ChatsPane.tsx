@@ -8,17 +8,12 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
-import { ChatProps } from '../../types';
-import { toggleMessagesPane } from '../../utils';
+import { toggleMessagesPane } from '../utils';
+import { useChatStore } from '../state/store';
 
-type ChatsPaneProps = {
-  chats: ChatProps[];
-  setSelectedChat: (chat: ChatProps) => void;
-  selectedChatId: string;
-};
+export default function ChatsPane() {
+  const chats = useChatStore((state) => state.chats);
 
-export default function ChatsPane(props: ChatsPaneProps) {
-  const { chats, setSelectedChat, selectedChatId } = props;
   return (
     <Sheet
       sx={{
@@ -92,12 +87,7 @@ export default function ChatsPane(props: ChatsPaneProps) {
         }}
       >
         {chats.map((chat) => (
-          <ChatListItem
-            key={chat.id}
-            {...chat}
-            setSelectedChat={setSelectedChat}
-            selectedChatId={selectedChatId}
-          />
+          <ChatListItem key={chat.id} {...chat} />
         ))}
       </List>
     </Sheet>
