@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+**/env.ts
+src/util/socket.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
