@@ -10,6 +10,14 @@ import { MessageProps } from '../types';
 import AiPannel from './AiPannel';
 import { useChatStore, useSocket } from '../state/store';
 
+type SocketMessage = {
+  id: number;
+  sender: 'You';
+  content: string;
+  timestamp: string;
+  room: string;
+};
+
 export default function MessagesPane() {
   const chats = useChatStore((state) => state.chats);
   const selectedId = useChatStore((state) => state.selectedId);
@@ -19,7 +27,7 @@ export default function MessagesPane() {
   const [textAreaValue, setTextAreaValue] = useState('');
 
   const handleChatSend = useCallback(async () => {
-    if (socket == undefined) return;
+    if (socket === undefined) return;
 
     const newId = chatMessages.length + 1;
 
@@ -30,14 +38,24 @@ export default function MessagesPane() {
       timestamp: 'Just now',
     };
 
-    await socket.emit('send_message', { ...newMessage, room: selectedId });
+    await socket.emit('send_message', { ...newMessage, room: `${selectedId}` });
 
-    setChatMessages([...chatMessages, newMessage]);
+    setChatMessages((msg) => [...msg, newMessage]);
   }, [socket, setChatMessages, selectedId, chatMessages, textAreaValue]);
 
   useEffect(() => {
     setChatMessages(selectedChat.messages);
   }, [selectedChat.messages]);
+
+  useEffect(() => {
+    if (socket === undefined) return;
+
+    socket.on('receive_message', (data: SocketMessage) => {
+      console.log('test');
+      const { room, ...newMessage } = data;
+      setChatMessages((msg) => [...msg, newMessage]);
+    });
+  }, [socket]);
 
   return (
     <Sheet

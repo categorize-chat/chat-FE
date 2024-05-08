@@ -13,7 +13,7 @@ import { useChatStore, useSocket } from '../state/store';
 import { useNavigate } from 'react-router-dom';
 
 type ChatListItemProps = {
-  id: number;
+  id: string;
   unread?: boolean;
   sender: UserProps;
   messages: MessageProps[];
@@ -28,14 +28,14 @@ export default function ChatListItem(props: ChatListItemProps) {
   const selected = selectedId === id;
 
   const chatListClick = useCallback(
-    (id: number) => {
+    (id: string) => {
       navigate(`/chat/${id}`);
 
       if (socket === undefined) {
         return;
       }
 
-      socket.emit('join_room', `${id}`);
+      socket.emit('join_room', id);
     },
     [navigate, socket],
   );

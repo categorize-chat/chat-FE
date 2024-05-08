@@ -47,7 +47,7 @@ export const users: UserProps[] = [
 
 export const chats: ChatProps[] = [
   {
-    id: 1,
+    id: '1',
     sender: users[0],
     messages: [
       {
@@ -133,7 +133,7 @@ export const chats: ChatProps[] = [
     ],
   },
   {
-    id: 2,
+    id: '2',
     sender: users[1],
     messages: [
       {
@@ -176,7 +176,7 @@ export const chats: ChatProps[] = [
     ],
   },
   {
-    id: 3,
+    id: '3',
     sender: users[2],
     messages: [
       {
@@ -189,7 +189,7 @@ export const chats: ChatProps[] = [
     ],
   },
   {
-    id: 4,
+    id: '4',
     sender: users[3],
     messages: [
       {
@@ -231,7 +231,7 @@ export const chats: ChatProps[] = [
   },
 
   {
-    id: 5,
+    id: '5',
     sender: users[4],
     messages: [
       {
@@ -244,7 +244,7 @@ export const chats: ChatProps[] = [
     ],
   },
   {
-    id: 6,
+    id: '6',
     sender: users[5],
     messages: [
       {
@@ -258,7 +258,7 @@ export const chats: ChatProps[] = [
   },
 
   {
-    id: 7,
+    id: '7',
     sender: users[6],
     messages: [
       {

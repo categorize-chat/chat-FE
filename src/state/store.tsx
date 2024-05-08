@@ -5,11 +5,11 @@ import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
 
 type TChatStore = {
   chats: ChatProps[];
-  selectedId: number;
+  selectedId: string;
   selectedChat: ChatProps | undefined;
 
   setChats: (chats: ChatProps[]) => void;
-  setSelectedId: (id: number) => void;
+  setSelectedId: (id: string) => void;
   setSelectedChat: (chat: ChatProps | undefined) => void;
 };
 
@@ -23,7 +23,7 @@ type TSocketStore = {
 
 export const useChatStore = create<TChatStore>((set) => ({
   chats: chats,
-  selectedId: 0,
+  selectedId: '0',
   selectedChat: undefined,
 
   setChats: (chats) => set(() => ({ chats })),

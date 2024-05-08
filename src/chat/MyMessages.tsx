@@ -12,14 +12,14 @@ export default function MyMessages() {
   const setSelectedChat = useChatStore((state) => state.setSelectedChat);
 
   const chatParams = useParams();
-  const chatId = Number(chatParams.id);
+  const chatId = chatParams.id;
 
   useEffect(() => {
     if (chatId === undefined) return;
 
     // 해당하는 채팅 찾기
     setSelectedChat(chats.find((chat) => chat.id === chatId));
-    setSelectedId(Number(chatId));
+    setSelectedId(chatId);
   }, [chatId, setSelectedId, chats, setSelectedChat]);
 
   return (
