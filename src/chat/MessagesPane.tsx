@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
@@ -8,17 +8,54 @@ import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { MessageProps } from '../types';
 import AiPannel from './AiPannel';
-import { useChatStore } from '../state/store';
+import { useChatStore, useSocket } from '../state/store';
+
+type SocketMessage = {
+  id: number;
+  sender: 'You';
+  content: string;
+  timestamp: string;
+  room: string;
+};
 
 export default function MessagesPane() {
   const chats = useChatStore((state) => state.chats);
+  const selectedId = useChatStore((state) => state.selectedId);
   const selectedChat = useChatStore((state) => state.selectedChat) ?? chats[0];
-  const [chatMessages, setChatMessages] = React.useState(selectedChat.messages);
-  const [textAreaValue, setTextAreaValue] = React.useState('');
+  const socket = useSocket((state) => state.socket);
+  const [chatMessages, setChatMessages] = useState(selectedChat.messages);
+  const [textAreaValue, setTextAreaValue] = useState('');
 
-  React.useEffect(() => {
+  const handleChatSend = useCallback(async () => {
+    if (socket === undefined) return;
+
+    const newId = chatMessages.length + 1;
+
+    const newMessage = {
+      id: newId,
+      sender: 'You' as const,
+      content: textAreaValue,
+      timestamp: 'Just now',
+    };
+
+    await socket.emit('send_message', { ...newMessage, room: `${selectedId}` });
+
+    setChatMessages((msg) => [...msg, newMessage]);
+  }, [socket, setChatMessages, selectedId, chatMessages, textAreaValue]);
+
+  useEffect(() => {
     setChatMessages(selectedChat.messages);
   }, [selectedChat.messages]);
+
+  useEffect(() => {
+    if (socket === undefined) return;
+
+    socket.on('receive_message', (data: SocketMessage) => {
+      console.log('test');
+      const { room, ...newMessage } = data;
+      setChatMessages((msg) => [...msg, newMessage]);
+    });
+  }, [socket]);
 
   return (
     <Sheet
@@ -84,18 +121,7 @@ export default function MessagesPane() {
           <MessageInput
             textAreaValue={textAreaValue}
             setTextAreaValue={setTextAreaValue}
-            onSubmit={() => {
-              const newId = chatMessages.length + 1;
-              setChatMessages([
-                ...chatMessages,
-                {
-                  id: newId,
-                  sender: 'You',
-                  content: textAreaValue,
-                  timestamp: 'Just now',
-                },
-              ]);
-            }}
+            onSubmit={handleChatSend}
           />
         </Box>
         <AiPannel />

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
@@ -6,10 +6,18 @@ import Sidebar from './common/Sidebar';
 import Header from './common/Header';
 import MyMessages from './chat/MyMessages';
 import { Route, Routes } from 'react-router-dom';
+import { customTheme } from './style';
+import { useSocket } from './state/store';
 
 export default function App() {
+  const connectSocket = useSocket((state) => state.connectSocket);
+
+  useEffect(() => {
+    connectSocket(import.meta.env.VITE_SOCK_URL);
+  }, [connectSocket]);
+
   return (
-    <CssVarsProvider disableTransitionOnChange>
+    <CssVarsProvider disableTransitionOnChange theme={customTheme}>
       <CssBaseline />
       <Routes>
         <Route path="/chat" element={<Dashboard />} />

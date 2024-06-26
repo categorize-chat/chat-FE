@@ -19,7 +19,7 @@ export type MessageProps = {
 };
 
 export type ChatProps = {
-  id: number;
+  id: string;
   sender: UserProps;
   messages: MessageProps[];
 };
