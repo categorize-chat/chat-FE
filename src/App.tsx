@@ -8,13 +8,12 @@ import MyMessages from './chat/MyMessages';
 import { Route, Routes } from 'react-router-dom';
 import { customTheme } from './style';
 import { useSocket } from './state/store';
-import { socketSetting } from './util/env';
 
 export default function App() {
   const connectSocket = useSocket((state) => state.connectSocket);
 
   useEffect(() => {
-    connectSocket(socketSetting.url);
+    connectSocket(import.meta.env.VITE_SOCK_URL);
   }, [connectSocket]);
 
   return (
