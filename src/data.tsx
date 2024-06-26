@@ -1,6 +1,7 @@
-import { ChatProps, UserProps } from './types';
+import { TChatProps } from './pages/chat/type';
+import { TUserProps } from './pages/user/type';
 
-export const users: UserProps[] = [
+export const users: TUserProps[] = [
   {
     name: 'Steve E.',
     username: '@steveEberger',
@@ -45,7 +46,7 @@ export const users: UserProps[] = [
   },
 ];
 
-export const chats: ChatProps[] = [
+export const chats: TChatProps[] = [
   {
     id: '1',
     sender: users[0],

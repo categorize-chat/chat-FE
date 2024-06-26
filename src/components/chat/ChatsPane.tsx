@@ -8,8 +8,8 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
-import { toggleMessagesPane } from '../utils';
-import { useChatStore } from '../state/chat';
+import { useChatStore } from '../../state/chat';
+import { toggleMessagesPane } from '../../utils/chat';
 
 export default function ChatsPane() {
   const chats = useChatStore((state) => state.chats);

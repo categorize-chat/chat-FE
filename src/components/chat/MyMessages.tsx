@@ -4,7 +4,7 @@ import Sheet from '@mui/joy/Sheet';
 import MessagesPane from './MessagesPane';
 import ChatsPane from './ChatsPane';
 import { useParams } from 'react-router-dom';
-import { useChatStore } from '../state/chat';
+import { useChatStore } from '../../state/chat';
 
 export default function MyMessages() {
   const chats = useChatStore((state) => state.chats);

@@ -9,11 +9,11 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
-import { UserProps } from '../types';
-import { toggleMessagesPane } from '../utils';
+import { TUserProps } from '../../pages/user/type';
+import { toggleMessagesPane } from '../../utils/chat';
 
 type MessagesPaneHeaderProps = {
-  sender: UserProps;
+  sender: TUserProps;
 };
 
 export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {

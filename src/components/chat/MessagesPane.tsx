@@ -6,9 +6,9 @@ import AvatarWithStatus from '../common/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { MessageProps } from '../types';
 import AiPannel from './AiPannel';
-import { useChatStore, useSocket } from '../state/chat';
+import { useChatStore, useSocket } from '../../state/chat';
+import { TMessageProps } from '../../pages/chat/type';
 
 type SocketMessage = {
   id: number;
@@ -94,7 +94,7 @@ export default function MessagesPane() {
             }}
           >
             <Stack spacing={2} justifyContent="flex-end">
-              {chatMessages.map((message: MessageProps, index: number) => {
+              {chatMessages.map((message: TMessageProps, index: number) => {
                 const isYou = message.sender === 'You';
                 return (
                   <Stack

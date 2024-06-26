@@ -7,16 +7,17 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
-import { MessageProps, UserProps } from '../types';
-import { toggleMessagesPane } from '../utils';
-import { useChatStore, useSocket } from '../state/chat';
 import { useNavigate } from 'react-router-dom';
+import { toggleMessagesPane } from '../../utils/chat';
+import { useChatStore, useSocket } from '../../state/chat';
+import { TUserProps } from '../../pages/user/type';
+import { TMessageProps } from '../../pages/chat/type';
 
 type ChatListItemProps = {
   id: string;
   unread?: boolean;
-  sender: UserProps;
-  messages: MessageProps[];
+  sender: TUserProps;
+  messages: TMessageProps[];
 };
 
 export default function ChatListItem(props: ChatListItemProps) {
