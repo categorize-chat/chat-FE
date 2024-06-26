@@ -9,7 +9,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { MessageProps, UserProps } from '../types';
 import { toggleMessagesPane } from '../utils';
-import { useChatStore, useSocket } from '../state/store';
+import { useChatStore, useSocket } from '../state/chat';
 import { useNavigate } from 'react-router-dom';
 
 type ChatListItemProps = {

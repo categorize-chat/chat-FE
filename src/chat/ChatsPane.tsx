@@ -9,7 +9,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
 import { toggleMessagesPane } from '../utils';
-import { useChatStore } from '../state/store';
+import { useChatStore } from '../state/chat';
 
 export default function ChatsPane() {
   const chats = useChatStore((state) => state.chats);
