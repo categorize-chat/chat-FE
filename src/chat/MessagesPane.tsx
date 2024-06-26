@@ -8,7 +8,7 @@ import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { MessageProps } from '../types';
 import AiPannel from './AiPannel';
-import { useChatStore, useSocket } from '../state/store';
+import { useChatStore, useSocket } from '../state/chat';
 
 type SocketMessage = {
   id: number;

@@ -5,9 +5,10 @@ import Box from '@mui/joy/Box';
 import Sidebar from './common/Sidebar';
 import Header from './common/Header';
 import MyMessages from './chat/MyMessages';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { customTheme } from './style';
-import { useSocket } from './state/store';
+import { useSocket } from './state/chat';
+import UserJoin from './pages/user/UserJoin';
 
 export default function App() {
   const connectSocket = useSocket((state) => state.connectSocket);
@@ -20,6 +21,8 @@ export default function App() {
     <CssVarsProvider disableTransitionOnChange theme={customTheme}>
       <CssBaseline />
       <Routes>
+        <Route path="/" element={<Navigate replace to="/user" />} />
+        <Route path="/user" element={<UserJoin />} />
         <Route path="/chat" element={<Dashboard />} />
         <Route path="/chat/:id" element={<Dashboard />} />
       </Routes>
