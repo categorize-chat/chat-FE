@@ -10,8 +10,8 @@ import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
 import { useChatStore, useSocket } from '../../state/chat';
-import { TUserProps } from '../../pages/user/type';
-import { TMessageProps } from '../../pages/chat/type';
+import { TUserProps } from '../../utils/user/type';
+import { TMessageProps } from '../../utils/chat/type';
 
 type ChatListItemProps = {
   id: string;

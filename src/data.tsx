@@ -1,5 +1,5 @@
-import { TChatProps } from './pages/chat/type';
-import { TUserProps } from './pages/user/type';
+import { TChatProps } from './utils/chat/type';
+import { TUserProps } from './utils/user/type';
 
 export const users: TUserProps[] = [
   {

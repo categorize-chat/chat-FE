@@ -1,9 +1,21 @@
 import { KeyboardArrowRight, QuestionAnswerRounded } from '@mui/icons-material';
 import { Box, Button, Card, FormControl, Input, Typography } from '@mui/joy';
 import { ChangeEvent, useRef } from 'react';
+import { useUserStore } from '../../state/user';
+import { useMutation } from 'react-query';
+import { userJoinQuery } from '../../utils/user/query';
 
 const UserJoin = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setUserId, setNickname } = useUserStore();
+
+  const userJoinMutate = useMutation({
+    ...userJoinQuery,
+    onSuccess: ({ userId, nickname }) => {
+      setUserId(userId);
+      setNickname(nickname);
+    },
+  });
 
   const handleSubmit = () => {
     if (inputRef.current === null) return;
@@ -16,6 +28,9 @@ const UserJoin = () => {
     }
 
     // TODO: user join api
+    userJoinMutate.mutate({
+      nickname: inputNickname,
+    });
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
