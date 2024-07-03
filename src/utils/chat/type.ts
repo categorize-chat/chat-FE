@@ -44,7 +44,7 @@ export type TChatRoomGenerateRequest = {
   channelName: string;
 };
 
-export type TChatRoomGenerateResponse = {
+export type TChatRoomGenerateResponse = TApiResponse<{
   channelId: string;
   channelName: string;
-};
+}>;

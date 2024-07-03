@@ -8,6 +8,7 @@ type TChatStore = {
   selectedChat: TChannelProps | undefined;
 
   setChats: (chats: TChannelProps[]) => void;
+  addChat: (newChat: TChannelProps) => void;
   setSelectedId: (id: string) => void;
   setSelectedChat: (chat: TChannelProps | undefined) => void;
 };
@@ -26,6 +27,8 @@ export const useChatStore = create<TChatStore>((set) => ({
   selectedChat: undefined,
 
   setChats: (chats) => set(() => ({ chats })),
+  addChat: (newChat: TChannelProps) =>
+    set((state) => ({ chats: [...state.chats, newChat] })),
   setSelectedId: (id) => set(() => ({ selectedId: id })),
   setSelectedChat: (chat) => set(() => ({ selectedChat: chat })),
 }));

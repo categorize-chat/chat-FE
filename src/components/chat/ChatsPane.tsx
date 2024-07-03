@@ -4,15 +4,30 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import { Box, Chip, IconButton, Input } from '@mui/joy';
 import List from '@mui/joy/List';
-import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
+import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
 import { useChatStore } from '../../state/chat';
 import { toggleMessagesPane } from '../../utils/chat';
+import { useMutation } from 'react-query';
+import { chatRoomGenerateQuery } from '../../utils/chat/query';
 
 export default function ChatsPane() {
-  const chats = useChatStore((state) => state.chats);
+  const { chats, addChat } = useChatStore();
+  const chatRoomGenerateMutation = useMutation({
+    ...chatRoomGenerateQuery(),
+    onSuccess: ({ channelId, channelName }) => {
+      addChat({ channelId, channelName });
+    },
+  });
+
+  const handleNewChat = () => {
+    // TODO: change with modal's value
+    chatRoomGenerateMutation.mutate({
+      channelName: 'temp',
+    });
+  };
 
   return (
     <Sheet
@@ -54,9 +69,10 @@ export default function ChatsPane() {
           aria-label="edit"
           color="neutral"
           size="sm"
+          onClick={handleNewChat}
           sx={{ display: { xs: 'none', sm: 'unset' } }}
         >
-          <EditNoteRoundedIcon />
+          <AddCommentIcon />
         </IconButton>
         <IconButton
           variant="plain"

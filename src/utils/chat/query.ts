@@ -2,6 +2,7 @@ import { API } from '../api';
 import {
   TChatMessageResponse,
   TChatRoomGenerateRequest,
+  TChatRoomGenerateResponse,
   TChatRoomsResponse,
 } from './type';
 
@@ -52,7 +53,7 @@ export const chatRoomGenerateQuery = () => ({
   mutationFn: async (req: TChatRoomGenerateRequest) => {
     return await API.json
       .post(`/chat`, req)
-      .then((res) => res.data as TChatMessageResponse)
+      .then((res) => res.data as TChatRoomGenerateResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
