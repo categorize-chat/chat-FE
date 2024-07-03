@@ -11,26 +11,24 @@ import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
 import { useChatStore, useSocket } from '../../state/chat';
 import { TUserProps } from '../../utils/user/type';
-import { TMessageProps } from '../../utils/chat/type';
+import { TChatProps, TMessageProps } from '../../utils/chat/type';
+import { Paths } from '../../utils/constant';
 
-type ChatListItemProps = {
-  id: string;
+type ChatListItemProps = TChatProps & {
   unread?: boolean;
-  sender: TUserProps;
-  messages: TMessageProps[];
 };
 
 export default function ChatListItem(props: ChatListItemProps) {
-  const { id, sender, messages } = props;
+  const { channelId, channelName, unread } = props;
   const socket = useSocket((state) => state.socket);
   const navigate = useNavigate();
 
   const selectedId = useChatStore((state) => state.selectedId);
-  const selected = selectedId === id;
+  const selected = selectedId === channelId;
 
   const chatListClick = useCallback(
     (id: string) => {
-      navigate(`/chat/${id}`);
+      navigate(`${Paths.chat.base()}/${id}`);
 
       if (socket === undefined) {
         return;
@@ -47,7 +45,7 @@ export default function ChatListItem(props: ChatListItemProps) {
         <ListItemButton
           onClick={() => {
             toggleMessagesPane();
-            chatListClick(id);
+            chatListClick(channelId);
           }}
           selected={selected}
           color="neutral"
@@ -58,10 +56,10 @@ export default function ChatListItem(props: ChatListItemProps) {
           }}
         >
           <Stack direction="row" spacing={1.5}>
-            <AvatarWithStatus online={sender.online} src={sender.avatar} />
+            <AvatarWithStatus />
             <Box sx={{ flex: 1 }}>
-              <Typography level="title-sm">{sender.name}</Typography>
-              <Typography level="body-sm">{sender.username}</Typography>
+              <Typography level="title-sm">{channelName}</Typography>
+              <Typography level="body-sm">{'test'}</Typography>
             </Box>
             <Box
               sx={{
@@ -69,9 +67,7 @@ export default function ChatListItem(props: ChatListItemProps) {
                 textAlign: 'right',
               }}
             >
-              {messages[0].unread && (
-                <CircleIcon sx={{ fontSize: 12 }} color="primary" />
-              )}
+              {unread && <CircleIcon sx={{ fontSize: 12 }} color="primary" />}
               <Typography
                 level="body-xs"
                 display={{ xs: 'none', md: 'block' }}
@@ -91,7 +87,7 @@ export default function ChatListItem(props: ChatListItemProps) {
               textOverflow: 'ellipsis',
             }}
           >
-            {messages[0].content}
+            {'hello!'}
           </Typography>
         </ListItemButton>
       </ListItem>

@@ -1,16 +1,15 @@
 import { create } from 'zustand';
-import { TChatProps } from '../types';
-import { chats } from '../data';
 import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
+import { TChannelProps } from '../utils/chat/type';
 
 type TChatStore = {
-  chats: TChatProps[];
+  chats: TChannelProps[];
   selectedId: string;
-  selectedChat: TChatProps | undefined;
+  selectedChat: TChannelProps | undefined;
 
-  setChats: (chats: TChatProps[]) => void;
+  setChats: (chats: TChannelProps[]) => void;
   setSelectedId: (id: string) => void;
-  setSelectedChat: (chat: TChatProps | undefined) => void;
+  setSelectedChat: (chat: TChannelProps | undefined) => void;
 };
 
 type TSocketStore = {
@@ -22,7 +21,7 @@ type TSocketStore = {
 };
 
 export const useChatStore = create<TChatStore>((set) => ({
-  chats: chats,
+  chats: [],
   selectedId: '0',
   selectedChat: undefined,
 

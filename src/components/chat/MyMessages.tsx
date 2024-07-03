@@ -5,22 +5,27 @@ import MessagesPane from './MessagesPane';
 import ChatsPane from './ChatsPane';
 import { useParams } from 'react-router-dom';
 import { useChatStore } from '../../state/chat';
+import { useQuery } from 'react-query';
+import { chatRoomsQuery } from '../../utils/chat/query';
 
 export default function MyMessages() {
-  const chats = useChatStore((state) => state.chats);
-  const setSelectedId = useChatStore((state) => state.setSelectedId);
-  const setSelectedChat = useChatStore((state) => state.setSelectedChat);
-
-  const chatParams = useParams();
-  const chatId = chatParams.id;
+  // const chats = useChatStore((state) => state.chats);
+  const { id: chatId } = useParams();
+  const { data, isError } = useQuery(chatRoomsQuery());
+  const { setChats } = useChatStore();
 
   useEffect(() => {
-    if (chatId === undefined) return;
+    if (!data) return;
 
-    // 해당하는 채팅 찾기
-    setSelectedChat(chats.find((chat) => chat.id === chatId));
-    setSelectedId(chatId);
-  }, [chatId, setSelectedId, chats, setSelectedChat]);
+    const { channels } = data;
+    if (channels === undefined) return;
+
+    setChats(channels);
+  }, [data]);
+
+  if (isError) {
+    return <></>;
+  }
 
   return (
     <Sheet

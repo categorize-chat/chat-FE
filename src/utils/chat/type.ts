@@ -1,24 +1,29 @@
 import { TApiResponse } from '../type';
-import { TUserProps } from '../user/type';
+// import { TUserProps } from '../user/type';
 
 export type TMessageProps = {
-  id: number;
+  // id: number;
+  // content: string;
+  // timestamp: string;
+  // unread?: boolean;
+  // sender: TUserProps | 'You';
+  // attachment?: {
+  //   fileName: string;
+  //   type: string;
+  //   size: string;
+  // };
+
+  nickname: string;
+  createdAt: string;
   content: string;
-  timestamp: string;
-  unread?: boolean;
-  sender: TUserProps | 'You';
-  attachment?: {
-    fileName: string;
-    type: string;
-    size: string;
-  };
 };
 
-export type TChatProps = {
-  id: string;
-  sender: TUserProps;
-  messages: TMessageProps[];
+export type TChannelProps = {
+  channelId: string;
+  channelName: string;
 };
+
+export type TChatProps = TMessageProps[];
 
 export type TChatRoomsResponse = TApiResponse<{
   channels: {

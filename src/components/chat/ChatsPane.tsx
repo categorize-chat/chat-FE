@@ -87,7 +87,7 @@ export default function ChatsPane() {
         }}
       >
         {chats.map((chat) => (
-          <ChatListItem key={chat.id} {...chat} />
+          <ChatListItem key={chat.channelId} {...chat} />
         ))}
       </List>
     </Sheet>
