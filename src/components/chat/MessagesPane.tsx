@@ -5,57 +5,58 @@ import Stack from '@mui/joy/Stack';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import MessagesPaneHeader from './MessagesPaneHeader';
-import { MessageProps } from '../types';
+// import MessagesPaneHeader from './MessagesPaneHeader';
 import AiPannel from './AiPannel';
-import { useChatStore, useSocket } from '../state/chat';
-
-type SocketMessage = {
-  id: number;
-  sender: 'You';
-  content: string;
-  timestamp: string;
-  room: string;
-};
+import { useChatStore, useSocket } from '../../state/chat';
+import { TChatProps, TMessageProps } from '../../utils/chat/type';
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { chatMessageQuery } from '../../utils/chat/query';
 
 export default function MessagesPane() {
-  const chats = useChatStore((state) => state.chats);
-  const selectedId = useChatStore((state) => state.selectedId);
-  const selectedChat = useChatStore((state) => state.selectedChat) ?? chats[0];
+  const { id: chatId } = useParams();
+
+  const { chats, selectedId, selectedChat } = useChatStore();
   const socket = useSocket((state) => state.socket);
-  const [chatMessages, setChatMessages] = useState(selectedChat.messages);
+
+  const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
+
+  const [chatMessages, setChatMessages] = useState<TChatProps>([]);
   const [textAreaValue, setTextAreaValue] = useState('');
 
   const handleChatSend = useCallback(async () => {
     if (socket === undefined) return;
 
-    const newId = chatMessages.length + 1;
-
-    const newMessage = {
-      id: newId,
-      sender: 'You' as const,
+    const newMessage: TMessageProps = {
+      nickname: 'You' as const,
       content: textAreaValue,
-      timestamp: 'Just now',
+      createdAt: new Date().toISOString(),
     };
 
     await socket.emit('send_message', { ...newMessage, room: `${selectedId}` });
 
     setChatMessages((msg) => [...msg, newMessage]);
-  }, [socket, setChatMessages, selectedId, chatMessages, textAreaValue]);
+  }, [socket, setChatMessages, selectedId, textAreaValue]);
 
   useEffect(() => {
-    setChatMessages(selectedChat.messages);
-  }, [selectedChat.messages]);
+    console.log('data: ', data);
+    if (!data) return;
+
+    setChatMessages(data.messages);
+  }, [data]);
 
   useEffect(() => {
     if (socket === undefined) return;
 
-    socket.on('receive_message', (data: SocketMessage) => {
+    socket.on('receive_message', (newMessage: TMessageProps) => {
       console.log('test');
-      const { room, ...newMessage } = data;
       setChatMessages((msg) => [...msg, newMessage]);
     });
   }, [socket]);
+
+  if (isError) {
+    return <></>;
+  }
 
   return (
     <Sheet
@@ -66,7 +67,7 @@ export default function MessagesPane() {
         backgroundColor: 'background.level1',
       }}
     >
-      <MessagesPaneHeader sender={selectedChat.sender} />
+      {/* <MessagesPaneHeader sender={selectedChat!.channelName} /> */}
       <Box
         sx={{
           display: 'grid',
@@ -94,8 +95,8 @@ export default function MessagesPane() {
             }}
           >
             <Stack spacing={2} justifyContent="flex-end">
-              {chatMessages.map((message: MessageProps, index: number) => {
-                const isYou = message.sender === 'You';
+              {chatMessages.map((message: TMessageProps, index: number) => {
+                const isYou = message.nickname === 'You';
                 return (
                   <Stack
                     key={index}
@@ -103,10 +104,10 @@ export default function MessagesPane() {
                     spacing={2}
                     flexDirection={isYou ? 'row-reverse' : 'row'}
                   >
-                    {message.sender !== 'You' && (
+                    {message.nickname !== 'You' && (
                       <AvatarWithStatus
-                        online={message.sender.online}
-                        src={message.sender.avatar}
+                      // online={message.nickname.online}
+                      // src={message.nickname.avatar}
                       />
                     )}
                     <ChatBubble

@@ -20,7 +20,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
-import { closeSidebar } from '../utils';
+import { closeSidebar } from '../../utils/chat';
 
 export default function Sidebar() {
   return (

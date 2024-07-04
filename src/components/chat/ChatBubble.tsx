@@ -8,14 +8,19 @@ import Typography from '@mui/joy/Typography';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
-import { MessageProps } from '../types';
+import { TMessageProps } from '../../utils/chat/type';
 
-type ChatBubbleProps = MessageProps & {
+type ChatBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
 };
 
-export default function ChatBubble(props: ChatBubbleProps) {
-  const { content, variant, timestamp, attachment = undefined, sender } = props;
+export default function ChatBubble({
+  content,
+  variant,
+  createdAt,
+  nickname,
+}: ChatBubbleProps) {
+  const attachment = false;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
   const [isLiked, setIsLiked] = React.useState<boolean>(false);
@@ -28,10 +33,8 @@ export default function ChatBubble(props: ChatBubbleProps) {
         spacing={2}
         sx={{ mb: 0.25 }}
       >
-        <Typography level="body-xs">
-          {sender === 'You' ? sender : sender.name}
-        </Typography>
-        <Typography level="body-xs">{timestamp}</Typography>
+        <Typography level="body-xs">{nickname}</Typography>
+        <Typography level="body-xs">{createdAt}</Typography>
       </Stack>
       {attachment ? (
         <Sheet

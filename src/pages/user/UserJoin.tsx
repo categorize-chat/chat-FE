@@ -1,9 +1,27 @@
 import { KeyboardArrowRight, QuestionAnswerRounded } from '@mui/icons-material';
 import { Box, Button, Card, FormControl, Input, Typography } from '@mui/joy';
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import { useUserStore } from '../../state/user';
+import { useMutation } from 'react-query';
+import { userJoinQuery } from '../../utils/user/query';
+import { useNavigate } from 'react-router-dom';
+import { Paths } from '../../utils/constant';
 
 const UserJoin = () => {
+  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setUserId, setNickname } = useUserStore();
+
+  const userJoinMutate = useMutation({
+    ...userJoinQuery(),
+    onSuccess: ({ userId, nickname }) => {
+      // TODO: 스토리지에 박기
+      setUserId(userId);
+      setNickname(nickname);
+
+      navigate(Paths.chat.base());
+    },
+  });
 
   const handleSubmit = () => {
     if (inputRef.current === null) return;
@@ -15,12 +33,19 @@ const UserJoin = () => {
       return;
     }
 
-    // TODO: user join api
+    userJoinMutate.mutate({
+      nickname: inputNickname,
+    });
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (inputRef.current === null) return;
     inputRef.current.value = e.target.value;
+  };
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   return (
@@ -66,6 +91,7 @@ const UserJoin = () => {
             required
             autoFocus
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             ref={inputRef}
             defaultValue=""
           />
