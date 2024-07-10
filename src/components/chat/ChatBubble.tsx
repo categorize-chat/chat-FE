@@ -9,6 +9,7 @@ import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import { TMessageProps } from '../../utils/chat/type';
+import { parseRawDateToTime } from '../../utils/common/function';
 
 type ChatBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
@@ -25,6 +26,8 @@ export default function ChatBubble({
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
   const [isLiked, setIsLiked] = React.useState<boolean>(false);
   const [isCelebrated, setIsCelebrated] = React.useState<boolean>(false);
+
+  const { date, time } = parseRawDateToTime(createdAt);
   return (
     <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
       <Stack
@@ -34,7 +37,7 @@ export default function ChatBubble({
         sx={{ mb: 0.25 }}
       >
         <Typography level="body-xs">{nickname}</Typography>
-        <Typography level="body-xs">{createdAt}</Typography>
+        <Typography level="body-xs">{time}</Typography>
       </Stack>
       {attachment ? (
         <Sheet
@@ -52,8 +55,8 @@ export default function ChatBubble({
               <InsertDriveFileRoundedIcon />
             </Avatar>
             <div>
-              <Typography fontSize="sm">{attachment.fileName}</Typography>
-              <Typography level="body-sm">{attachment.size}</Typography>
+              {/* <Typography fontSize="sm">{attachment.fileName}</Typography>
+              <Typography level="body-sm">{attachment.size}</Typography> */}
             </div>
           </Stack>
         </Sheet>

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
@@ -21,8 +20,18 @@ import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../../utils/chat';
+import { useChatStore } from '../../state/chat';
+import { useNavigate } from 'react-router-dom';
+import { Paths } from '../../utils/constant';
 
 export default function Sidebar() {
+  const { chats } = useChatStore();
+  const navigate = useNavigate();
+
+  const handleGoHome = () => {
+    navigate(Paths.chat.base());
+  };
+
   return (
     <Sheet
       className="Sidebar"
@@ -104,7 +113,7 @@ export default function Sidebar() {
           }}
         >
           <ListItem>
-            <ListItemButton>
+            <ListItemButton onClick={handleGoHome}>
               <HomeRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">홈</Typography>
@@ -118,7 +127,7 @@ export default function Sidebar() {
                 <Typography level="title-sm">메세지</Typography>
               </ListItemContent>
               <Chip size="sm" color="primary" variant="solid">
-                4
+                {chats?.length}
               </Chip>
             </ListItemButton>
           </ListItem>

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Stack from '@mui/joy/Stack';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
@@ -57,7 +56,7 @@ export default function ChatsPane() {
               size="md"
               slotProps={{ root: { component: 'span' } }}
             >
-              4
+              {chats.length}
             </Chip>
           }
           sx={{ mr: 'auto' }}
