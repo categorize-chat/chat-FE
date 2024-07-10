@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import { chatRoomsQuery } from '../../utils/chat/query';
 import { useChatStore } from '../../state/chat';
 import { useEffect } from 'react';
+import NewChat from '../../components/chat/NewChat';
 
 export const ChatMain = () => {
   const { data: chatRoomsData, isError: chatRoomsError } = useQuery(
@@ -33,6 +34,7 @@ export const ChatMain = () => {
       <Box component="main" className="MainContent" sx={{ flex: 1 }}>
         <MyMessages />
       </Box>
+      <NewChat />
     </Box>
   );
 };
