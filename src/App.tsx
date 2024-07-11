@@ -8,7 +8,7 @@ import UserJoin from './pages/user/UserJoin';
 import { ChatMain } from './pages/chat/ChatMain';
 
 export default function App() {
-  const connectSocket = useSocket((state) => state.connectSocket);
+  const { connectSocket } = useSocket();
 
   useEffect(() => {
     connectSocket(import.meta.env.VITE_SOCK_URL);

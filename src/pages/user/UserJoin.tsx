@@ -1,6 +1,6 @@
 import { KeyboardArrowRight, QuestionAnswerRounded } from '@mui/icons-material';
 import { Box, Button, Card, FormControl, Input, Typography } from '@mui/joy';
-import { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { useUserStore } from '../../state/user';
 import { useMutation } from 'react-query';
 import { userJoinQuery } from '../../utils/user/query';
@@ -10,7 +10,7 @@ import { Paths } from '../../utils/constant';
 const UserJoin = () => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { setUserId, setNickname } = useUserStore();
+  const { userId, setUserId, setNickname } = useUserStore();
 
   const userJoinMutate = useMutation({
     ...userJoinQuery(),
