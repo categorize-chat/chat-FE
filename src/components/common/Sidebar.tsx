@@ -23,9 +23,12 @@ import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
+import { useUserStore } from '../../state/user';
+import CustomAvatar from '../user/CustomAvatar';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
+  const { nickname, userId } = useUserStore();
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -166,14 +169,9 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <Avatar
-          variant="outlined"
-          size="sm"
-          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
-        />
+        <CustomAvatar nickname={nickname} userId={userId} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">monognuisy</Typography>
-          <Typography level="body-xs">me@monognuisy.com</Typography>
+          <Typography level="title-sm">{nickname}</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
           <LogoutRoundedIcon />

@@ -11,3 +11,15 @@ export const parseRawDateToTime = (rawDate: string) => {
     time,
   };
 };
+
+export const hashString = (str: string, min: number, max: number) => {
+  let hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  const remainder = hash % (max - min);
+
+  return (remainder < 0 ? remainder + (max - min) : remainder) + min;
+};
