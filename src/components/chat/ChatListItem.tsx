@@ -10,11 +10,10 @@ import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
 import { useChatStore, useSocket } from '../../state/chat';
-import { TUserProps } from '../../utils/user/type';
-import { TChatProps, TMessageProps } from '../../utils/chat/type';
+import { TChannelProps } from '../../utils/chat/type';
 import { Paths } from '../../utils/constant';
 
-type ChatListItemProps = TChatProps & {
+type ChatListItemProps = TChannelProps & {
   unread?: boolean;
 };
 
