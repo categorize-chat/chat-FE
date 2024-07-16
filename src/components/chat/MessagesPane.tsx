@@ -12,6 +12,7 @@ import { TChatProps, TMessageProps } from '../../utils/chat/type';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
+import { useUserStore } from '../../state/user';
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
@@ -20,26 +21,29 @@ export default function MessagesPane() {
   const socket = useSocket((state) => state.socket);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
+  const { nickname } = useUserStore();
 
   const [chatMessages, setChatMessages] = useState<TChatProps>([]);
   const [textAreaValue, setTextAreaValue] = useState('');
 
   const handleChatSend = useCallback(async () => {
-    if (socket === undefined) return;
+    if (!socket) return;
 
     const newMessage: TMessageProps = {
-      nickname: 'You' as const,
+      nickname,
       content: textAreaValue,
       createdAt: new Date().toISOString(),
     };
 
-    await socket.emit('send_message', { ...newMessage, room: `${selectedId}` });
+    socket.emit('message', {
+      ...newMessage,
+      roomId: chatId,
+    });
 
     setChatMessages((msg) => [...msg, newMessage]);
   }, [socket, setChatMessages, selectedId, textAreaValue]);
 
   useEffect(() => {
-    console.log('data: ', data);
     if (!data) return;
 
     setChatMessages(data.messages);

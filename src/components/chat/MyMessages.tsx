@@ -4,7 +4,7 @@ import Sheet from '@mui/joy/Sheet';
 import MessagesPane from './MessagesPane';
 import ChatsPane from './ChatsPane';
 import { useParams } from 'react-router-dom';
-import { useChatStore } from '../../state/chat';
+import { useChatStore, useSocket } from '../../state/chat';
 import { useQuery } from 'react-query';
 import { chatRoomsQuery } from '../../utils/chat/query';
 
@@ -13,6 +13,7 @@ export default function MyMessages() {
   const { id: chatId } = useParams();
   const { data, isError } = useQuery(chatRoomsQuery());
   const { setChats } = useChatStore();
+  const { socket, connectSocket } = useSocket();
 
   useEffect(() => {
     if (!data) return;
@@ -22,6 +23,28 @@ export default function MyMessages() {
 
     setChats(channels);
   }, [data]);
+
+  // 소켓 연결
+  useEffect(() => {
+    connectSocket(`${import.meta.env.VITE_SOCK_URL}/chat`, {
+      path: '/socket.io',
+    });
+  }, []);
+
+  // 소켓 리스너 설정
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('join', (data) => {
+      // TODO: handle join
+      console.log(data);
+    });
+
+    socket.on('message', ({ nickname, createdAt, content }) => {
+      // TODO: handle message
+      console.log(nickname, content, createdAt);
+    });
+  }, [socket]);
 
   if (isError) {
     return <></>;

@@ -12,6 +12,7 @@ import { toggleMessagesPane } from '../../utils/chat';
 import { useChatStore, useSocket } from '../../state/chat';
 import { TChannelProps } from '../../utils/chat/type';
 import { Paths } from '../../utils/constant';
+import { useUserStore } from '../../state/user';
 
 type ChatListItemProps = TChannelProps & {
   unread?: boolean;
@@ -19,21 +20,19 @@ type ChatListItemProps = TChannelProps & {
 
 export default function ChatListItem(props: ChatListItemProps) {
   const { channelId, channelName, unread } = props;
-  const socket = useSocket((state) => state.socket);
+  const { socket } = useSocket();
+  const { nickname } = useUserStore();
   const navigate = useNavigate();
 
   const selectedId = useChatStore((state) => state.selectedId);
   const selected = selectedId === channelId;
 
   const chatListClick = useCallback(
-    (id: string) => {
-      navigate(`${Paths.chat.base()}/${id}`);
+    (roomId: string) => {
+      if (!socket) return;
+      socket.emit('join', { roomId, nickname });
 
-      if (socket === undefined) {
-        return;
-      }
-
-      socket.emit('join_room', id);
+      navigate(`${Paths.chat.base()}/${roomId}`);
     },
     [navigate, socket],
   );

@@ -4,8 +4,6 @@ export const parseRawDateToTime = (rawDate: string) => {
   const regex = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/;
   const [, date, time] = rawDate.match(regex)!;
 
-  console.log(date, time);
-
   return {
     date,
     time,

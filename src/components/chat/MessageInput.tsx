@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
@@ -10,6 +9,7 @@ import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
 import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import { useRef } from 'react';
 
 export type MessageInputProps = {
   textAreaValue: string;
@@ -19,7 +19,7 @@ export type MessageInputProps = {
 
 export default function MessageInput(props: MessageInputProps) {
   const { textAreaValue, setTextAreaValue, onSubmit } = props;
-  const textAreaRef = React.useRef<HTMLDivElement>(null);
+  const textAreaRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
     if (textAreaValue.trim() !== '') {
       onSubmit();

@@ -9,8 +9,6 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
 import { useChatStore } from '../../state/chat';
 import { toggleMessagesPane } from '../../utils/chat';
-import { useMutation } from 'react-query';
-import { chatRoomGenerateQuery } from '../../utils/chat/query';
 
 export default function ChatsPane() {
   const { chats, addChat, setModalOpen } = useChatStore();

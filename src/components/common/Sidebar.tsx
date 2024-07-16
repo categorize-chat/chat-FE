@@ -1,5 +1,4 @@
 import GlobalStyles from '@mui/joy/GlobalStyles';
-import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Divider from '@mui/joy/Divider';

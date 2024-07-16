@@ -1,6 +1,6 @@
 import { KeyboardArrowRight, QuestionAnswerRounded } from '@mui/icons-material';
 import { Box, Button, Card, FormControl, Input, Typography } from '@mui/joy';
-import { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
+import { ChangeEvent, KeyboardEvent, useRef } from 'react';
 import { useUserStore } from '../../state/user';
 import { useMutation } from 'react-query';
 import { userJoinQuery } from '../../utils/user/query';
