@@ -4,6 +4,7 @@ import { useChatStore } from '../../state/chat';
 import { useMutation } from 'react-query';
 import { chatRoomGenerateQuery } from '../../utils/chat/query';
 import { ChangeEvent, useRef } from 'react';
+import Swal from 'sweetalert2';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -29,6 +30,17 @@ const NewChat = () => {
     onSuccess: ({ channelId, channelName }) => {
       addChat({ channelId, channelName });
       setModalOpen(false);
+    },
+    onError: async () => {
+      setModalOpen(false);
+
+      await Swal.fire({
+        title: '중복된 채널 이름 입니다',
+        text: '다른 이름을 사용해주세요.',
+        icon: 'error',
+      });
+
+      setModalOpen(true);
     },
   });
 
@@ -62,6 +74,9 @@ const NewChat = () => {
             placeholder="생성할 채팅방의 이름을 입력해주세요"
             ref={inputRef}
             onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleNewChat();
+            }}
           />
           <Box
             sx={{
