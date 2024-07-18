@@ -168,7 +168,7 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <CustomAvatar nickname={nickname} userId={userId} />
+        <CustomAvatar nickname={nickname} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography level="title-sm">{nickname}</Typography>
         </Box>

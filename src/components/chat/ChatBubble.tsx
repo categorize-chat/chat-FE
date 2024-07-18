@@ -29,7 +29,10 @@ export default function ChatBubble({
 
   const { date, time } = parseRawDateToTime(createdAt);
   return (
-    <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
+    <Box
+      sx={{ maxWidth: '60%', minWidth: 'auto', marginRight: `1rem !important` }}
+      className="asdf"
+    >
       <Stack
         direction="row"
         justifyContent="space-between"
