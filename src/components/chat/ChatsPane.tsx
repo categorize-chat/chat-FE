@@ -11,7 +11,7 @@ import { useChatStore } from '../../state/chat';
 import { toggleMessagesPane } from '../../utils/chat';
 
 export default function ChatsPane() {
-  const { chats, addChat, setModalOpen } = useChatStore();
+  const { chats, setModalOpen } = useChatStore();
 
   return (
     <>

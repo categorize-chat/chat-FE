@@ -6,6 +6,7 @@ import { useMutation } from 'react-query';
 import { userJoinQuery } from '../../utils/user/query';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
+import Swal from 'sweetalert2';
 
 const UserJoin = () => {
   const navigate = useNavigate();
@@ -20,6 +21,13 @@ const UserJoin = () => {
       setNickname(nickname);
 
       navigate(Paths.chat.base());
+    },
+    onError: () => {
+      Swal.fire({
+        title: '중복된 유저이름 입니다',
+        text: '다른 이름을 사용해주세요.',
+        icon: 'error',
+      });
     },
   });
 

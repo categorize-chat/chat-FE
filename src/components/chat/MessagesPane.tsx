@@ -13,11 +13,12 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
 import { useUserStore } from '../../state/user';
+import CustomAvatar from '../user/CustomAvatar';
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chats, selectedId, selectedChat } = useChatStore();
+  const { selectedId } = useChatStore();
   const socket = useSocket((state) => state.socket);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
@@ -100,7 +101,7 @@ export default function MessagesPane() {
           >
             <Stack spacing={2} justifyContent="flex-end">
               {chatMessages.map((message: TMessageProps, index: number) => {
-                const isYou = message.nickname === 'You';
+                const isYou = message.nickname === nickname;
                 return (
                   <Stack
                     key={index}
@@ -108,12 +109,7 @@ export default function MessagesPane() {
                     spacing={2}
                     flexDirection={isYou ? 'row-reverse' : 'row'}
                   >
-                    {message.nickname !== 'You' && (
-                      <AvatarWithStatus
-                      // online={message.nickname.online}
-                      // src={message.nickname.avatar}
-                      />
-                    )}
+                    <CustomAvatar nickname={message.nickname} />
                     <ChatBubble
                       variant={isYou ? 'sent' : 'received'}
                       {...message}

@@ -8,17 +8,16 @@ const calculateColor = (str: string) => {
 
 interface ICustomAvatarProps {
   nickname: string;
-  userId: string;
 }
 
-const CustomAvatar = ({ nickname, userId }: ICustomAvatarProps) => {
+const CustomAvatar = ({ nickname }: ICustomAvatarProps) => {
   return (
     <Box
       sx={{
         width: '30px',
         height: '30px',
         borderRadius: '100px',
-        backgroundColor: calculateColor(nickname + userId),
+        backgroundColor: calculateColor(nickname),
       }}
     ></Box>
   );

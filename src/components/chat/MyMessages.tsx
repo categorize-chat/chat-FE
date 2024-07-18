@@ -12,7 +12,7 @@ export default function MyMessages() {
   // const chats = useChatStore((state) => state.chats);
   const { id: chatId } = useParams();
   const { data, isError } = useQuery(chatRoomsQuery());
-  const { setChats } = useChatStore();
+  const { setChats, setSelectedId } = useChatStore();
   const { socket, connectSocket } = useSocket();
 
   useEffect(() => {
@@ -23,6 +23,12 @@ export default function MyMessages() {
 
     setChats(channels);
   }, [data]);
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    setSelectedId(chatId);
+  }, [chatId]);
 
   // 소켓 연결
   useEffect(() => {
