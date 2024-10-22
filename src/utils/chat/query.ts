@@ -27,12 +27,12 @@ export const chatRoomsQuery = () => ({
         return result;
       });
   },
+  refetchOnWindowFocus: false,
 });
 
 export const chatMessageQuery = (id: string) => ({
   queryKey: [chatQueryKeys.message, id],
   queryFn: async () => {
-    console.log(id);
     if (!id) return;
 
     return await API.json
@@ -46,6 +46,7 @@ export const chatMessageQuery = (id: string) => ({
         return result;
       });
   },
+  refetchOnWindowFocus: false,
 });
 
 export const chatRoomGenerateQuery = () => ({
@@ -62,4 +63,5 @@ export const chatRoomGenerateQuery = () => ({
         return result;
       });
   },
+  refetchOnWindowFocus: false,
 });

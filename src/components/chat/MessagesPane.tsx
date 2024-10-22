@@ -1,14 +1,13 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
-import AvatarWithStatus from '../common/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 // import MessagesPaneHeader from './MessagesPaneHeader';
 import AiPannel from './AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
-import { TChatProps, TMessageProps } from '../../utils/chat/type';
+import { TMessageProps } from '../../utils/chat/type';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
@@ -18,16 +17,16 @@ import CustomAvatar from '../user/CustomAvatar';
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { selectedId } = useChatStore();
+  const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
   const socket = useSocket((state) => state.socket);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
   const { nickname } = useUserStore();
 
-  const [chatMessages, setChatMessages] = useState<TChatProps>([]);
   const [textAreaValue, setTextAreaValue] = useState('');
 
-  const handleChatSend = useCallback(async () => {
+  const handleChatSend = async () => {
+    console.log(socket)
     if (!socket) return;
 
     const newMessage: TMessageProps = {
@@ -40,9 +39,7 @@ export default function MessagesPane() {
       ...newMessage,
       roomId: chatId,
     });
-
-    setChatMessages((msg) => [...msg, newMessage]);
-  }, [socket, setChatMessages, selectedId, textAreaValue]);
+  }
 
   useEffect(() => {
     if (!data) return;
@@ -53,9 +50,8 @@ export default function MessagesPane() {
   useEffect(() => {
     if (socket === undefined) return;
 
-    socket.on('receive_message', (newMessage: TMessageProps) => {
-      console.log('test');
-      setChatMessages((msg) => [...msg, newMessage]);
+    socket.on('chat', (newMessage: TMessageProps) => {
+      addNewMessage(newMessage)
     });
   }, [socket]);
 

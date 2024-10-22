@@ -17,4 +17,5 @@ export const AiSummaryQuery = (req: TAiSummaryRequest) => ({
 
     return response;
   },
+  refetchOnWindowFocus: false,
 });

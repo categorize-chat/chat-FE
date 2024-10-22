@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import { Fragment } from 'react';
 import Box from '@mui/joy/Box';
 import ListDivider from '@mui/joy/ListDivider';
 import ListItem from '@mui/joy/ListItem';
@@ -9,10 +9,9 @@ import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
-import { useChatStore, useSocket } from '../../state/chat';
+import { useChatStore} from '../../state/chat';
 import { TChannelProps } from '../../utils/chat/type';
 import { Paths } from '../../utils/constant';
-import { useUserStore } from '../../state/user';
 
 type ChatListItemProps = TChannelProps & {
   unread?: boolean;
@@ -20,22 +19,15 @@ type ChatListItemProps = TChannelProps & {
 
 export default function ChatListItem(props: ChatListItemProps) {
   const { channelId, channelName, unread } = props;
-  const { socket } = useSocket();
-  const { nickname } = useUserStore();
   const navigate = useNavigate();
 
   const selectedId = useChatStore((state) => state.selectedId);
   const selected = selectedId === channelId;
 
-  const chatListClick = useCallback(
+  const chatListClick = 
     (roomId: string) => {
-      if (!socket) return;
-      socket.emit('join', { roomId, nickname });
-
       navigate(`${Paths.chat.base()}/${roomId}`);
-    },
-    [navigate, socket],
-  );
+    }
 
   return (
     <Fragment>
