@@ -1,8 +1,31 @@
 import { Box, Button, Sheet, Stack, Typography } from '@mui/joy';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { useMutation, useQuery } from 'react-query';
+import { AiSummaryQuery } from '../../utils/ai/query';
+import { useChatStore } from '../../state/chat';
 
 export default function AiPannel() {
+  const { selectedId } = useChatStore();
+
+  const aiSummaryMutation = useMutation({
+    ...AiSummaryQuery(),
+    onSuccess: ({ messages, summary }) => {
+      console.log(messages, summary);
+    },
+    onError: () => {
+      alert('AI 요약 중 에러가 발생했습니다.');
+    },
+  });
+
+  const handleClickAIButton = () => {
+    const req = {
+      channelId: selectedId,
+    };
+
+    aiSummaryMutation.mutate(req);
+  };
+
   return (
     <Sheet
       sx={{
@@ -70,6 +93,7 @@ export default function AiPannel() {
           color="primary"
           sx={{ my: 3, alignSelf: 'center', borderRadius: 'sm' }}
           endDecorator={<AutoAwesomeIcon />}
+          onClick={handleClickAIButton}
         >
           주제 요약하기
         </Button>

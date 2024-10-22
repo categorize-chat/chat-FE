@@ -72,7 +72,7 @@ export default function MessagesPane() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: '1fr minmax(min-content, min(30%, 360px))',
+          gridTemplateColumns: '1fr minmax(min-content, min(50%, 400px))',
           overflowY: 'auto',
           height: '100%',
         }}

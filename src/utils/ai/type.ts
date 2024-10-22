@@ -1,4 +1,4 @@
-import { TChatProps } from '../chat/type';
+import { TMessageProps } from '../chat/type';
 import { TApiResponse } from '../type';
 
 export type TAiSummaryRequest = {
@@ -6,10 +6,13 @@ export type TAiSummaryRequest = {
 };
 
 export type TAiSummaryResponse = TApiResponse<{
-  message: {
-    [key: string]: {
-      chats: TChatProps;
-      summary: string;
+  messages: (TMessageProps & {
+    topic: number;
+  })[];
+  summary: {
+    [key: number]: {
+      keywords: string[];
+      content: string;
     };
   };
 }>;

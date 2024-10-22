@@ -1,12 +1,12 @@
 import { API } from '../api';
 import { TAiSummaryRequest, TAiSummaryResponse } from './type';
 
-export const AiSummaryQuery = (req: TAiSummaryRequest) => ({
-  queryKey: [`AI ${req.channelId}`],
-  queryFn: async () => {
+export const AiSummaryQuery = () => ({
+  mutationKey: [`AI summary`],
+  mutationFn: async (req: TAiSummaryRequest) => {
     const response = await API.json
-      .post('/chat', req)
-      .then((res) => res.data as TAiSummaryResponse)
+      .post('/chat/summary', req)
+      .then(res => res.data as TAiSummaryResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
