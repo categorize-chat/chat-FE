@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState } from 'react';
 import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
 import IconButton from '@mui/joy/IconButton';
@@ -10,6 +10,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import { TMessageProps } from '../../utils/chat/type';
 import { parseRawDateToTime } from '../../utils/common/function';
+import { useAIStore } from '../../state/ai';
 
 type ChatBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
@@ -20,12 +21,29 @@ export default function ChatBubble({
   variant,
   createdAt,
   nickname,
+  topic,
 }: ChatBubbleProps) {
   const attachment = false;
   const isSent = variant === 'sent';
-  const [isHovered, setIsHovered] = React.useState<boolean>(false);
-  const [isLiked, setIsLiked] = React.useState<boolean>(false);
-  const [isCelebrated, setIsCelebrated] = React.useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isCelebrated, setIsCelebrated] = useState<boolean>(false);
+
+  const { selectedTopic } = useAIStore();
+
+  const bubbleColor = useMemo(() => {
+    const { index, color } = selectedTopic;
+
+    if (index === -1) {
+      return isSent ? 'var(--joy-palette-primary-solidBg)' : 'background.body';
+    }
+
+    if (index === topic) {
+      return color;
+    }
+
+    return 'background.body';
+  }, [selectedTopic, topic, isSent]);
 
   const { date, time } = parseRawDateToTime(createdAt);
   return (
@@ -77,9 +95,7 @@ export default function ChatBubble({
               borderRadius: 'lg',
               borderTopRightRadius: isSent ? 0 : 'lg',
               borderTopLeftRadius: isSent ? 'lg' : 0,
-              backgroundColor: isSent
-                ? 'var(--joy-palette-primary-solidBg)'
-                : 'background.body',
+              backgroundColor: bubbleColor,
             }}
           >
             <Typography
@@ -117,7 +133,7 @@ export default function ChatBubble({
                 variant={isLiked ? 'soft' : 'plain'}
                 color={isLiked ? 'danger' : 'neutral'}
                 size="sm"
-                onClick={() => setIsLiked((prevState) => !prevState)}
+                onClick={() => setIsLiked(prevState => !prevState)}
               >
                 {isLiked ? '❤️' : <FavoriteBorderIcon />}
               </IconButton>
@@ -125,7 +141,7 @@ export default function ChatBubble({
                 variant={isCelebrated ? 'soft' : 'plain'}
                 color={isCelebrated ? 'warning' : 'neutral'}
                 size="sm"
-                onClick={() => setIsCelebrated((prevState) => !prevState)}
+                onClick={() => setIsCelebrated(prevState => !prevState)}
               >
                 {isCelebrated ? '🎉' : <CelebrationOutlinedIcon />}
               </IconButton>

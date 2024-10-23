@@ -16,6 +16,7 @@ export type TMessageProps = {
   nickname: string;
   createdAt: string;
   content: string;
+  topic: number;
 };
 
 export type TChannelProps = {
@@ -33,11 +34,7 @@ export type TChatRoomsResponse = TApiResponse<{
 }>;
 
 export type TChatMessageResponse = TApiResponse<{
-  messages: {
-    nickname: string;
-    createdAt: string;
-    content: string;
-  }[];
+  messages: TMessageProps[];
 }>;
 
 export type TChatRoomGenerateRequest = {

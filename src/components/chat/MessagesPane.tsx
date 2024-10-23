@@ -18,7 +18,7 @@ export default function MessagesPane() {
   const { id: chatId } = useParams();
 
   const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
-  const socket = useSocket((state) => state.socket);
+  const socket = useSocket(state => state.socket);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
   const { nickname } = useUserStore();
@@ -26,20 +26,20 @@ export default function MessagesPane() {
   const [textAreaValue, setTextAreaValue] = useState('');
 
   const handleChatSend = async () => {
-    console.log(socket)
     if (!socket) return;
 
     const newMessage: TMessageProps = {
       nickname,
       content: textAreaValue,
       createdAt: new Date().toISOString(),
+      topic: -1,
     };
 
     socket.emit('message', {
       ...newMessage,
       roomId: chatId,
     });
-  }
+  };
 
   useEffect(() => {
     if (!data) return;
@@ -51,7 +51,7 @@ export default function MessagesPane() {
     if (socket === undefined) return;
 
     socket.on('chat', (newMessage: TMessageProps) => {
-      addNewMessage(newMessage)
+      addNewMessage(newMessage);
     });
   }, [socket]);
 

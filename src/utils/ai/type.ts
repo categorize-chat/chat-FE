@@ -6,9 +6,7 @@ export type TAiSummaryRequest = {
 };
 
 export type TAiSummaryResponse = TApiResponse<{
-  messages: (TMessageProps & {
-    topic: number;
-  })[];
+  messages: TMessageProps[];
   summary: {
     [key: number]: {
       keywords: string[];

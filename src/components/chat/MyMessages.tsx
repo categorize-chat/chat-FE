@@ -35,7 +35,7 @@ export default function MyMessages() {
 
     // 채팅방에 입장
     socket.emit('join', chatId);
-  }, [socket, chatId])
+  }, [socket, chatId]);
 
   // 소켓 연결
   useEffect(() => {
@@ -43,16 +43,6 @@ export default function MyMessages() {
       path: '/socket.io',
     });
   }, [chatId]);
-
-  // 소켓 리스너 설정
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on('join', (data) => {
-      // TODO: handle join
-      console.log(data);
-    });
-  }, [socket]);
 
   if (isError) {
     return <></>;

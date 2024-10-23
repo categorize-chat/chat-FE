@@ -1,10 +1,5 @@
 import { Box } from '@mui/joy';
-import { hashString } from '../../utils/common/function';
-
-const calculateColor = (str: string) => {
-  const hashedColor = `#${hashString(str, 0x000000, 0xffffff).toString(16)}`;
-  return hashedColor;
-};
+import { calculateColor } from '../../utils/common/function';
 
 interface ICustomAvatarProps {
   nickname: string;
