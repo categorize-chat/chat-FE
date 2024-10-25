@@ -5,7 +5,7 @@ import Stack from '@mui/joy/Stack';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 // import MessagesPaneHeader from './MessagesPaneHeader';
-import AiPannel from './AiPannel';
+import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
 import { TMessageProps } from '../../utils/chat/type';
 import { useParams } from 'react-router-dom';

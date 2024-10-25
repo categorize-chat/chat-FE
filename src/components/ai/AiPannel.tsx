@@ -3,16 +3,23 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useMutation } from 'react-query';
 import { AiSummaryQuery } from '../../utils/ai/query';
 import { useChatStore } from '../../state/chat';
-import AiInit from '../ai/AiInit';
-import AiLoading from '../ai/AiLoading';
-import { useState } from 'react';
+import AiInit from './AiInit';
+import AiLoading from './AiLoading';
+import { useEffect, useState } from 'react';
 import { TAiSummaryResponse } from '../../utils/ai/type';
-import AiResult from '../ai/AiResult';
+import AiResult from './AiResult';
+import { useParams } from 'react-router-dom';
+import { useAIStore } from '../../state/ai';
 
 export default function AiPannel() {
-  const { selectedId } = useChatStore();
+  const { id: chatId } = useParams();
 
-  const [aiResult, setAiResult] = useState<TAiSummaryResponse['result']>();
+  const { selectedId } = useChatStore();
+  const { init: initAIStore } = useAIStore();
+
+  const [aiResult, setAiResult] = useState<TAiSummaryResponse['result'] | null>(
+    null,
+  );
 
   const aiSummaryMutation = useMutation({
     ...AiSummaryQuery(),
@@ -32,6 +39,11 @@ export default function AiPannel() {
 
     aiSummaryMutation.mutate(req);
   };
+
+  useEffect(() => {
+    setAiResult(null);
+    initAIStore();
+  }, [chatId]);
 
   return (
     <Sheet
@@ -66,7 +78,7 @@ export default function AiPannel() {
       {aiSummaryMutation.isLoading ? (
         <AiLoading />
       ) : aiSummaryMutation.isSuccess && aiResult ? (
-        <AiResult result={aiResult} />
+        <AiResult result={aiResult} setResult={setAiResult} />
       ) : (
         <AiInit handleClickAIButton={handleClickAIButton} />
       )}

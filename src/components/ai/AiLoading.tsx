@@ -17,12 +17,20 @@ const AiLoading = () => {
       <SmartToyIcon
         sx={{ fontSize: 50, color: 'primary.main', marginBottom: '1rem' }}
       />
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center" mb={2}>
         <Typography fontSize="lg" fontWeight="lg">
           AI가 열심히 채팅을 분석하고 있습니다
         </Typography>
       </Stack>
-      <Typography>AI가 메시지를 읽고 요약을 준비하고 있어요!</Typography>
+      <Typography>메시지를 읽고 요약을 준비하고 있어요!</Typography>
+      <Typography
+        fontSize="sm"
+        sx={{
+          opacity: 0.5,
+        }}
+      >
+        (최대 30초~1분 가량 소요될 수 있어요)
+      </Typography>
       <CircularProgress sx={{ my: 3 }} />
     </Box>
   );

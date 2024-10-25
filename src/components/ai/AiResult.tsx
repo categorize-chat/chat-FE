@@ -1,17 +1,19 @@
-import { Box, Card, Divider, Stack, Typography } from '@mui/joy';
+import { Box, Button, Card, Divider, Stack, Typography } from '@mui/joy';
 import { TAiSummaryResponse } from '../../utils/ai/type';
 import { TColorMaps, useAIStore } from '../../state/ai';
-import { useEffect, useMemo } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import { useChatStore } from '../../state/chat';
 import { TMessageProps } from '../../utils/chat/type';
 import _ from 'lodash';
 import { Circle } from '@mui/icons-material';
+import RestoreIcon from '@mui/icons-material/Restore';
 
 interface IAiResultProps {
   result: TAiSummaryResponse['result'];
+  setResult: Dispatch<SetStateAction<TAiSummaryResponse['result'] | null>>;
 }
 
-const AiResult = ({ result }: IAiResultProps) => {
+const AiResult = ({ result, setResult }: IAiResultProps) => {
   const { messages, summary } = result;
 
   const { chatMessages, setChatMessages } = useChatStore();
@@ -31,11 +33,14 @@ const AiResult = ({ result }: IAiResultProps) => {
     for (let i = refernece.length - replacer.length; i > 0; i--) {
       const target = refernece[i];
 
-      // console.log(target, comparer);
+      console.log(target, comparer);
+
+      const targetTime = new Date(target.createdAt);
+      const comparerTime = new Date(comparer.createdAt);
 
       if (
         target.content === comparer.content &&
-        target.createdAt === comparer.createdAt &&
+        targetTime.getTime() === comparerTime.getTime() &&
         target.nickname === comparer.nickname
       ) {
         const result = [
@@ -50,6 +55,11 @@ const AiResult = ({ result }: IAiResultProps) => {
 
     // 못 찾았을 경우, 그냥 원본 반환
     return [refernece, refernece.length];
+  };
+
+  const handleClickReturn = () => {
+    if (confirm('결과물을 모두 버리고 처음 화면으로 돌아가시겠습니까?'))
+      setResult(null);
   };
 
   useEffect(() => {
@@ -108,13 +118,13 @@ const AiResult = ({ result }: IAiResultProps) => {
         flexDirection: 'column',
         justifyContent: 'start',
         alignItems: 'center',
-        px: 3,
       }}
     >
       <Stack
         sx={{
           my: 3,
           textAlign: 'center',
+          px: 3,
         }}
       >
         <Typography fontSize="lg" fontWeight="lg" sx={{}}>
@@ -127,7 +137,10 @@ const AiResult = ({ result }: IAiResultProps) => {
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
+          px: 3,
           gap: 2,
+          maxHeight: 'calc(100vh - 240px)',
+          overflowY: 'auto', // 세로 스크롤 활성화
         }}
       >
         {Object.entries(summary).map(([topicIndex, { keywords, content }]) => (
@@ -138,7 +151,24 @@ const AiResult = ({ result }: IAiResultProps) => {
             summary={content}
           />
         ))}
+        {Object.entries(summary).map(([topicIndex, { keywords, content }]) => (
+          <KeywordButton
+            topicIndex={+topicIndex}
+            keyword={keywords[0]}
+            key={topicIndex}
+            summary={content}
+          />
+        ))}
       </Box>
+      <Stack
+        sx={{
+          my: 3,
+        }}
+      >
+        <Button endDecorator={<RestoreIcon />} onClick={handleClickReturn}>
+          뒤로 가기
+        </Button>
+      </Stack>
     </Box>
   );
 };
@@ -218,6 +248,7 @@ const KeywordButton = ({ topicIndex, keyword, summary }: IKeywordButton) => {
         <Circle
           sx={{
             color: cardColor.circleColor,
+            transition: 'ease 1s',
           }}
         />
       </Stack>

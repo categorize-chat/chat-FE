@@ -27,17 +27,25 @@ type TAIStore = {
   setSelectedTopic: (selectedTopic: TSelectedTopic) => void;
   setColorMaps: (colorMaps: TColorMaps) => void;
   setFirstTopicIndex: (firstTopicIndex: TFirstTopicIndex) => void;
+
+  init: () => void;
 };
 
-export const useAIStore = create<TAIStore>(set => ({
+const initialAIState = {
   selectedTopic: {
     index: -1,
     color: '',
   },
   colorMaps: {},
   firstTopicIndex: {},
+};
+
+export const useAIStore = create<TAIStore>(set => ({
+  ...initialAIState,
 
   setSelectedTopic: selectedTopic => set(() => ({ selectedTopic })),
   setColorMaps: colorMaps => set(() => ({ colorMaps })),
   setFirstTopicIndex: firstTopicIndex => set(() => ({ firstTopicIndex })),
+
+  init: () => set({ ...initialAIState }),
 }));
