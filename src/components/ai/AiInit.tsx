@@ -1,11 +1,21 @@
-import { Box, Button, Typography } from '@mui/joy';
+import { Box, Button, Input, Stack, Typography } from '@mui/joy';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { useRef } from 'react';
 
 interface IAiInitProps {
-  handleClickAIButton: () => void;
+  handleClickAIButton: (howmany: number) => void;
 }
 
 const AiInit = ({ handleClickAIButton }: IAiInitProps) => {
+  const howmanyInputRef = useRef<HTMLInputElement | null>(null);
+
+  const aiButtonHandler = () => {
+    if (!howmanyInputRef || !howmanyInputRef.current) return;
+
+    const howmany = +(howmanyInputRef.current as HTMLInputElement).value || 100;
+    handleClickAIButton(howmany);
+  };
+
   return (
     <Box
       sx={{
@@ -39,12 +49,38 @@ const AiInit = ({ handleClickAIButton }: IAiInitProps) => {
         <li>채팅을 요약하고 싶어...</li>
       </ul>
 
+      <Stack
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <Typography mr={1}>요약할 최신 메세지 수:</Typography>
+        <Input
+          defaultValue={100}
+          size="sm"
+          type="number"
+          autoFocus={true}
+          slotProps={{
+            input: {
+              ref: howmanyInputRef,
+              min: 1,
+              max: 200,
+            },
+          }}
+          sx={{
+            width: 'fit-content',
+          }}
+        />
+      </Stack>
+
       <Button
         size="sm"
         color="primary"
         sx={{ my: 3, alignSelf: 'center', borderRadius: 'sm' }}
         endDecorator={<AutoAwesomeIcon />}
-        onClick={handleClickAIButton}
+        onClick={aiButtonHandler}
       >
         주제 요약하기
       </Button>

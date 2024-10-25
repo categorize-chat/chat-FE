@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { TAiSummaryResponse, THmlKey } from '../utils/ai/type';
+import { TMessageProps } from '../utils/chat/type';
 
 type TSelectedTopic = {
   index: number;
@@ -11,22 +13,36 @@ type TColorHSL = {
   l: number; // 0 ~ 100
 };
 
-export type TColorMaps = {
-  [topic: number]: TColorHSL;
-};
+export type TColorMaps = Record<
+  THmlKey,
+  {
+    [topic: number]: TColorHSL;
+  }
+>;
 
-type TFirstTopicIndex = {
-  [n: number]: number;
-};
+type TFirstTopicIndices = Record<
+  THmlKey,
+  {
+    [n: number]: number;
+  }
+>;
 
-type TAIStore = {
+export type TAIStore = {
   selectedTopic: TSelectedTopic;
   colorMaps: TColorMaps;
-  firstTopicIndex: TFirstTopicIndex;
+  firstTopicIndices: TFirstTopicIndices;
+  aiResult: TAiSummaryResponse['result'];
+  hml: THmlKey;
+  replacedPartMessages: Record<THmlKey, TMessageProps[]>;
 
   setSelectedTopic: (selectedTopic: TSelectedTopic) => void;
   setColorMaps: (colorMaps: TColorMaps) => void;
-  setFirstTopicIndex: (firstTopicIndex: TFirstTopicIndex) => void;
+  setFirstTopicIndices: (firstTopicIndices: TFirstTopicIndices) => void;
+  setAiResult: (aiResult: TAiSummaryResponse['result']) => void;
+  setHml: (hml: THmlKey) => void;
+  setReplacedPartMessages: (
+    replacedPartMessages: Record<THmlKey, TMessageProps[]>,
+  ) => void;
 
   init: () => void;
 };
@@ -36,8 +52,11 @@ const initialAIState = {
     index: -1,
     color: '',
   },
-  colorMaps: {},
-  firstTopicIndex: {},
+  colorMaps: {} as TAIStore['colorMaps'],
+  firstTopicIndices: {} as TAIStore['firstTopicIndices'],
+  aiResult: {} as TAIStore['aiResult'],
+  hml: 'mid' as const,
+  replacedPartMessages: {} as TAIStore['replacedPartMessages'],
 };
 
 export const useAIStore = create<TAIStore>(set => ({
@@ -45,7 +64,11 @@ export const useAIStore = create<TAIStore>(set => ({
 
   setSelectedTopic: selectedTopic => set(() => ({ selectedTopic })),
   setColorMaps: colorMaps => set(() => ({ colorMaps })),
-  setFirstTopicIndex: firstTopicIndex => set(() => ({ firstTopicIndex })),
+  setFirstTopicIndices: firstTopicIndices => set(() => ({ firstTopicIndices })),
+  setAiResult: aiResult => set({ aiResult }),
+  setHml: hml => set({ hml }),
+  setReplacedPartMessages: replacedPartMessages =>
+    set({ replacedPartMessages }),
 
   init: () => set({ ...initialAIState }),
 }));

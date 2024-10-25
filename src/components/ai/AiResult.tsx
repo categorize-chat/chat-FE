@@ -1,39 +1,48 @@
-import { Box, Button, Card, Divider, Stack, Typography } from '@mui/joy';
-import { TAiSummaryResponse } from '../../utils/ai/type';
-import { TColorMaps, useAIStore } from '../../state/ai';
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  Radio,
+  RadioGroup,
+  Stack,
+  Typography,
+} from '@mui/joy';
+import { TAIStore, TColorMaps, useAIStore } from '../../state/ai';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useChatStore } from '../../state/chat';
 import { TMessageProps } from '../../utils/chat/type';
 import _ from 'lodash';
 import { Circle } from '@mui/icons-material';
 import RestoreIcon from '@mui/icons-material/Restore';
+import { THmlKey } from '../../utils/ai/type';
 
-interface IAiResultProps {
-  result: TAiSummaryResponse['result'];
-  setResult: Dispatch<SetStateAction<TAiSummaryResponse['result'] | null>>;
-}
-
-const AiResult = ({ result, setResult }: IAiResultProps) => {
-  const { messages, summary } = result;
+const AiResult = () => {
+  const { aiResult, init } = useAIStore();
+  const { summaries } = aiResult;
 
   const { chatMessages, setChatMessages } = useChatStore();
-  const { setColorMaps, setFirstTopicIndex } = useAIStore();
+  const {
+    setColorMaps,
+    setFirstTopicIndices,
+    setSelectedTopic,
+    hml,
+    setHml,
+    replacedPartMessages,
+    setReplacedPartMessages,
+  } = useAIStore();
 
-  const replaceMessage = (
-    refernece: TMessageProps[],
-    replacer: TMessageProps[],
-  ): [TMessageProps[], number] => {
-    const comparer = replacer[0];
+  const [startIndex, setStartIndex] = useState(-1);
 
-    if (refernece.length <= replacer.length) {
-      return [replacer, 0];
-    }
-
+  const findStartIndex = (
+    reference: TMessageProps[],
+    comparer: TMessageProps,
+    topics: number[],
+  ) => {
     // 위로 올라가면서 같은 채팅 찾기
-    for (let i = refernece.length - replacer.length; i > 0; i--) {
-      const target = refernece[i];
-
-      console.log(target, comparer);
+    let i = -1;
+    for (i = reference.length - topics.length; i >= 0; i--) {
+      const target = reference[i];
 
       const targetTime = new Date(target.createdAt);
       const comparerTime = new Date(comparer.createdAt);
@@ -43,72 +52,133 @@ const AiResult = ({ result, setResult }: IAiResultProps) => {
         targetTime.getTime() === comparerTime.getTime() &&
         target.nickname === comparer.nickname
       ) {
-        const result = [
-          ...refernece.slice(0, i),
-          ...replacer,
-          ...refernece.slice(i + replacer.length),
-        ];
-
-        return [result, i];
+        break;
       }
     }
 
-    // 못 찾았을 경우, 그냥 원본 반환
-    return [refernece, refernece.length];
+    return i;
+  };
+
+  const getReplacedMessage = (
+    refernece: TMessageProps[],
+    startIndex: number,
+    topics: number[],
+  ) => {
+    return refernece
+      .slice(startIndex, startIndex + topics.length)
+      .map(({ topic, ...rest }, idx) => ({
+        ...rest,
+        topic: topics[idx],
+      }));
   };
 
   const handleClickReturn = () => {
-    if (confirm('결과물을 모두 버리고 처음 화면으로 돌아가시겠습니까?'))
-      setResult(null);
+    if (confirm('결과물을 모두 버리고 처음 화면으로 돌아가시겠습니까?')) init();
   };
 
   useEffect(() => {
-    if (!messages || !summary) return;
+    if (!aiResult || !chatMessages) return;
 
-    const [replacedMessage, startIndex] = replaceMessage(
-      chatMessages,
-      messages,
-    );
+    const { topics, summaries, refChat } = aiResult;
 
-    const topicIndices = Object.keys(summary);
-    const firstTopicIndex: {
-      [n: number]: number;
-    } = {};
+    if (!topics || !summaries || !refChat) return;
 
-    let k = 0;
+    const startIndex = findStartIndex(chatMessages, refChat, topics.mid);
 
-    for (let i = startIndex; i < replacedMessage.length; i++) {
-      if (replacedMessage[i].topic === +topicIndices[k]) {
-        firstTopicIndex[+topicIndices[k]] = i;
-        k++;
-      }
-    }
+    const hmlKey = ['high', 'mid', 'low'] as const;
 
-    setChatMessages(replacedMessage);
-    setFirstTopicIndex(firstTopicIndex);
+    const replacedPartMessages = Object.fromEntries(
+      hmlKey.map(hml => [
+        hml,
+        getReplacedMessage(chatMessages, startIndex, topics[hml]),
+      ]),
+    ) as TAIStore['replacedPartMessages'];
+
+    const firstTopicIndices = Object.fromEntries(
+      hmlKey.map(hml => {
+        const topicIndex = Object.keys(summaries[hml]);
+
+        const firstTopicIndex: {
+          [n: number]: number;
+        } = {};
+
+        // 각 토픽 별 첫 인덱스 찾기
+        let k = 0;
+
+        for (let i = 0; i < replacedPartMessages[hml].length; i++) {
+          if (replacedPartMessages[hml][i].topic === +topicIndex[k]) {
+            firstTopicIndex[+topicIndex[k]] = i + startIndex;
+            k++;
+          }
+        }
+
+        return [hml, firstTopicIndex];
+      }),
+    ) as TAIStore['firstTopicIndices'];
+
+    setStartIndex(startIndex);
+    setReplacedPartMessages(replacedPartMessages);
+    setFirstTopicIndices(firstTopicIndices);
 
     // 사용 가능한 색 지정
-    const colorNums = topicIndices.length;
-    const step = Math.floor(360 / colorNums);
+    const colorMaps = Object.fromEntries(
+      hmlKey.map(hml => {
+        const topicIndex = Object.keys(summaries[hml]);
 
-    const displacement = Math.floor(Math.random() * step);
+        const colorNums = topicIndex.length;
+        const step = Math.floor(360 / colorNums);
 
-    const defaultS = 70;
-    const defaultL = 80;
+        const displacement = Math.floor(Math.random() * step);
 
-    const hs = Array.from(
-      { length: colorNums },
-      (_, i) => displacement + i * step,
-    );
+        const defaultS = 70;
+        const defaultL = 80;
 
-    const colorMaps: TColorMaps = {};
+        const hs = Array.from(
+          { length: colorNums },
+          (_, i) => displacement + i * step,
+        );
 
-    topicIndices.forEach((topic, i) => {
-      colorMaps[+topic] = { h: hs[i], s: defaultS, l: defaultL };
-    });
+        const color: TColorMaps['high'] = {};
+
+        topicIndex.forEach((topic, i) => {
+          color[+topic] = { h: hs[i], s: defaultS, l: defaultL };
+        });
+
+        return [hml, color];
+      }),
+    ) as TAIStore['colorMaps'];
 
     setColorMaps(colorMaps);
-  }, [messages, summary]);
+  }, [aiResult]);
+
+  useEffect(() => {
+    // 채팅 메세지 설정
+
+    if (
+      !chatMessages ||
+      !replacedPartMessages ||
+      !replacedPartMessages[hml] ||
+      startIndex === -1
+    )
+      return;
+
+    const newChatMessages = [
+      ...chatMessages.slice(0, startIndex),
+      ...replacedPartMessages[hml],
+      ...chatMessages.slice(startIndex + replacedPartMessages[hml].length),
+    ];
+
+    setChatMessages(newChatMessages);
+  }, [hml, replacedPartMessages, startIndex]);
+
+  useEffect(() => {
+    // 토픽 선택 해제
+
+    setSelectedTopic({
+      index: -1,
+      color: '',
+    });
+  }, [hml]);
 
   return (
     <Box
@@ -132,6 +202,62 @@ const AiResult = ({ result, setResult }: IAiResultProps) => {
         </Typography>
         <Typography>누르면 해당하는 채팅을 하이라이트 할 수 있어요</Typography>
       </Stack>
+      <Stack
+        sx={{
+          px: 3,
+          mb: 3,
+        }}
+      >
+        <RadioGroup
+          orientation="horizontal"
+          aria-labelledby="segmented-controls-example"
+          name="hml"
+          value={hml}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setHml(event.target.value as THmlKey)
+          }
+          sx={{
+            minHeight: 48,
+            width: '100%',
+            padding: '4px',
+            borderRadius: '12px',
+            bgcolor: 'neutral.softBg',
+            '--RadioGroup-gap': '4px',
+            '--Radio-actionRadius': '8px',
+          }}
+        >
+          {[
+            ['적은 주제', 'low'],
+            ['적당한 주제', 'mid'],
+            ['많은 주제', 'high'],
+          ].map(([name, value]) => (
+            <Radio
+              key={value}
+              color="neutral"
+              value={value}
+              disableIcon
+              label={name}
+              variant="plain"
+              sx={{ px: 2, alignItems: 'center' }}
+              slotProps={{
+                action: ({ checked }) => ({
+                  sx: {
+                    ...(checked && {
+                      bgcolor: 'background.surface',
+                      boxShadow: 'sm',
+                      '&:hover': {
+                        bgcolor: 'background.surface',
+                      },
+                      fontWeight: 'bold',
+                    }),
+                  },
+                }),
+              }}
+            />
+          ))}
+        </RadioGroup>
+      </Stack>
+
       <Box
         sx={{
           display: 'flex',
@@ -139,33 +265,35 @@ const AiResult = ({ result, setResult }: IAiResultProps) => {
           width: '100%',
           px: 3,
           gap: 2,
-          maxHeight: 'calc(100vh - 240px)',
+          maxHeight: 'calc(100vh - 312px)',
           overflowY: 'auto', // 세로 스크롤 활성화
         }}
       >
-        {Object.entries(summary).map(([topicIndex, { keywords, content }]) => (
-          <KeywordButton
-            topicIndex={+topicIndex}
-            keyword={keywords[0]}
-            key={topicIndex}
-            summary={content}
-          />
-        ))}
-        {Object.entries(summary).map(([topicIndex, { keywords, content }]) => (
-          <KeywordButton
-            topicIndex={+topicIndex}
-            keyword={keywords[0]}
-            key={topicIndex}
-            summary={content}
-          />
-        ))}
+        {summaries &&
+          summaries[hml] &&
+          Object.entries(summaries[hml]).map(
+            ([topicIndex, { keywords, content }]) => (
+              <KeywordButton
+                topicIndex={+topicIndex}
+                keyword={keywords[0]}
+                key={topicIndex}
+                summary={content}
+              />
+            ),
+          )}
       </Box>
       <Stack
         sx={{
-          my: 3,
+          mt: 'auto',
         }}
       >
-        <Button endDecorator={<RestoreIcon />} onClick={handleClickReturn}>
+        <Button
+          sx={{
+            my: 3,
+          }}
+          endDecorator={<RestoreIcon />}
+          onClick={handleClickReturn}
+        >
           뒤로 가기
         </Button>
       </Stack>
@@ -180,17 +308,19 @@ interface IKeywordButton {
 }
 
 const KeywordButton = ({ topicIndex, keyword, summary }: IKeywordButton) => {
-  const { selectedTopic, setSelectedTopic, colorMaps } = useAIStore();
+  const { selectedTopic, setSelectedTopic, colorMaps, hml } = useAIStore();
 
   const buttonColor = useMemo(() => {
-    const colorAvailable = colorMaps[topicIndex];
+    if (!colorMaps || !colorMaps[hml]) return '';
+
+    const colorAvailable = colorMaps[hml][topicIndex];
 
     if (!colorAvailable) {
       return '';
     }
 
     return `hsl(${colorAvailable.h} ${colorAvailable.s} ${colorAvailable.l})`;
-  }, [colorMaps]);
+  }, [colorMaps, hml]);
 
   const cardColor = useMemo(
     () =>

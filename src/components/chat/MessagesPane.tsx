@@ -21,7 +21,7 @@ export default function MessagesPane() {
   const { id: chatId } = useParams();
 
   const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
-  const { firstTopicIndex, selectedTopic } = useAIStore();
+  const { firstTopicIndices, selectedTopic, hml } = useAIStore();
 
   const socket = useSocket(state => state.socket);
 
@@ -55,13 +55,15 @@ export default function MessagesPane() {
   }, [data]);
 
   useEffect(() => {
-    if (!selectedTopic || !firstTopicIndex || selectedTopic.index === -1)
+    if (!selectedTopic || !firstTopicIndices[hml] || selectedTopic.index === -1)
       return;
 
-    messageRefs.current[firstTopicIndex[selectedTopic.index]]?.scrollIntoView({
+    messageRefs.current[
+      firstTopicIndices[hml][selectedTopic.index]
+    ]?.scrollIntoView({
       behavior: 'smooth',
     });
-  }, [selectedTopic, firstTopicIndex]);
+  }, [selectedTopic, firstTopicIndices]);
 
   useEffect(() => {
     if (socket === undefined) return;

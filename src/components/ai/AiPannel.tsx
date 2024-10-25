@@ -5,8 +5,7 @@ import { AiSummaryQuery } from '../../utils/ai/query';
 import { useChatStore } from '../../state/chat';
 import AiInit from './AiInit';
 import AiLoading from './AiLoading';
-import { useEffect, useState } from 'react';
-import { TAiSummaryResponse } from '../../utils/ai/type';
+import { useEffect } from 'react';
 import AiResult from './AiResult';
 import { useParams } from 'react-router-dom';
 import { useAIStore } from '../../state/ai';
@@ -15,11 +14,7 @@ export default function AiPannel() {
   const { id: chatId } = useParams();
 
   const { selectedId } = useChatStore();
-  const { init: initAIStore } = useAIStore();
-
-  const [aiResult, setAiResult] = useState<TAiSummaryResponse['result'] | null>(
-    null,
-  );
+  const { init: initAIStore, aiResult, setAiResult } = useAIStore();
 
   const aiSummaryMutation = useMutation({
     ...AiSummaryQuery(),
@@ -32,16 +27,16 @@ export default function AiPannel() {
     },
   });
 
-  const handleClickAIButton = () => {
+  const handleClickAIButton = (howmany: number) => {
     const req = {
       channelId: selectedId,
+      howmany,
     };
 
     aiSummaryMutation.mutate(req);
   };
 
   useEffect(() => {
-    setAiResult(null);
     initAIStore();
   }, [chatId]);
 
@@ -77,8 +72,8 @@ export default function AiPannel() {
       </Stack>
       {aiSummaryMutation.isLoading ? (
         <AiLoading />
-      ) : aiSummaryMutation.isSuccess && aiResult ? (
-        <AiResult result={aiResult} setResult={setAiResult} />
+      ) : aiSummaryMutation.isSuccess && Object.keys(aiResult).length > 0 ? (
+        <AiResult />
       ) : (
         <AiInit handleClickAIButton={handleClickAIButton} />
       )}
