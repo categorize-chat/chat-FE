@@ -27,7 +27,7 @@ export default function ChatBubble({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isCelebrated, setIsCelebrated] = useState<boolean>(false);
 
-  const { selectedTopic } = useAIStore();
+  const { selectedTopic, colorMaps, hml, setSelectedTopic } = useAIStore();
 
   const bubbleColor = useMemo(() => {
     const { index, color } = selectedTopic;
@@ -44,6 +44,30 @@ export default function ChatBubble({
 
     return index !== -1 && index !== topic;
   }, [selectedTopic, topic, isSent]);
+
+  const chatClickHandler = () => {
+    if (topic === -1) return;
+    if (!colorMaps || !colorMaps[hml]) return;
+
+    if (topic === selectedTopic.index) {
+      setSelectedTopic({
+        index: -1,
+        color: '',
+      });
+      return;
+    }
+
+    const colorCode = colorMaps[hml][topic];
+    if (!colorCode) return;
+
+    const { h, s, l } = colorCode;
+    const color = `hsl(${h} ${s} ${l})`;
+
+    setSelectedTopic({
+      index: topic,
+      color,
+    });
+  };
 
   return (
     <Box
@@ -73,12 +97,14 @@ export default function ChatBubble({
         <Sheet
           color={isSent ? 'primary' : 'neutral'}
           variant={isSent ? 'solid' : 'soft'}
+          onClick={chatClickHandler}
           sx={{
             p: 1.25,
             borderRadius: 'lg',
             borderTopRightRadius: isSent ? 0 : 'lg',
             borderTopLeftRadius: isSent ? 'lg' : 0,
             backgroundColor: bubbleColor,
+            cursor: topic !== -1 ? 'pointer' : '',
           }}
         >
           <Typography

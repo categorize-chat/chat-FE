@@ -29,7 +29,7 @@ const AiLoading = () => {
           opacity: 0.5,
         }}
       >
-        (최대 30초~1분 가량 소요될 수 있어요)
+        (최대 1~2분 가량 소요될 수 있어요)
       </Typography>
       <CircularProgress sx={{ my: 3 }} />
     </Box>
