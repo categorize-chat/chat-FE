@@ -1,30 +1,31 @@
-# React + TypeScript + Vite
+# AI Chat - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+2024 1학기 시작 졸업프로젝트 - **자동으로 맥락을 찾고 분류해주는 AI 채팅앱**
 
-Currently, two official plugins are available:
+![예시 화면](public/sample.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 사용 기술
 
-## Expanding the ESLint configuration
+- React 18
+- yarn
+- vite
+- typescript
+- zustand
+- MUI
+- socket.io
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 실행 방법
 
-- Configure the top-level `parserOptions` property like this:
+> ⚠️ yarn 이 설치되어 있어야 합니다.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+1. 본 레포지토리를 clone 받습니다.
+2. 루트 디렉토리에 `.env` 파일을 생성하고, 다음과 같은 내용으로 저장합니다.
+
+```text
+VITE_SERVER_URL = <서버 주소>
+VITE_SOCK_URL = <서버 소켓 주소>
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. `yarn` 을 입력하여 필요한 모듈을 받습니다.
+4. `yarn dev` 를 이용하여 dev 서버를 실행시킵니다.
+5. (벡엔드 서버를 구동합니다)
