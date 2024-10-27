@@ -34,6 +34,12 @@ const AiResult = () => {
 
   const [startIndex, setStartIndex] = useState(-1);
 
+  const warningText = {
+    low: '* 주제간의 충돌이 발생할 수 있습니다.',
+    mid: '* 분류가 마음에 들지 않으면 정도를 바꿔보세요.',
+    high: '* 제대로 분류되지 않은 채팅이 있을 수 있습니다.',
+  } as const;
+
   const findStartIndex = (
     reference: TMessageProps[],
     comparer: TMessageProps,
@@ -206,6 +212,10 @@ const AiResult = () => {
         sx={{
           px: 3,
           mb: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1,
         }}
       >
         <RadioGroup
@@ -227,9 +237,9 @@ const AiResult = () => {
           }}
         >
           {[
-            ['적은 주제', 'low'],
-            ['적당한 주제', 'mid'],
-            ['많은 주제', 'high'],
+            ['넓은 분류', 'low'],
+            ['적당한 분류', 'mid'],
+            ['세밀한 분류', 'high'],
           ].map(([name, value]) => (
             <Radio
               key={value}
@@ -256,6 +266,13 @@ const AiResult = () => {
             />
           ))}
         </RadioGroup>
+        <Typography
+          sx={{
+            color: 'var(--joy-palette-text-tertiary)',
+          }}
+        >
+          {warningText[hml]}
+        </Typography>
       </Stack>
 
       <Box
@@ -265,7 +282,7 @@ const AiResult = () => {
           width: '100%',
           px: 3,
           gap: 2,
-          maxHeight: 'calc(100vh - 312px)',
+          maxHeight: 'calc(100vh - 344px)',
           overflowY: 'auto', // 세로 스크롤 활성화
         }}
       >

@@ -9,7 +9,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
-import { useChatStore} from '../../state/chat';
+import { useChatStore } from '../../state/chat';
 import { TChannelProps } from '../../utils/chat/type';
 import { Paths } from '../../utils/constant';
 
@@ -21,13 +21,12 @@ export default function ChatListItem(props: ChatListItemProps) {
   const { channelId, channelName, unread } = props;
   const navigate = useNavigate();
 
-  const selectedId = useChatStore((state) => state.selectedId);
+  const selectedId = useChatStore(state => state.selectedId);
   const selected = selectedId === channelId;
 
-  const chatListClick = 
-    (roomId: string) => {
-      navigate(`${Paths.chat.base()}/${roomId}`);
-    }
+  const chatListClick = (roomId: string) => {
+    navigate(`${Paths.chat.base()}/${roomId}`);
+  };
 
   return (
     <Fragment>
@@ -49,7 +48,6 @@ export default function ChatListItem(props: ChatListItemProps) {
             <AvatarWithStatus />
             <Box sx={{ flex: 1 }}>
               <Typography level="title-sm">{channelName}</Typography>
-              <Typography level="body-sm">{'test'}</Typography>
             </Box>
             <Box
               sx={{
@@ -58,13 +56,6 @@ export default function ChatListItem(props: ChatListItemProps) {
               }}
             >
               {unread && <CircleIcon sx={{ fontSize: 12 }} color="primary" />}
-              <Typography
-                level="body-xs"
-                display={{ xs: 'none', md: 'block' }}
-                noWrap
-              >
-                5 mins ago
-              </Typography>
             </Box>
           </Stack>
           <Typography
@@ -76,9 +67,7 @@ export default function ChatListItem(props: ChatListItemProps) {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
             }}
-          >
-            {'hello!'}
-          </Typography>
+          >{`${channelName} 톡방입니다`}</Typography>
         </ListItemButton>
       </ListItem>
       <ListDivider sx={{ margin: 0 }} />
