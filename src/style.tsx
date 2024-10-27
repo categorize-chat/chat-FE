@@ -1,4 +1,5 @@
 import { extendTheme } from '@mui/joy/styles';
+import './index.css'; // Tailwind CSS 파일 임포트
 
 export const customTheme = extendTheme({
   fontFamily: {

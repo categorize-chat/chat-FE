@@ -1,48 +1,52 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
-import AvatarWithStatus from '../common/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 // import MessagesPaneHeader from './MessagesPaneHeader';
-import AiPannel from './AiPannel';
+import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
-import { TChatProps, TMessageProps } from '../../utils/chat/type';
+import { TMessageProps } from '../../utils/chat/type';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
 import { useUserStore } from '../../state/user';
 import CustomAvatar from '../user/CustomAvatar';
+import { parseRawDateAndTime } from '../../utils/common/function';
+import { Divider, Typography } from '@mui/joy';
+import { useAIStore } from '../../state/ai';
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { selectedId } = useChatStore();
-  const socket = useSocket((state) => state.socket);
+  const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
+  const { firstTopicIndices, selectedTopic, hml } = useAIStore();
+
+  const socket = useSocket(state => state.socket);
+
+  const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
   const { nickname } = useUserStore();
 
-  const [chatMessages, setChatMessages] = useState<TChatProps>([]);
   const [textAreaValue, setTextAreaValue] = useState('');
 
-  const handleChatSend = useCallback(async () => {
+  const handleChatSend = async () => {
     if (!socket) return;
 
     const newMessage: TMessageProps = {
       nickname,
       content: textAreaValue,
       createdAt: new Date().toISOString(),
+      topic: -1,
     };
 
     socket.emit('message', {
       ...newMessage,
       roomId: chatId,
     });
-
-    setChatMessages((msg) => [...msg, newMessage]);
-  }, [socket, setChatMessages, selectedId, textAreaValue]);
+  };
 
   useEffect(() => {
     if (!data) return;
@@ -51,11 +55,21 @@ export default function MessagesPane() {
   }, [data]);
 
   useEffect(() => {
+    if (!selectedTopic || !firstTopicIndices[hml] || selectedTopic.index === -1)
+      return;
+
+    messageRefs.current[
+      firstTopicIndices[hml][selectedTopic.index]
+    ]?.scrollIntoView({
+      behavior: 'smooth',
+    });
+  }, [selectedTopic, firstTopicIndices]);
+
+  useEffect(() => {
     if (socket === undefined) return;
 
-    socket.on('receive_message', (newMessage: TMessageProps) => {
-      console.log('test');
-      setChatMessages((msg) => [...msg, newMessage]);
+    socket.on('chat', (newMessage: TMessageProps) => {
+      addNewMessage(newMessage);
     });
   }, [socket]);
 
@@ -76,7 +90,7 @@ export default function MessagesPane() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: '1fr minmax(min-content, min(30%, 360px))',
+          gridTemplateColumns: '1fr minmax(min-content, min(50%, 400px))',
           overflowY: 'auto',
           height: '100%',
         }}
@@ -100,21 +114,45 @@ export default function MessagesPane() {
             }}
           >
             <Stack spacing={2} justifyContent="flex-end">
-              {chatMessages.map((message: TMessageProps, index: number) => {
+              {chatMessages.map((message: TMessageProps, i) => {
+                const { date, time } = parseRawDateAndTime(message.createdAt);
                 const isYou = message.nickname === nickname;
+
+                const prevDate =
+                  i > 0
+                    ? parseRawDateAndTime(chatMessages[i - 1].createdAt).date
+                    : null;
                 return (
-                  <Stack
-                    key={index}
-                    direction="row"
-                    spacing={2}
-                    flexDirection={isYou ? 'row-reverse' : 'row'}
-                  >
-                    <CustomAvatar nickname={message.nickname} />
-                    <ChatBubble
-                      variant={isYou ? 'sent' : 'received'}
-                      {...message}
-                    />
-                  </Stack>
+                  <Fragment key={i}>
+                    {prevDate !== date && (
+                      <Stack>
+                        <Divider>
+                          <Typography
+                            textAlign={'center'}
+                            my={2}
+                            fontWeight={'lg'}
+                          >
+                            {date}
+                          </Typography>
+                        </Divider>
+                      </Stack>
+                    )}
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      flexDirection={isYou ? 'row-reverse' : 'row'}
+                      id={`${i}`}
+                      ref={el => (messageRefs.current[i] = el)}
+                    >
+                      <CustomAvatar nickname={message.nickname} />
+                      <ChatBubble
+                        variant={isYou ? 'sent' : 'received'}
+                        {...message}
+                        date={date}
+                        time={time}
+                      />
+                    </Stack>
+                  </Fragment>
                 );
               })}
             </Stack>

@@ -1,18 +1,21 @@
 import { create } from 'zustand';
 import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
-import { TChannelProps } from '../utils/chat/type';
+import { TChannelProps, TMessageProps } from '../utils/chat/type';
 
 type TChatStore = {
   chats: TChannelProps[];
   selectedId: string;
   selectedChat: TChannelProps | undefined;
   modalOpen: boolean;
+  chatMessages: TMessageProps[];
 
   setChats: (chats: TChannelProps[]) => void;
   addChat: (newChat: TChannelProps) => void;
   setSelectedId: (id: string) => void;
   setSelectedChat: (chat: TChannelProps | undefined) => void;
   setModalOpen: (modalOpen: boolean) => void;
+  setChatMessages: (chatMessages: TMessageProps[]) => void;
+  addNewMessage: (newMessage: TMessageProps) => void;
 };
 
 type TSocketStore = {
@@ -28,6 +31,7 @@ export const useChatStore = create<TChatStore>((set) => ({
   selectedId: '0',
   selectedChat: undefined,
   modalOpen: false,
+  chatMessages: [],
 
   setChats: (chats) => set(() => ({ chats })),
   addChat: (newChat: TChannelProps) =>
@@ -35,6 +39,8 @@ export const useChatStore = create<TChatStore>((set) => ({
   setSelectedId: (id) => set(() => ({ selectedId: id })),
   setSelectedChat: (chat) => set(() => ({ selectedChat: chat })),
   setModalOpen: (modalOpen: boolean) => set({ modalOpen }),
+  setChatMessages: (chatMessages: TMessageProps[]) => set(() => ({ chatMessages })),
+  addNewMessage: (newMessage) => set((state) => ({chatMessages: [...state.chatMessages, newMessage]}))
 }));
 
 export const useSocket = create<TSocketStore>((set) => ({

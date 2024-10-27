@@ -14,6 +14,7 @@ export const userJoinQuery = () => ({
         return result;
       });
   },
+  refetchOnWindowFocus: false,
 });
 
 export const userInfoQuery = (id: string) => ({
@@ -30,4 +31,5 @@ export const userInfoQuery = (id: string) => ({
         return result;
       });
   },
+  refetchOnWindowFocus: false,
 });

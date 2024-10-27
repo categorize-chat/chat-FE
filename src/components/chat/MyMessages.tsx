@@ -30,27 +30,19 @@ export default function MyMessages() {
     setSelectedId(chatId);
   }, [chatId]);
 
+  useEffect(() => {
+    if (!socket || !chatId) return;
+
+    // 채팅방에 입장
+    socket.emit('join', chatId);
+  }, [socket, chatId]);
+
   // 소켓 연결
   useEffect(() => {
     connectSocket(`${import.meta.env.VITE_SOCK_URL}/chat`, {
       path: '/socket.io',
     });
-  }, []);
-
-  // 소켓 리스너 설정
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on('join', (data) => {
-      // TODO: handle join
-      console.log(data);
-    });
-
-    socket.on('message', ({ nickname, createdAt, content }) => {
-      // TODO: handle message
-      console.log(nickname, content, createdAt);
-    });
-  }, [socket]);
+  }, [chatId]);
 
   if (isError) {
     return <></>;
