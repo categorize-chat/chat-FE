@@ -19,3 +19,10 @@ export type TUserJoinResponse = TApiResponse<{
 export type TUserInfoResponse = TApiResponse<{
   nickname: string;
 }>;
+
+export type TUserOAuthResponse = TApiResponse<{
+  accessToken: string;
+  nickname: string;
+  profileUrl: string;
+  email: string;
+}>;

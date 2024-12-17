@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import svgr from '@svgr/rollup';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -9,7 +10,7 @@ export default ({ mode }) => {
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),
     },
-    plugins: [react()],
+    plugins: [react(), svgr()],
     server: {
       port: 5173,
       proxy: {
@@ -17,7 +18,7 @@ export default ({ mode }) => {
           target: `${env.VITE_SERVER_URL}`,
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: path => path.replace(/^\/api/, ''),
         },
       },
     },
