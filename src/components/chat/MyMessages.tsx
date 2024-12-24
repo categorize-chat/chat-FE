@@ -41,6 +41,7 @@ export default function MyMessages() {
   useEffect(() => {
     connectSocket(`${import.meta.env.VITE_SOCK_URL}/chat`, {
       path: '/socket.io',
+      auth: { token: localStorage.getItem('accessToken') },
     });
   }, [chatId]);
 
