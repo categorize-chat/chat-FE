@@ -11,7 +11,7 @@ const OAuthCallback = () => {
 
   const sendOAuthCode = async (code: string) => {
     const userInfo = await API.json
-      .post('/auth/kakao', { code })
+      .post('/oauth/kakao', { code })
       .then(res => res.data as TUserOAuthResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {

@@ -74,7 +74,7 @@ const NewChat = () => {
             placeholder="생성할 채팅방의 이름을 입력해주세요"
             ref={inputRef}
             onChange={handleInputChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') handleNewChat();
             }}
           />

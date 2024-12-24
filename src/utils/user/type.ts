@@ -1,10 +1,9 @@
 import { TApiResponse } from '../type';
 
 export type TUserProps = {
-  name: string;
-  username: string;
-  avatar: string;
-  online: boolean;
+  nickname: string;
+  email: string;
+  profileUrl: string;
 };
 
 export type TUserJoinRequest = {
