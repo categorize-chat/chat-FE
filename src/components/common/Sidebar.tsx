@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import { useUserStore } from '../../state/user';
 import CustomAvatar from '../user/CustomAvatar';
-import { validateToken } from '../../utils/auth/function';
+import { searchChatRoom, validateToken } from '../../utils/auth/function';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
@@ -163,7 +163,7 @@ export default function Sidebar() {
             <ListItemButton
               onClick={
                 // FIXME: TEST
-                () => validateToken({ nickname, email, profileUrl })
+                () => searchChatRoom()
               }
             >
               <SettingsRoundedIcon />
@@ -174,7 +174,7 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <CustomAvatar nickname={nickname} />
+        <CustomAvatar user={{ nickname, email, profileUrl }} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography level="title-sm">{nickname}</Typography>
         </Box>
