@@ -26,24 +26,26 @@ type TSocketStore = {
   ) => void;
 };
 
-export const useChatStore = create<TChatStore>((set) => ({
+export const useChatStore = create<TChatStore>(set => ({
   chats: [],
   selectedId: '0',
   selectedChat: undefined,
   modalOpen: false,
   chatMessages: [],
 
-  setChats: (chats) => set(() => ({ chats })),
+  setChats: chats => set(() => ({ chats })),
   addChat: (newChat: TChannelProps) =>
-    set((state) => ({ chats: [...state.chats, newChat] })),
-  setSelectedId: (id) => set(() => ({ selectedId: id })),
-  setSelectedChat: (chat) => set(() => ({ selectedChat: chat })),
+    set(state => ({ chats: [...state.chats, newChat] })),
+  setSelectedId: id => set(() => ({ selectedId: id })),
+  setSelectedChat: chat => set(() => ({ selectedChat: chat })),
   setModalOpen: (modalOpen: boolean) => set({ modalOpen }),
-  setChatMessages: (chatMessages: TMessageProps[]) => set(() => ({ chatMessages })),
-  addNewMessage: (newMessage) => set((state) => ({chatMessages: [...state.chatMessages, newMessage]}))
+  setChatMessages: (chatMessages: TMessageProps[]) =>
+    set(() => ({ chatMessages })),
+  addNewMessage: newMessage =>
+    set(state => ({ chatMessages: [...state.chatMessages, newMessage] })),
 }));
 
-export const useSocket = create<TSocketStore>((set) => ({
+export const useSocket = create<TSocketStore>(set => ({
   socket: undefined,
   connectSocket: (url, opts?) => set(() => ({ socket: io(url, opts) })),
 }));

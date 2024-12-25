@@ -1,4 +1,5 @@
 import { TApiResponse } from '../type';
+import { TUserProps } from '../user/type';
 // import { TUserProps } from '../user/type';
 
 export type TMessageProps = {
@@ -44,4 +45,6 @@ export type TChatRoomGenerateRequest = {
 export type TChatRoomGenerateResponse = TApiResponse<{
   channelId: string;
   channelName: string;
+  owner: string;
+  participants: string[];
 }>;

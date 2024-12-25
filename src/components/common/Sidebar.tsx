@@ -24,10 +24,11 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import { useUserStore } from '../../state/user';
 import CustomAvatar from '../user/CustomAvatar';
+import { searchChatRoom, validateToken } from '../../utils/auth/function';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
-  const { nickname, userId } = useUserStore();
+  const { nickname, email, profileUrl } = useUserStore();
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -58,7 +59,7 @@ export default function Sidebar() {
       }}
     >
       <GlobalStyles
-        styles={(theme) => ({
+        styles={theme => ({
           ':root': {
             '--Sidebar-width': '220px',
             [theme.breakpoints.up('lg')]: {
@@ -111,7 +112,7 @@ export default function Sidebar() {
           sx={{
             gap: 1,
             '--List-nestedInsetStart': '30px',
-            '--ListItem-radius': (theme) => theme.vars.radius.sm,
+            '--ListItem-radius': theme => theme.vars.radius.sm,
           }}
         >
           <ListItem>
@@ -147,7 +148,7 @@ export default function Sidebar() {
           sx={{
             mt: 'auto',
             flexGrow: 0,
-            '--ListItem-radius': (theme) => theme.vars.radius.sm,
+            '--ListItem-radius': theme => theme.vars.radius.sm,
             '--List-gap': '8px',
             mb: 2,
           }}
@@ -159,7 +160,12 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              onClick={
+                // FIXME: TEST
+                () => searchChatRoom()
+              }
+            >
               <SettingsRoundedIcon />
               설정
             </ListItemButton>
@@ -168,7 +174,7 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <CustomAvatar nickname={nickname} />
+        <CustomAvatar user={{ nickname, email, profileUrl }} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography level="title-sm">{nickname}</Typography>
         </Box>
