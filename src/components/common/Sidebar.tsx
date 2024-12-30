@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import { useUserStore } from '../../state/user';
 import CustomAvatar from '../user/CustomAvatar';
-import { searchChatRoom, validateToken } from '../../utils/auth/function';
+import { searchChatRoom } from '../../utils/auth/function';
 
 export default function Sidebar() {
   const { chats } = useChatStore();

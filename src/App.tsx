@@ -6,6 +6,7 @@ import UserJoin from './pages/user/UserJoin';
 import { ChatMain } from './pages/chat/ChatMain';
 import UserLogin from './pages/user/UserLogin';
 import OAuthCallback from './pages/user/OAuthCallback';
+import SearchPage from './pages/search/SearchPage';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/user/oauth/kakao" element={<OAuthCallback />} />
         <Route path="/chat" element={<ChatMain />} />
         <Route path="/chat/:id" element={<ChatMain />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </CssVarsProvider>
   );
