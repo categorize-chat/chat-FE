@@ -14,7 +14,8 @@ export type TMessageProps = {
   //   size: string;
   // };
 
-  nickname: string;
+  // TODO: nickname -> user (TUserProps)
+  user: TUserProps;
   createdAt: string;
   content: string;
   topic: number;

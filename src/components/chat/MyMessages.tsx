@@ -39,8 +39,11 @@ export default function MyMessages() {
 
   // 소켓 연결
   useEffect(() => {
-    connectSocket(`${import.meta.env.VITE_SOCK_URL}/chat`, {
+    const socketUrl = `${import.meta.env.VITE_SOCK_URL}/chat`;
+
+    connectSocket(socketUrl, {
       path: '/socket.io',
+      withCredentials: true,
       auth: { token: localStorage.getItem('accessToken') },
     });
   }, [chatId]);
