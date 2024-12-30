@@ -1,20 +1,29 @@
 import { Box } from '@mui/joy';
-import { calculateColor } from '../../utils/common/function';
+import { TUserProps } from '../../utils/user/type';
 
 interface ICustomAvatarProps {
-  nickname: string;
+  user: TUserProps | null;
 }
 
-const CustomAvatar = ({ nickname }: ICustomAvatarProps) => {
+const CustomAvatar = ({ user }: ICustomAvatarProps) => {
   return (
     <Box
       sx={{
         width: '30px',
         height: '30px',
-        borderRadius: '100px',
-        backgroundColor: calculateColor(nickname),
       }}
-    ></Box>
+    >
+      {user && (
+        <img
+          src={user.profileUrl}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '100px',
+          }}
+        />
+      )}
+    </Box>
   );
 };
 

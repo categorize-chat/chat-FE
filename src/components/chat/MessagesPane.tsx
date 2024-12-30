@@ -1,10 +1,9 @@
-import { useState, useEffect, Fragment, useRef } from 'react';
+import { useState, useEffect, Fragment, useRef, useMemo } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-// import MessagesPaneHeader from './MessagesPaneHeader';
 import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
 import { TMessageProps } from '../../utils/chat/type';
@@ -28,15 +27,24 @@ export default function MessagesPane() {
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
-  const { nickname } = useUserStore();
+  const { nickname, email, profileUrl } = useUserStore();
 
   const [textAreaValue, setTextAreaValue] = useState('');
+
+  // 현재 메세지 보내는 유저
+  const user = useMemo(() => {
+    return {
+      nickname,
+      email,
+      profileUrl,
+    };
+  }, [nickname, email, profileUrl]);
 
   const handleChatSend = async () => {
     if (!socket) return;
 
     const newMessage: TMessageProps = {
-      nickname,
+      user,
       content: textAreaValue,
       createdAt: new Date().toISOString(),
       topic: -1,
@@ -116,7 +124,7 @@ export default function MessagesPane() {
             <Stack spacing={2} justifyContent="flex-end">
               {chatMessages.map((message: TMessageProps, i) => {
                 const { date, time } = parseRawDateAndTime(message.createdAt);
-                const isYou = message.nickname === nickname;
+                const isYou = message.user.nickname === nickname;
 
                 const prevDate =
                   i > 0
@@ -144,7 +152,7 @@ export default function MessagesPane() {
                       id={`${i}`}
                       ref={el => (messageRefs.current[i] = el)}
                     >
-                      <CustomAvatar nickname={message.nickname} />
+                      <CustomAvatar user={user} />
                       <ChatBubble
                         variant={isYou ? 'sent' : 'received'}
                         {...message}
