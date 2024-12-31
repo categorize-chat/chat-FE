@@ -8,4 +8,7 @@ export const Paths = {
   chat: {
     base: () => '/chat',
   },
+  search: {
+    base: () => '/search',
+  },
 };
