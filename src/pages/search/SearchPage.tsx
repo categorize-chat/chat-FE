@@ -1,8 +1,6 @@
-import { Box, Button, Input, Sheet } from '@mui/joy';
-import Sidebar from '../../components/common/Sidebar';
-import Header from '../../components/common/Header';
+import { Input, Sheet } from '@mui/joy';
 import SearchIcon from '@mui/icons-material/Search';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { searchApi } from '../../utils/search/api';
 import { TChannelProps } from '../../utils/chat/type';
 import ChannelListItem from '../../components/search/ChannelListItem';
@@ -36,9 +34,7 @@ const SearchPage = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
-      <Sidebar />
-      <Header />
+    <>
       <Sheet
         sx={{
           display: 'grid',
@@ -76,7 +72,7 @@ const SearchPage = () => {
             ))}
         </Sheet>
       </Sheet>
-    </Box>
+    </>
   );
 };
 

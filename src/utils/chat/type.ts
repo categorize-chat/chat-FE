@@ -14,7 +14,6 @@ export type TMessageProps = {
   //   size: string;
   // };
 
-  // TODO: nickname -> user (TUserProps)
   user: TUserProps;
   createdAt: string;
   content: string;
@@ -31,10 +30,7 @@ export type TChannelProps = {
 export type TChatProps = TMessageProps[];
 
 export type TChatRoomsResponse = TApiResponse<{
-  channels: {
-    channelId: string;
-    channelName: string;
-  }[];
+  channels: TChannelProps[];
 }>;
 
 export type TChatMessageResponse = TApiResponse<{
