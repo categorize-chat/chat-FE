@@ -33,7 +33,7 @@ export default function MessageInput(props: MessageInputProps) {
           placeholder="보낼 메세지를 입력해주세요..."
           aria-label="Message"
           ref={textAreaRef}
-          onChange={(e) => {
+          onChange={e => {
             setTextAreaValue(e.target.value);
           }}
           value={textAreaValue}
@@ -77,8 +77,9 @@ export default function MessageInput(props: MessageInputProps) {
               </Button>
             </Stack>
           }
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+          onKeyDown={event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
               handleClick();
             }
           }}
