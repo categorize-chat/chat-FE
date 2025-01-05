@@ -124,7 +124,6 @@ export default function MessagesPane() {
             <Stack spacing={2} justifyContent="flex-end">
               {chatMessages.map((message: TMessageProps, i) => {
                 const { date, time } = parseRawDateAndTime(message.createdAt);
-                console.log(message.user);
                 const isYou = message.user.email === email;
 
                 const prevDate =
