@@ -11,5 +11,5 @@ export type TSearchRoomsResponse = TApiResponse<{
 }>;
 
 export type TSubscribeResponse = TApiResponse<{
-  user: TUserProps;
+  user: TUserProps & { subscriptions: string[] };
 }>;
