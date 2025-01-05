@@ -12,7 +12,7 @@ export default ({ mode }) => {
     },
     plugins: [react(), svgr()],
     server: {
-      port: 5173,
+      port: +env.VITE_CLIENT_PORT,
       proxy: {
         '/api': {
           target: `${env.VITE_SERVER_URL}`,
