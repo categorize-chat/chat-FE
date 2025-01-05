@@ -4,6 +4,7 @@ export type TUserProps = {
   nickname: string;
   email: string;
   profileUrl: string;
+  subscriptions: string[];
 };
 
 export type TUserJoinRequest = {
@@ -19,9 +20,8 @@ export type TUserInfoResponse = TApiResponse<{
   nickname: string;
 }>;
 
-export type TUserOAuthResponse = TApiResponse<{
-  accessToken: string;
-  nickname: string;
-  profileUrl: string;
-  email: string;
-}>;
+export type TUserOAuthResponse = TApiResponse<
+  {
+    accessToken: string;
+  } & TUserProps
+>;

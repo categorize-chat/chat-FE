@@ -5,24 +5,11 @@ import MessagesPane from './MessagesPane';
 import ChatsPane from './ChatsPane';
 import { useParams } from 'react-router-dom';
 import { useChatStore, useSocket } from '../../state/chat';
-import { useQuery } from 'react-query';
-import { chatRoomsQuery } from '../../utils/chat/query';
 
 export default function MyMessages() {
-  // const chats = useChatStore((state) => state.chats);
   const { id: chatId } = useParams();
-  const { data, isError } = useQuery(chatRoomsQuery());
-  const { setChats, setSelectedId } = useChatStore();
+  const { setSelectedId } = useChatStore();
   const { socket, connectSocket } = useSocket();
-
-  useEffect(() => {
-    if (!data) return;
-
-    const { channels } = data;
-    if (channels === undefined) return;
-
-    setChats(channels);
-  }, [data]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -47,10 +34,6 @@ export default function MyMessages() {
       auth: { token: localStorage.getItem('accessToken') },
     });
   }, [chatId]);
-
-  if (isError) {
-    return <></>;
-  }
 
   return (
     <Sheet

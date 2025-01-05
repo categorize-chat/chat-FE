@@ -7,7 +7,8 @@ import { useUserStore } from '../../state/user';
 const OAuthCallback = () => {
   const navigate = useNavigate();
 
-  const { setNickname, setEmail, setProfileUrl } = useUserStore();
+  const { setNickname, setEmail, setProfileUrl, setSubscriptions } =
+    useUserStore();
 
   const sendOAuthCode = async (code: string) => {
     const userInfo = await API.json
@@ -27,6 +28,7 @@ const OAuthCallback = () => {
     setNickname(userInfo.nickname);
     setEmail(userInfo.email);
     setProfileUrl(userInfo.profileUrl);
+    // 구독 관리는 chat 페이지에서 함
 
     navigate('/chat');
   };

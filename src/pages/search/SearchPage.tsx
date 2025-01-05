@@ -64,6 +64,9 @@ const SearchPage = () => {
           sx={{
             gap: 2,
             flexWrap: 'wrap',
+            display: 'flex',
+            flexDirection: 'row',
+            padding: 2,
           }}
         >
           {searchedChannels &&

@@ -6,12 +6,13 @@ type TUserStore = {
   userId: string;
   email: string;
   profileUrl: string;
+  subscriptions: string[];
 
   setNickname: (nickname: string) => void;
   setUserId: (userId: string) => void;
   setEmail: (email: string) => void;
   setProfileUrl: (profileUrl: string) => void;
-
+  setSubscriptions: (subscriptions: string[]) => void;
   reset: () => void;
 };
 
@@ -20,6 +21,7 @@ const initUserState = {
   email: '',
   profileUrl: '',
   userId: '',
+  subscriptions: [],
 };
 
 export const useUserStore = create<TUserStore>()(
@@ -31,6 +33,7 @@ export const useUserStore = create<TUserStore>()(
       setUserId: userId => set({ userId }),
       setEmail: email => set({ email }),
       setProfileUrl: profileUrl => set({ profileUrl }),
+      setSubscriptions: subscriptions => set({ subscriptions }),
       reset: () => set({ ...initUserState }),
     }),
     {
@@ -42,6 +45,7 @@ export const useUserStore = create<TUserStore>()(
         userId: state.userId,
         email: state.email,
         profileUrl: state.profileUrl,
+        subscriptions: state.subscriptions,
       }),
     },
   ),
