@@ -24,3 +24,11 @@ export type TUserOAuthResponse = TApiResponse<
     accessToken: string;
   } & TUserProps
 >;
+
+export type TUserUpdateRequest = {
+  nickname: string;
+};
+
+export type TUserUpdateResponse = TApiResponse<{
+  nickname: string;
+}>;
