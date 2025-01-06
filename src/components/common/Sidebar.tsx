@@ -40,6 +40,9 @@ export default function Sidebar() {
   const handleGoSearch = () => {
     navigate(Paths.search.base());
   };
+  const handleGoSetting = () => {
+    navigate(Paths.user.settings());
+  };
 
   return (
     <Sheet
@@ -163,10 +166,7 @@ export default function Sidebar() {
           <TabItem
             name="설정"
             icon={<SettingsRoundedIcon />}
-            onClick={
-              // FIXME: TEST
-              () => searchChatRoom()
-            }
+            onClick={handleGoSetting}
           />
         </List>
       </Box>
