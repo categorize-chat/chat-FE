@@ -152,7 +152,7 @@ export default function MessagesPane() {
                       id={`${i}`}
                       ref={el => (messageRefs.current[i] = el)}
                     >
-                      <CustomAvatar user={user} />
+                      <CustomAvatar user={message.user} />
                       <ChatBubble
                         variant={isYou ? 'sent' : 'received'}
                         {...message}

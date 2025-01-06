@@ -8,18 +8,20 @@ import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { TMessageProps } from '../../utils/chat/type';
 import { useAIStore } from '../../state/ai';
+import { TUserProps } from '../../utils/user/type';
 
 type ChatBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
   date: string;
   time: string;
+  user: TUserProps;
 };
 
 export default function ChatBubble({
   content,
   variant,
   time,
-  nickname,
+  user,
   topic,
 }: ChatBubbleProps) {
   const isSent = variant === 'sent';
@@ -86,7 +88,7 @@ export default function ChatBubble({
         spacing={2}
         sx={{ mb: 0.25 }}
       >
-        <Typography level="body-xs">{nickname}</Typography>
+        <Typography level="body-xs">{user.nickname}</Typography>
         <Typography level="body-xs">{time.slice(0, -3)}</Typography>
       </Stack>
       <Box
