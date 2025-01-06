@@ -31,6 +31,7 @@ export default function MyMessages() {
     connectSocket(socketUrl, {
       path: '/socket.io',
       withCredentials: true,
+      secure: true,
       auth: { token: localStorage.getItem('accessToken') },
     });
   }, [chatId]);
