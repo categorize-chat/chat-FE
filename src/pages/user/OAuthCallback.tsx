@@ -7,8 +7,7 @@ import { useUserStore } from '../../state/user';
 const OAuthCallback = () => {
   const navigate = useNavigate();
 
-  const { setNickname, setEmail, setProfileUrl, setSubscriptions } =
-    useUserStore();
+  const { setNickname, setEmail, setProfileUrl } = useUserStore();
 
   const sendOAuthCode = async (code: string) => {
     const userInfo = await API.json

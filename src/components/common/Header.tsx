@@ -1,4 +1,3 @@
-import * as React from 'react';
 import GlobalStyles from '@mui/joy/GlobalStyles';
 import IconButton from '@mui/joy/IconButton';
 import Sheet from '@mui/joy/Sheet';
@@ -25,7 +24,7 @@ export default function Header() {
       }}
     >
       <GlobalStyles
-        styles={(theme) => ({
+        styles={theme => ({
           ':root': {
             '--Header-height': '52px',
             [theme.breakpoints.up('lg')]: {
