@@ -27,8 +27,8 @@ const NewChat = () => {
 
   const chatRoomGenerateMutation = useMutation({
     ...chatRoomGenerateQuery(),
-    onSuccess: ({ channelId, channelName }) => {
-      addChat({ channelId, channelName });
+    onSuccess: ({ channelId, channelName, owner, participants }) => {
+      addChat({ channelId, channelName, owner, participants });
       setModalOpen(false);
     },
     onError: async () => {
