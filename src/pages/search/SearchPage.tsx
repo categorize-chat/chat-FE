@@ -71,7 +71,7 @@ const SearchPage = () => {
         >
           {searchedChannels &&
             searchedChannels.map(channel => (
-              <ChannelListItem key={channel.channelId} channel={channel} />
+              <ChannelListItem key={channel.channelName} channel={channel} />
             ))}
         </Sheet>
       </Sheet>

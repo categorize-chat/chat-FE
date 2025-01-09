@@ -21,6 +21,7 @@ export type TMessageProps = {
 };
 
 export type TChannelProps = {
+  _id?: string; // FIXME: channelId 로 통합
   channelId: string;
   channelName: string;
   owner: TUserProps;

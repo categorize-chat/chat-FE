@@ -9,14 +9,15 @@ type TChannelListItemProps = {
 };
 
 const ChannelListItem = ({ channel }: TChannelListItemProps) => {
-  const { channelName, channelId } = channel;
+  const { channelName, channelId, _id: channelIdSub } = channel;
   const channelDescription = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.`;
 
   const { subscriptions, setSubscriptions } = useUserStore();
-  const isSubscribed = useMemo(
-    () => false && subscriptions.includes(channelId),
-    [subscriptions, channelId],
-  );
+  const isSubscribed = useMemo(() => {
+    const realChannelId = channelId || channelIdSub!;
+
+    return subscriptions.includes(realChannelId);
+  }, [subscriptions, channelId]);
 
   const handleSubscribe = async () => {
     if (isSubscribed) {

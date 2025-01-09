@@ -13,3 +13,7 @@ export type TSearchRoomsResponse = TApiResponse<{
 export type TSubscribeResponse = TApiResponse<{
   user: TUserProps & { subscriptions: string[] };
 }>;
+
+export type TSearchResponse = TApiResponse<{
+  channels: TChannelProps[];
+}>;
