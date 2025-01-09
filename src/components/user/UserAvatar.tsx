@@ -1,11 +1,11 @@
 import { Box } from '@mui/joy';
 import { TUserProps } from '../../utils/user/type';
 
-interface ICustomAvatarProps {
+interface TUserAvatarProps {
   user: TUserProps | null;
 }
 
-const CustomAvatar = ({ user }: ICustomAvatarProps) => {
+const UserAvatar = ({ user }: TUserAvatarProps) => {
   return (
     <Box
       sx={{
@@ -27,4 +27,4 @@ const CustomAvatar = ({ user }: ICustomAvatarProps) => {
   );
 };
 
-export default CustomAvatar;
+export default UserAvatar;

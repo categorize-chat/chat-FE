@@ -6,11 +6,11 @@ import List from '@mui/joy/List';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ChatListItem from './ChatListItem';
+import RoomListItem from './RoomListItem';
 import { useChatStore } from '../../state/chat';
 import { toggleMessagesPane } from '../../utils/chat';
 
-export default function ChatsPane() {
+export default function ChatSidebar() {
   const { chats, setModalOpen } = useChatStore();
 
   return (
@@ -87,8 +87,8 @@ export default function ChatsPane() {
             '--ListItem-paddingX': '1rem',
           }}
         >
-          {chats.map((chat) => (
-            <ChatListItem key={chat.channelId} {...chat} />
+          {chats.map(chat => (
+            <RoomListItem key={chat.channelId} {...chat} />
           ))}
         </List>
       </Sheet>

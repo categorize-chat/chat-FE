@@ -21,14 +21,14 @@ const style = {
   gap: `1rem`,
 };
 
-const NewChat = () => {
+const NewChatModal = () => {
   const { modalOpen, setModalOpen, addChat } = useChatStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const chatRoomGenerateMutation = useMutation({
     ...chatRoomGenerateQuery(),
-    onSuccess: ({ channelId, channelName }) => {
-      addChat({ channelId, channelName });
+    onSuccess: ({ channelId, channelName, owner, participants }) => {
+      addChat({ channelId, channelName, owner, participants });
       setModalOpen(false);
     },
     onError: async () => {
@@ -96,4 +96,4 @@ const NewChat = () => {
   );
 };
 
-export default NewChat;
+export default NewChatModal;

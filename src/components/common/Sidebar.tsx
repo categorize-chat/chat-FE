@@ -22,8 +22,7 @@ import { useChatStore } from '../../state/chat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import { useUserStore } from '../../state/user';
-import CustomAvatar from '../user/CustomAvatar';
-import { searchChatRoom } from '../../utils/auth/function';
+import UserAvatar from '../user/UserAvatar';
 import TabItem from './sidebar/TabItem';
 
 export default function Sidebar() {
@@ -172,7 +171,7 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <CustomAvatar user={{ nickname, email, profileUrl }} />
+        <UserAvatar user={{ nickname, email, profileUrl }} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography level="title-sm">{nickname}</Typography>
         </Box>

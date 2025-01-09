@@ -1,18 +1,22 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
-import { Box, Button, Divider, FormControl, Input, Typography } from '@mui/joy';
-import { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import { Box, Button, Divider, Input, Typography } from '@mui/joy';
+import React, { ChangeEvent, KeyboardEvent, useRef } from 'react';
 import { useUserStore } from '../../state/user';
 import { useMutation } from 'react-query';
 import { userJoinQuery } from '../../utils/user/query';
 import { useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 import JoinForm from '../../components/user/JoinForm';
+
 import KakaoAuthButton from '../../components/user/KakaoAuthButton';
 
-const UserLogin = () => {
+const UserJoinPage = () => {
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const nickNameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const pwdInputRef = useRef<HTMLInputElement>(null);
   const { setUserId, setNickname } = useUserStore();
 
   const userJoinMutate = useMutation({
@@ -34,9 +38,9 @@ const UserLogin = () => {
   });
 
   const handleSubmit = () => {
-    if (inputRef.current === null) return;
+    if (nickNameInputRef.current === null) return;
 
-    const inputNickname = inputRef.current.value;
+    const inputNickname = nickNameInputRef.current.value;
 
     if (!inputNickname) {
       alert('Please write down your nickname.');
@@ -48,10 +52,12 @@ const UserLogin = () => {
     });
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (inputRef.current === null) return;
-    inputRef.current.value = e.target.value;
-  };
+  const handleInputChange =
+    (ref: React.RefObject<HTMLInputElement>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (ref.current === null) return;
+      ref.current.value = e.target.value;
+    };
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -68,35 +74,59 @@ const UserLogin = () => {
     >
       <JoinForm>
         <Typography level="h1">Welcome to AI-Chat</Typography>
-        <Typography>로그인을 해주세요</Typography>
+        <Typography>가입하고 모든 기능을 누려보세요!</Typography>
+        <Typography>
+          <Link to={Paths.user.login()}>이미 계정이 있으신가요?</Link>
+        </Typography>
 
-        <FormControl
-          sx={{
+        <form
+          style={{
             marginTop: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px',
+            gap: '8px',
             width: '100%',
           }}
         >
           <Input
-            placeholder="Nickname"
-            size="lg"
+            placeholder="닉네임"
+            size="md"
             required
             autoFocus
-            onChange={handleInputChange}
+            onChange={handleInputChange(nickNameInputRef)}
             onKeyDown={handleKeyDown}
-            ref={inputRef}
+            ref={nickNameInputRef}
+            defaultValue=""
+          />
+          <Input
+            placeholder="이메일"
+            size="md"
+            required
+            type="email"
+            onChange={handleInputChange(emailInputRef)}
+            onKeyDown={handleKeyDown}
+            ref={emailInputRef}
+            defaultValue=""
+          />
+          <Input
+            placeholder="비밀번호"
+            size="md"
+            required
+            type="password"
+            onChange={handleInputChange(pwdInputRef)}
+            onKeyDown={handleKeyDown}
+            ref={pwdInputRef}
             defaultValue=""
           />
           <Button
             endDecorator={<KeyboardArrowRight />}
-            type="submit"
+            type="button"
             color="primary"
             onClick={handleSubmit}
           >
-            로그인
+            회원가입
           </Button>
+
           <Divider
             sx={{
               margin: '8px 0',
@@ -106,10 +136,10 @@ const UserLogin = () => {
           </Divider>
 
           <KakaoAuthButton />
-        </FormControl>
+        </form>
       </JoinForm>
     </Box>
   );
 };
 
-export default UserLogin;
+export default UserJoinPage;

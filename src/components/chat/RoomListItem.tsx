@@ -13,11 +13,11 @@ import { useChatStore } from '../../state/chat';
 import { TChannelProps } from '../../utils/chat/type';
 import { Paths } from '../../utils/constant';
 
-type ChatListItemProps = TChannelProps & {
+type TRoomListItemProps = TChannelProps & {
   unread?: boolean;
 };
 
-export default function ChatListItem(props: ChatListItemProps) {
+export default function RoomListItem(props: TRoomListItemProps) {
   const { channelId, channelName, unread } = props;
   const navigate = useNavigate();
 
