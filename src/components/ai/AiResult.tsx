@@ -56,7 +56,7 @@ const AiResult = () => {
       if (
         target.content === comparer.content &&
         targetTime.getTime() === comparerTime.getTime() &&
-        target.nickname === comparer.nickname
+        target.user.nickname === comparer.user.nickname
       ) {
         break;
       }
