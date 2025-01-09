@@ -10,20 +10,20 @@ import { TMessageProps } from '../../utils/chat/type';
 import { useAIStore } from '../../state/ai';
 import { TUserProps } from '../../utils/user/type';
 
-type ChatBubbleProps = TMessageProps & {
+type TMessageBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
   date: string;
   time: string;
   user: TUserProps;
 };
 
-export default function ChatBubble({
+export default function MessageBubble({
   content,
   variant,
   time,
   user,
   topic,
-}: ChatBubbleProps) {
+}: TMessageBubbleProps) {
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(false);

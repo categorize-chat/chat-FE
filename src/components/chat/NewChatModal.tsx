@@ -21,7 +21,7 @@ const style = {
   gap: `1rem`,
 };
 
-const NewChat = () => {
+const NewChatModal = () => {
   const { modalOpen, setModalOpen, addChat } = useChatStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -96,4 +96,4 @@ const NewChat = () => {
   );
 };
 
-export default NewChat;
+export default NewChatModal;

@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment, useRef, useMemo } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
-import ChatBubble from './ChatBubble';
+import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
 import { useUserStore } from '../../state/user';
-import CustomAvatar from '../user/CustomAvatar';
+import UserAvatar from '../user/UserAvatar';
 import { parseRawDateAndTime } from '../../utils/common/function';
 import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '../../state/ai';
@@ -152,8 +152,8 @@ export default function MessagesPane() {
                       id={`${i}`}
                       ref={el => (messageRefs.current[i] = el)}
                     >
-                      <CustomAvatar user={message.user} />
-                      <ChatBubble
+                      <UserAvatar user={message.user} />
+                      <MessageBubble
                         variant={isYou ? 'sent' : 'received'}
                         {...message}
                         date={date}
