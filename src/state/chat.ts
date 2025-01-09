@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
 import { TChannelProps, TMessageProps } from '../utils/chat/type';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 type TChatStore = {
   chats: TChannelProps[];
@@ -26,24 +27,41 @@ type TSocketStore = {
   ) => void;
 };
 
-export const useChatStore = create<TChatStore>(set => ({
+const initChatState = {
   chats: [],
   selectedId: '0',
   selectedChat: undefined,
   modalOpen: false,
   chatMessages: [],
+};
 
-  setChats: chats => set(() => ({ chats })),
-  addChat: (newChat: TChannelProps) =>
-    set(state => ({ chats: [...state.chats, newChat] })),
-  setSelectedId: id => set(() => ({ selectedId: id })),
-  setSelectedChat: chat => set(() => ({ selectedChat: chat })),
-  setModalOpen: (modalOpen: boolean) => set({ modalOpen }),
-  setChatMessages: (chatMessages: TMessageProps[]) =>
-    set(() => ({ chatMessages })),
-  addNewMessage: newMessage =>
-    set(state => ({ chatMessages: [...state.chatMessages, newMessage] })),
-}));
+export const useChatStore = create<TChatStore>()(
+  persist(
+    set => ({
+      ...initChatState,
+
+      setChats: chats => set(() => ({ chats })),
+      addChat: (newChat: TChannelProps) =>
+        set(state => ({ chats: [...state.chats, newChat] })),
+      setSelectedId: id => set(() => ({ selectedId: id })),
+      setSelectedChat: chat => set(() => ({ selectedChat: chat })),
+      setModalOpen: (modalOpen: boolean) => set({ modalOpen }),
+      setChatMessages: (chatMessages: TMessageProps[]) =>
+        set(() => ({ chatMessages })),
+      addNewMessage: newMessage =>
+        set(state => ({ chatMessages: [...state.chatMessages, newMessage] })),
+      reset: () => set({ ...initChatState }),
+    }),
+    {
+      name: 'chatStorage',
+      storage: createJSONStorage(() => sessionStorage),
+
+      partialize: state => ({
+        chats: state.chats,
+      }),
+    },
+  ),
+);
 
 export const useSocket = create<TSocketStore>(set => ({
   socket: undefined,
