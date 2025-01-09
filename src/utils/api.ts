@@ -2,7 +2,8 @@ import axios, { AxiosHeaders } from 'axios';
 
 const axiosApi = (extraHeader: Partial<AxiosHeaders>) =>
   axios.create({
-    baseURL: `${import.meta.env.VITE_SERVER_URL}`,
+    // baseURL: `${import.meta.env.VITE_SERVER_URL}`,
+    baseURL: `/api`, // proxy 사용
     withCredentials: true,
     headers: {
       'Access-Control-Allow-Credentials': true,

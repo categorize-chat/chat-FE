@@ -14,7 +14,6 @@ export type TMessageProps = {
   //   size: string;
   // };
 
-  // TODO: nickname -> user (TUserProps)
   user: TUserProps;
   createdAt: string;
   content: string;
@@ -22,17 +21,17 @@ export type TMessageProps = {
 };
 
 export type TChannelProps = {
+  _id?: string; // FIXME: channelId 로 통합
   channelId: string;
   channelName: string;
+  owner: TUserProps;
+  participants: TUserProps[];
 };
 
 export type TChatProps = TMessageProps[];
 
 export type TChatRoomsResponse = TApiResponse<{
-  channels: {
-    channelId: string;
-    channelName: string;
-  }[];
+  channels: TChannelProps[];
 }>;
 
 export type TChatMessageResponse = TApiResponse<{

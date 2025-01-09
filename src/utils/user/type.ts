@@ -19,9 +19,16 @@ export type TUserInfoResponse = TApiResponse<{
   nickname: string;
 }>;
 
-export type TUserOAuthResponse = TApiResponse<{
-  accessToken: string;
+export type TUserOAuthResponse = TApiResponse<
+  {
+    accessToken: string;
+  } & TUserProps
+>;
+
+export type TUserUpdateRequest = {
   nickname: string;
-  profileUrl: string;
-  email: string;
+};
+
+export type TUserUpdateResponse = TApiResponse<{
+  nickname: string;
 }>;

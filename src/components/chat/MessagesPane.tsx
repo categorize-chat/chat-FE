@@ -124,7 +124,7 @@ export default function MessagesPane() {
             <Stack spacing={2} justifyContent="flex-end">
               {chatMessages.map((message: TMessageProps, i) => {
                 const { date, time } = parseRawDateAndTime(message.createdAt);
-                const isYou = message.user.nickname === nickname;
+                const isYou = message.user.email === email;
 
                 const prevDate =
                   i > 0
@@ -152,7 +152,7 @@ export default function MessagesPane() {
                       id={`${i}`}
                       ref={el => (messageRefs.current[i] = el)}
                     >
-                      <CustomAvatar user={user} />
+                      <CustomAvatar user={message.user} />
                       <ChatBubble
                         variant={isYou ? 'sent' : 'received'}
                         {...message}

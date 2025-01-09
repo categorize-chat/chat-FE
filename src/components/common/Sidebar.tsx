@@ -4,9 +4,8 @@ import Chip from '@mui/joy/Chip';
 import Divider from '@mui/joy/Divider';
 import IconButton from '@mui/joy/IconButton';
 import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
-import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton';
-import ListItemContent from '@mui/joy/ListItemContent';
+import { listItemButtonClasses } from '@mui/joy/ListItemButton';
+import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
@@ -20,19 +19,29 @@ import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
 import { useUserStore } from '../../state/user';
 import CustomAvatar from '../user/CustomAvatar';
-import { searchChatRoom, validateToken } from '../../utils/auth/function';
+import { searchChatRoom } from '../../utils/auth/function';
+import TabItem from './sidebar/TabItem';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
   const { nickname, email, profileUrl } = useUserStore();
+  const { pathname } = useLocation();
+
   const navigate = useNavigate();
+  const parsedPath = pathname.split('/')[1];
 
   const handleGoHome = () => {
     navigate(Paths.chat.base());
+  };
+  const handleGoSearch = () => {
+    navigate(Paths.search.base());
+  };
+  const handleGoSetting = () => {
+    navigate(Paths.user.settings());
   };
 
   return (
@@ -115,33 +124,32 @@ export default function Sidebar() {
             '--ListItem-radius': theme => theme.vars.radius.sm,
           }}
         >
-          <ListItem>
-            <ListItemButton onClick={handleGoHome}>
-              <HomeRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">홈</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton selected>
-              <QuestionAnswerRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">메세지</Typography>
-              </ListItemContent>
-              <Chip size="sm" color="primary" variant="solid">
-                {chats?.length}
-              </Chip>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton>
-              <GroupRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">친구</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
+          <TabItem
+            isSelected={false}
+            name="홈"
+            icon={<HomeRoundedIcon />}
+            onClick={handleGoHome}
+          />
+
+          <TabItem
+            isSelected={parsedPath === 'chat'}
+            name="채팅"
+            icon={<QuestionAnswerRoundedIcon />}
+            onClick={handleGoHome}
+          >
+            <Chip size="sm" color="primary" variant="solid">
+              {chats?.length}
+            </Chip>
+          </TabItem>
+
+          <TabItem
+            isSelected={parsedPath === 'search'}
+            name="검색"
+            icon={<SearchIcon />}
+            onClick={handleGoSearch}
+          />
+
+          <TabItem name="친구" icon={<GroupRoundedIcon />} />
         </List>
         <List
           size="sm"
@@ -153,23 +161,13 @@ export default function Sidebar() {
             mb: 2,
           }}
         >
-          <ListItem>
-            <ListItemButton>
-              <SupportRoundedIcon />
-              문의
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={
-                // FIXME: TEST
-                () => searchChatRoom()
-              }
-            >
-              <SettingsRoundedIcon />
-              설정
-            </ListItemButton>
-          </ListItem>
+          <TabItem name="문의" icon={<SupportRoundedIcon />} />
+
+          <TabItem
+            name="설정"
+            icon={<SettingsRoundedIcon />}
+            onClick={handleGoSetting}
+          />
         </List>
       </Box>
       <Divider />

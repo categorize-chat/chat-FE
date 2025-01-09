@@ -7,13 +7,15 @@ import { chatRoomsQuery } from '../../utils/chat/query';
 import { useChatStore } from '../../state/chat';
 import { useEffect } from 'react';
 import NewChat from '../../components/chat/NewChat';
+import { useUserStore } from '../../state/user';
 
 export const ChatMain = () => {
-  const { data: chatRoomsData, isError: chatRoomsError } = useQuery(
-    chatRoomsQuery(),
-  );
+  const { data: chatRoomsData, isError: chatRoomsError } =
+    useQuery(chatRoomsQuery());
   const { setChats } = useChatStore();
+  const { setSubscriptions } = useUserStore();
 
+  // 받아온 채널 설정
   useEffect(() => {
     if (!chatRoomsData) return;
 
@@ -21,6 +23,8 @@ export const ChatMain = () => {
     if (channels === undefined) return;
 
     setChats(channels);
+
+    setSubscriptions(channels.map(channel => channel.channelId));
   }, [chatRoomsData, setChats]);
 
   if (chatRoomsError) {
@@ -28,13 +32,11 @@ export const ChatMain = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
-      <Sidebar />
-      <Header />
+    <>
       <Box component="main" className="MainContent" sx={{ flex: 1 }}>
         <MyMessages />
       </Box>
       <NewChat />
-    </Box>
+    </>
   );
 };
