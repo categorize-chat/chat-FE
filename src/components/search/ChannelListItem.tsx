@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@mui/joy';
 import { TChannelProps } from '../../utils/chat/type';
 import { useUserStore } from '../../state/user';
-import { subscribeChannel, unsubscribeChannel } from '../../utils/search/api';
+import { searchApi } from '../../utils/search/api';
 import { useMemo } from 'react';
 
 type TChannelListItemProps = {
@@ -21,9 +21,9 @@ const ChannelListItem = ({ channel }: TChannelListItemProps) => {
 
   const handleSubscribe = async () => {
     if (isSubscribed) {
-      unsubscribeChannel(channelId);
+      await searchApi.unsubscribeChannel(channelId);
     } else {
-      const { user } = await subscribeChannel(channelId);
+      const { user } = await searchApi.subscribeChannel(channelId);
       const { subscriptions } = user;
 
       setSubscriptions(subscriptions);
