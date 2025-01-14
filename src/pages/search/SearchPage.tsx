@@ -4,6 +4,7 @@ import { ChangeEvent, useRef, useState } from 'react';
 import { searchApi } from '../../utils/search/api';
 import { TChannelProps } from '../../utils/chat/type';
 import ChannelListItem from '../../components/search/ChannelListItem';
+import { debounce } from '../../utils/common/time';
 
 const SearchPage = () => {
   // 검색어 입력창 ref
@@ -12,20 +13,21 @@ const SearchPage = () => {
   // States
   const [searchedChannels, setSearchedChannels] = useState<TChannelProps[]>([]);
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // debounce 처리된 검색어 입력 핸들러
+  const handleSearchChange = debounce((e: ChangeEvent<HTMLInputElement>) => {
     if (!searchInputRef.current) {
       return;
     }
 
     searchInputRef.current.value = e.target.value;
 
-    // 바로 검색 요청
     sendSearchRequest(e.target.value);
-  };
+  }, 500);
 
   const sendSearchRequest = async (keyword: string) => {
-    if (!keyword || keyword.length < 2) {
-      setSearchedChannels([]);
+    if (!keyword || keyword.length < 1) {
+      const { channels } = await searchApi.searchAllRooms();
+      setSearchedChannels(channels);
       return;
     }
 
