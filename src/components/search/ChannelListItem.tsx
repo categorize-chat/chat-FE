@@ -9,8 +9,8 @@ type TChannelListItemProps = {
 };
 
 const ChannelListItem = ({ channel }: TChannelListItemProps) => {
-  const { channelName, channelId, _id: channelIdSub } = channel;
-  const channelDescription = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.`;
+  const { channelName, channelId, _id: channelIdSub, description } = channel;
+  const channelDescription = description || '설명이 없습니다.';
 
   const { subscriptions, setSubscriptions } = useUserStore();
   const isSubscribed = useMemo(() => {
@@ -40,13 +40,12 @@ const ChannelListItem = ({ channel }: TChannelListItemProps) => {
         margin: 1,
         borderRadius: '8px',
         border: '1px solid #ccc',
-        width: 'fit-content',
-        maxWidth: '300px',
+        width: '300px',
         height: 'fit-content',
         alignSelf: 'flex-start',
       }}
     >
-      <Box>
+      <Box width="100%">
         <Box sx={{ display: 'flex', flexDirection: 'row', marginBottom: 1 }}>
           <Typography level="h4">
             <b>{channelName}</b>

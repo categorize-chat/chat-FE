@@ -1,4 +1,12 @@
-import { Box, Button, Input, Modal } from '@mui/joy';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  Textarea,
+} from '@mui/joy';
 import { Typography } from '@mui/material';
 import { useChatStore } from '../../state/chat';
 import { useMutation } from 'react-query';
@@ -24,38 +32,49 @@ const style = {
 const NewChatModal = () => {
   const { modalOpen, setModalOpen, addChat } = useChatStore();
   const inputRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const chatRoomGenerateMutation = useMutation({
     ...chatRoomGenerateQuery(),
-    onSuccess: ({ channelId, channelName, owner, participants }) => {
-      addChat({ channelId, channelName, owner, participants });
+    onSuccess: chat => {
+      addChat(chat);
       setModalOpen(false);
     },
-    onError: async () => {
+    onError: async (error: any) => {
+      const errorMessage = error.response?.data?.message;
       setModalOpen(false);
 
       await Swal.fire({
-        title: '중복된 채널 이름 입니다',
+        title: errorMessage || '채팅방 생성 중 오류가 발생했습니다.',
         text: '다른 이름을 사용해주세요.',
         icon: 'error',
       });
 
-      setModalOpen(true);
+      setModalOpen(errorMessage);
     },
   });
 
   const handleNewChat = () => {
     // TODO: change with modal's value
-    if (inputRef.current === null) return;
+    if (!inputRef.current || !descriptionRef.current) {
+      alert('이름과 설명을 작성해주세요');
+      return;
+    }
 
     chatRoomGenerateMutation.mutate({
       channelName: inputRef.current.value,
+      description: descriptionRef.current.value,
     });
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (inputRef.current === null) return;
     inputRef.current.value = e.target.value;
+  };
+
+  const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (descriptionRef.current === null) return;
+    descriptionRef.current.value = e.target.value;
   };
 
   return (
@@ -70,14 +89,33 @@ const NewChatModal = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             채팅방 생성
           </Typography>
-          <Input
-            placeholder="생성할 채팅방의 이름을 입력해주세요"
-            ref={inputRef}
-            onChange={handleInputChange}
-            onKeyDown={e => {
-              if (e.key === 'Enter') handleNewChat();
-            }}
-          />
+          <FormControl>
+            <FormLabel sx={{ color: 'gray', marginBottom: '0.5rem' }}>
+              이름 <span style={{ color: 'red' }}>*</span>
+            </FormLabel>
+            <Input
+              required
+              placeholder="생성할 채팅방의 이름을 입력해주세요"
+              ref={inputRef}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel sx={{ color: 'gray', marginBottom: '0.5rem' }}>
+              설명 <span style={{ color: 'red' }}>*</span>
+            </FormLabel>
+            <Textarea
+              required
+              placeholder="생성할 채팅방의 설명을 입력해주세요"
+              onChange={handleDescriptionChange}
+              minRows={3}
+              slotProps={{
+                textarea: {
+                  ref: descriptionRef,
+                },
+              }}
+            />
+          </FormControl>
           <Box
             sx={{
               display: 'flex',
