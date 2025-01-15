@@ -43,4 +43,5 @@ jobs:
             cd ${{ secrets.REMOTE_REPO_PATH }}
             git checkout main
             git pull origin main
+            nvm use 22
             pm2 restart yarn
