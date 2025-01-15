@@ -34,14 +34,14 @@ jobs:
           target: ${{ secrets.REMOTE_REPO_PATH }}
 
       - name: remote ssh
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.REMOTE_IP }}
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_KEY }}
           script: |
+            exec bash -l
             cd ${{ secrets.REMOTE_REPO_PATH }}
             git checkout main
             git pull origin main
-            nvm use 22
             pm2 restart yarn
