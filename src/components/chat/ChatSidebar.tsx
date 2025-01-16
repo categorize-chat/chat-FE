@@ -10,8 +10,12 @@ import RoomListItem from './RoomListItem';
 import { useChatStore } from '../../state/chat';
 import { toggleMessagesPane } from '../../utils/chat';
 
-export default function ChatSidebar() {
-  const { chats, setModalOpen } = useChatStore();
+type TChatSidebarProps = {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
+  const { chats } = useChatStore();
 
   return (
     <>
@@ -54,7 +58,7 @@ export default function ChatSidebar() {
             aria-label="edit"
             color="neutral"
             size="sm"
-            onClick={() => setModalOpen(true)}
+            onClick={() => setOpen(true)}
             sx={{ display: { xs: 'none', sm: 'unset' } }}
           >
             <AddCommentIcon />
