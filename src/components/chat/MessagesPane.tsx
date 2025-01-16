@@ -8,13 +8,14 @@ import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '../../state/chat';
 import { TMessageProps } from '../../utils/chat/type';
 import { useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 import { chatMessageQuery } from '../../utils/chat/query';
 import { useUserStore } from '../../state/user';
 import UserAvatar from '../user/UserAvatar';
 import { parseRawDateAndTime } from '../../utils/common/function';
 import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '../../state/ai';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
@@ -26,7 +27,24 @@ export default function MessagesPane() {
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const { data, isError } = useQuery(chatMessageQuery(chatId || ''));
+  const { data, fetchNextPage, hasNextPage, isError, isFetchingNextPage } =
+    useInfiniteQuery({
+      ...chatMessageQuery(chatId || ''),
+      getNextPageParam: lastPage => lastPage.nextCursor,
+    });
+
+  const { ref, isIntersecting } = useIntersectionObserver(
+    {
+      threshold: 0.1,
+      rootMargin: '100px',
+    },
+    () => {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+  );
+
   const { nickname, email, profileUrl } = useUserStore();
 
   const [textAreaValue, setTextAreaValue] = useState('');
@@ -59,7 +77,8 @@ export default function MessagesPane() {
   useEffect(() => {
     if (!data) return;
 
-    setChatMessages(data.messages);
+    const allMessages = data.pages.flatMap(page => page.messages);
+    setChatMessages(allMessages);
   }, [data]);
 
   useEffect(() => {
@@ -121,6 +140,12 @@ export default function MessagesPane() {
               flexDirection: 'column-reverse',
             }}
           >
+            {isFetchingNextPage && (
+              <Box sx={{ textAlign: 'center', p: 2 }}>
+                메시지를 불러오는 중...
+              </Box>
+            )}
+
             <Stack spacing={2} justifyContent="flex-end">
               {chatMessages.map((message: TMessageProps, i) => {
                 const { date, time } = parseRawDateAndTime(message.createdAt);
@@ -164,6 +189,8 @@ export default function MessagesPane() {
                 );
               })}
             </Stack>
+
+            <div ref={ref} style={{ height: '10px' }} />
           </Box>
           <MessageInput
             textAreaValue={textAreaValue}
