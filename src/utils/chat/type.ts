@@ -24,6 +24,7 @@ export type TChannelProps = {
   _id?: string; // FIXME: channelId 로 통합
   channelId: string;
   channelName: string;
+  description: string;
   owner: TUserProps;
   participants: TUserProps[];
 };
@@ -40,11 +41,7 @@ export type TChatMessageResponse = TApiResponse<{
 
 export type TChatRoomGenerateRequest = {
   channelName: string;
+  description: string;
 };
 
-export type TChatRoomGenerateResponse = TApiResponse<{
-  channelId: string;
-  channelName: string;
-  owner: TUserProps;
-  participants: TUserProps[];
-}>;
+export type TChatRoomGenerateResponse = TApiResponse<TChannelProps>;

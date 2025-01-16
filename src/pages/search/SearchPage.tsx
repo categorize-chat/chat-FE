@@ -26,8 +26,7 @@ const SearchPage = () => {
 
   const sendSearchRequest = async (keyword: string) => {
     if (!keyword || keyword.length < 1) {
-      const { channels } = await searchApi.searchAllRooms();
-      setSearchedChannels(channels);
+      setSearchedChannels([]);
       return;
     }
 
