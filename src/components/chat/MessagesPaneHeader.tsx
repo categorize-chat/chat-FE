@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { TChannelProps } from '../../utils/chat/type';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
+import ChannelInfoModal from './ChannelInfoModal';
 
 type TMessagesPaneHeaderProps = {
   channel: TChannelProps;
@@ -39,6 +40,11 @@ const MessagesPaneHeader = ({ channel }: TMessagesPaneHeaderProps) => {
           cursor: 'pointer',
         }}
         onClick={handleInfoOpen}
+      />
+      <ChannelInfoModal
+        open={isInfoOpen}
+        setOpen={setIsInfoOpen}
+        channelInfo={channel}
       />
     </Box>
   );

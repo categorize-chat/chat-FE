@@ -2,7 +2,7 @@ import { Box, Sheet } from '@mui/joy';
 import { useQuery } from 'react-query';
 import { chatRoomsQuery } from '../../utils/chat/query';
 import { useChatStore, useSocket } from '../../state/chat';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '../../components/chat/NewChatModal';
 import { useUserStore } from '../../state/user';
 import { useParams } from 'react-router-dom';
@@ -18,6 +18,8 @@ export const ChatPage = () => {
   const { id: chatId } = useParams();
   const { setSelectedId, setSelectedChat } = useChatStore();
   const { socket, connectSocket } = useSocket();
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   // setSelectedChat을 메모이제이션
   const updateSelectedChat = useCallback((chatId: string, chats: any[]) => {
@@ -101,12 +103,12 @@ export const ChatPage = () => {
               top: 52,
             }}
           >
-            <ChatSidebar />
+            <ChatSidebar setOpen={setModalOpen} />
           </Sheet>
           {chatId ? <MessagesPane /> : <></>}
         </Sheet>
       </Box>
-      <NewChatModal />
+      <NewChatModal open={modalOpen} setOpen={setModalOpen} />
     </>
   );
 };
