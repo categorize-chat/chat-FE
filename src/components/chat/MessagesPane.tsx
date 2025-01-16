@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef, useMemo } from 'react';
+import { useState, useEffect, Fragment, useRef, useMemo, memo } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
@@ -15,11 +15,15 @@ import UserAvatar from '../user/UserAvatar';
 import { parseRawDateAndTime } from '../../utils/common/function';
 import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '../../state/ai';
+import MessagesPaneHeader from './MessagesPaneHeader';
+
+const MemoizedMessagesPaneHeader = memo(MessagesPaneHeader);
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
+  const { chatMessages, selectedChat, setChatMessages, addNewMessage } =
+    useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
 
   const socket = useSocket(state => state.socket);
@@ -76,10 +80,19 @@ export default function MessagesPane() {
   useEffect(() => {
     if (socket === undefined) return;
 
-    socket.on('chat', (newMessage: TMessageProps) => {
+    // 메시지 수신 이벤트 핸들러
+    const handleChatMessage = (newMessage: TMessageProps) => {
       addNewMessage(newMessage);
-    });
-  }, [socket]);
+    };
+
+    // 이벤트 리스너 등록
+    socket.on('chat', handleChatMessage);
+
+    // cleanup 함수: 컴포넌트 언마운트 또는 의존성 변경 시 이벤트 리스너 제거
+    return () => {
+      socket.off('chat', handleChatMessage);
+    };
+  }, [socket, addNewMessage]); // addNewMessage도 의존성 배열에 추가
 
   if (isError) {
     return <></>;
@@ -94,7 +107,7 @@ export default function MessagesPane() {
         backgroundColor: 'background.level1',
       }}
     >
-      {/* <MessagesPaneHeader sender={selectedChat!.channelName} /> */}
+      {selectedChat && <MemoizedMessagesPaneHeader channel={selectedChat} />}
       <Box
         sx={{
           display: 'grid',
