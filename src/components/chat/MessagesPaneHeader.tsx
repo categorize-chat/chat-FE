@@ -16,10 +16,6 @@ const MessagesPaneHeader = ({ channel }: TMessagesPaneHeaderProps) => {
     setIsInfoOpen(true);
   };
 
-  const handleInfoClose = () => {
-    setIsInfoOpen(false);
-  };
-
   return (
     <Box
       sx={{

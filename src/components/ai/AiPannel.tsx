@@ -1,4 +1,4 @@
-import { Sheet, Stack, Typography } from '@mui/joy';
+import { Box, Sheet, Stack, Typography } from '@mui/joy';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useMutation } from 'react-query';
 import { AiSummaryQuery } from '../../utils/ai/query';
@@ -45,6 +45,8 @@ export default function AiPannel() {
       sx={{
         borderLeft: '1px solid',
         borderColor: 'divider',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Stack
@@ -69,13 +71,20 @@ export default function AiPannel() {
           인공지능 비서
         </Typography>
       </Stack>
-      {aiSummaryMutation.isLoading ? (
-        <AiLoading />
-      ) : aiSummaryMutation.isSuccess && Object.keys(aiResult).length > 0 ? (
-        <AiResult />
-      ) : (
-        <AiInit handleClickAIButton={handleClickAIButton} />
-      )}
+      <Box
+        sx={{
+          flex: 1,
+          height: 'max-content',
+        }}
+      >
+        {aiSummaryMutation.isLoading ? (
+          <AiLoading />
+        ) : aiSummaryMutation.isSuccess && Object.keys(aiResult).length > 0 ? (
+          <AiResult />
+        ) : (
+          <AiInit handleClickAIButton={handleClickAIButton} />
+        )}
+      </Box>
     </Sheet>
   );
 }

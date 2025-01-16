@@ -130,6 +130,7 @@ export default function MessagesPane() {
               display: 'flex',
               flexDirection: 'column',
               overflowY: 'auto',
+              flex: 1,
             }}
           >
             <Box
