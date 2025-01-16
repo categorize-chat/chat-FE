@@ -107,7 +107,6 @@ export default function MessagesPane() {
         backgroundColor: 'background.level1',
       }}
     >
-      {selectedChat && <MemoizedMessagesPaneHeader channel={selectedChat} />}
       <Box
         sx={{
           display: 'grid',
@@ -123,66 +122,77 @@ export default function MessagesPane() {
             overflowY: 'auto',
           }}
         >
+          {selectedChat && (
+            <MemoizedMessagesPaneHeader channel={selectedChat} />
+          )}
           <Box
             sx={{
               display: 'flex',
-              flex: 1,
-              minHeight: 0,
-              px: 2,
-              py: 3,
-              overflowY: 'scroll',
-              flexDirection: 'column-reverse',
+              flexDirection: 'column',
+              overflowY: 'auto',
             }}
           >
-            <Stack spacing={2} justifyContent="flex-end">
-              {chatMessages.map((message: TMessageProps, i) => {
-                const { date, time } = parseRawDateAndTime(message.createdAt);
-                const isYou = message.user.email === email;
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                minHeight: 0,
+                px: 2,
+                py: 3,
+                overflowY: 'scroll',
+                flexDirection: 'column-reverse',
+              }}
+            >
+              <Stack spacing={2} justifyContent="flex-end">
+                {chatMessages.map((message: TMessageProps, i) => {
+                  const { date, time } = parseRawDateAndTime(message.createdAt);
+                  const isYou = message.user.email === email;
 
-                const prevDate =
-                  i > 0
-                    ? parseRawDateAndTime(chatMessages[i - 1].createdAt).date
-                    : null;
-                return (
-                  <Fragment key={i}>
-                    {prevDate !== date && (
-                      <Stack>
-                        <Divider>
-                          <Typography
-                            textAlign={'center'}
-                            my={2}
-                            fontWeight={'lg'}
-                          >
-                            {date}
-                          </Typography>
-                        </Divider>
+                  const prevDate =
+                    i > 0
+                      ? parseRawDateAndTime(chatMessages[i - 1].createdAt).date
+                      : null;
+                  return (
+                    <Fragment key={i}>
+                      {prevDate !== date && (
+                        <Stack>
+                          <Divider>
+                            <Typography
+                              textAlign={'center'}
+                              my={2}
+                              fontWeight={'lg'}
+                            >
+                              {date}
+                            </Typography>
+                          </Divider>
+                        </Stack>
+                      )}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        flexDirection={isYou ? 'row-reverse' : 'row'}
+                        id={`${i}`}
+                        ref={el => (messageRefs.current[i] = el)}
+                      >
+                        <UserAvatar user={message.user} />
+                        <MessageBubble
+                          variant={isYou ? 'sent' : 'received'}
+                          {...message}
+                          date={date}
+                          time={time}
+                        />
                       </Stack>
-                    )}
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      flexDirection={isYou ? 'row-reverse' : 'row'}
-                      id={`${i}`}
-                      ref={el => (messageRefs.current[i] = el)}
-                    >
-                      <UserAvatar user={message.user} />
-                      <MessageBubble
-                        variant={isYou ? 'sent' : 'received'}
-                        {...message}
-                        date={date}
-                        time={time}
-                      />
-                    </Stack>
-                  </Fragment>
-                );
-              })}
-            </Stack>
+                    </Fragment>
+                  );
+                })}
+              </Stack>
+            </Box>
+            <MessageInput
+              textAreaValue={textAreaValue}
+              setTextAreaValue={setTextAreaValue}
+              onSubmit={handleChatSend}
+            />
           </Box>
-          <MessageInput
-            textAreaValue={textAreaValue}
-            setTextAreaValue={setTextAreaValue}
-            onSubmit={handleChatSend}
-          />
         </Box>
         <AiPannel />
       </Box>

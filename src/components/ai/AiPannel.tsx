@@ -53,7 +53,6 @@ export default function AiPannel() {
         alignItems="center"
         justifyContent="space-between"
         p={2}
-        pb={1.5}
         sx={{
           borderBottom: '1px solid',
           borderColor: 'divider',
