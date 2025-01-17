@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef, useMemo } from 'react';
+import { useState, useEffect, Fragment, useRef, useMemo, memo } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
@@ -16,11 +16,15 @@ import { parseRawDateAndTime } from '../../utils/common/function';
 import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '../../state/ai';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import MessagesPaneHeader from './MessagesPaneHeader';
+
+const MemoizedMessagesPaneHeader = memo(MessagesPaneHeader);
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, setChatMessages, addNewMessage } = useChatStore();
+  const { chatMessages, selectedChat, setChatMessages, addNewMessage } =
+    useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
 
   const socket = useSocket(state => state.socket);
@@ -33,7 +37,7 @@ export default function MessagesPane() {
       getNextPageParam: lastPage => lastPage.nextCursor,
     });
 
-  const { ref, isIntersecting } = useIntersectionObserver(
+  const { ref } = useIntersectionObserver(
     {
       threshold: 0.1,
       rootMargin: '100px',
@@ -95,10 +99,19 @@ export default function MessagesPane() {
   useEffect(() => {
     if (socket === undefined) return;
 
-    socket.on('chat', (newMessage: TMessageProps) => {
+    // 메시지 수신 이벤트 핸들러
+    const handleChatMessage = (newMessage: TMessageProps) => {
       addNewMessage(newMessage);
-    });
-  }, [socket]);
+    };
+
+    // 이벤트 리스너 등록
+    socket.on('chat', handleChatMessage);
+
+    // cleanup 함수: 컴포넌트 언마운트 또는 의존성 변경 시 이벤트 리스너 제거
+    return () => {
+      socket.off('chat', handleChatMessage);
+    };
+  }, [socket, addNewMessage]); // addNewMessage도 의존성 배열에 추가
 
   if (isError) {
     return <></>;
@@ -113,7 +126,6 @@ export default function MessagesPane() {
         backgroundColor: 'background.level1',
       }}
     >
-      {/* <MessagesPaneHeader sender={selectedChat!.channelName} /> */}
       <Box
         sx={{
           display: 'grid',
@@ -129,74 +141,86 @@ export default function MessagesPane() {
             overflowY: 'auto',
           }}
         >
+          {selectedChat && (
+            <MemoizedMessagesPaneHeader channel={selectedChat} />
+          )}
           <Box
             sx={{
               display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto',
               flex: 1,
-              minHeight: 0,
-              px: 2,
-              py: 3,
-              overflowY: 'scroll',
-              flexDirection: 'column-reverse',
             }}
           >
-            {isFetchingNextPage && (
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                메시지를 불러오는 중...
-              </Box>
-            )}
+            <Box
+              sx={{
+                display: 'flex',
+                flex: 1,
+                minHeight: 0,
+                px: 2,
+                py: 3,
+                overflowY: 'scroll',
+                flexDirection: 'column-reverse',
+              }}
+            >
+              {isFetchingNextPage && (
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  메시지를 불러오는 중...
+                </Box>
+              )}
 
-            <Stack spacing={2} justifyContent="flex-end">
-              {chatMessages.map((message: TMessageProps, i) => {
-                const { date, time } = parseRawDateAndTime(message.createdAt);
-                const isYou = message.user.email === email;
+              <Stack spacing={2} justifyContent="flex-end">
+                {chatMessages.map((message: TMessageProps, i) => {
+                  const { date, time } = parseRawDateAndTime(message.createdAt);
+                  const isYou = message.user.email === email;
 
-                const prevDate =
-                  i > 0
-                    ? parseRawDateAndTime(chatMessages[i - 1].createdAt).date
-                    : null;
-                return (
-                  <Fragment key={i}>
-                    {prevDate !== date && (
-                      <Stack>
-                        <Divider>
-                          <Typography
-                            textAlign={'center'}
-                            my={2}
-                            fontWeight={'lg'}
-                          >
-                            {date}
-                          </Typography>
-                        </Divider>
+                  const prevDate =
+                    i > 0
+                      ? parseRawDateAndTime(chatMessages[i - 1].createdAt).date
+                      : null;
+                  return (
+                    <Fragment key={i}>
+                      {prevDate !== date && (
+                        <Stack>
+                          <Divider>
+                            <Typography
+                              textAlign={'center'}
+                              my={2}
+                              fontWeight={'lg'}
+                            >
+                              {date}
+                            </Typography>
+                          </Divider>
+                        </Stack>
+                      )}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        flexDirection={isYou ? 'row-reverse' : 'row'}
+                        id={`${i}`}
+                        ref={el => (messageRefs.current[i] = el)}
+                      >
+                        <UserAvatar user={message.user} />
+                        <MessageBubble
+                          variant={isYou ? 'sent' : 'received'}
+                          {...message}
+                          date={date}
+                          time={time}
+                        />
                       </Stack>
-                    )}
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      flexDirection={isYou ? 'row-reverse' : 'row'}
-                      id={`${i}`}
-                      ref={el => (messageRefs.current[i] = el)}
-                    >
-                      <UserAvatar user={message.user} />
-                      <MessageBubble
-                        variant={isYou ? 'sent' : 'received'}
-                        {...message}
-                        date={date}
-                        time={time}
-                      />
-                    </Stack>
-                  </Fragment>
-                );
-              })}
-            </Stack>
+                    </Fragment>
+                  );
+                })}
+              </Stack>
 
-            <div ref={ref} style={{ height: '10px' }} />
+              <div ref={ref} style={{ height: '10px' }} />
+            </Box>
+            <MessageInput
+              textAreaValue={textAreaValue}
+              setTextAreaValue={setTextAreaValue}
+              onSubmit={handleChatSend}
+            />
           </Box>
-          <MessageInput
-            textAreaValue={textAreaValue}
-            setTextAreaValue={setTextAreaValue}
-            onSubmit={handleChatSend}
-          />
         </Box>
         <AiPannel />
       </Box>

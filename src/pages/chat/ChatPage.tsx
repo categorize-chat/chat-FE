@@ -2,7 +2,7 @@ import { Box, Sheet } from '@mui/joy';
 import { useQuery } from 'react-query';
 import { chatRoomsQuery } from '../../utils/chat/query';
 import { useChatStore, useSocket } from '../../state/chat';
-import { useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '../../components/chat/NewChatModal';
 import { useUserStore } from '../../state/user';
 import { useParams } from 'react-router-dom';
@@ -12,18 +12,32 @@ import MessagesPane from '../../components/chat/MessagesPane';
 export const ChatPage = () => {
   const { data: chatRoomsData, isError: chatRoomsError } =
     useQuery(chatRoomsQuery());
-  const { setChats } = useChatStore();
+  const { chats, setChats } = useChatStore();
   const { setSubscriptions } = useUserStore();
 
   const { id: chatId } = useParams();
-  const { setSelectedId } = useChatStore();
+  const { setSelectedId, setSelectedChat } = useChatStore();
   const { socket, connectSocket } = useSocket();
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // setSelectedChat을 메모이제이션
+  const updateSelectedChat = useCallback((chatId: string, chats: any[]) => {
+    const channel = chats.find(channel => channel.channelId === chatId);
+    if (channel) {
+      setSelectedChat(channel);
+    }
+  }, []);
 
   useEffect(() => {
     if (!chatId) return;
 
     setSelectedId(chatId);
-  }, [chatId]);
+
+    if (!chats) return;
+
+    updateSelectedChat(chatId, chats);
+  }, [chatId, chats, updateSelectedChat]);
 
   useEffect(() => {
     if (!socket || !chatId) return;
@@ -89,12 +103,12 @@ export const ChatPage = () => {
               top: 52,
             }}
           >
-            <ChatSidebar />
+            <ChatSidebar setOpen={setModalOpen} />
           </Sheet>
           {chatId ? <MessagesPane /> : <></>}
         </Sheet>
       </Box>
-      <NewChatModal />
+      <NewChatModal open={modalOpen} setOpen={setModalOpen} />
     </>
   );
 };
