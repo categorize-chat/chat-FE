@@ -3,8 +3,6 @@ name: Frontend Deploy
 on:
   push:
     branches: ['main']
-  pull_request:
-    branches: ['main']
 
 jobs:
   build:
@@ -12,6 +10,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Copy .env
+        run: |
+          touch .env.prod
+          echo "VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}" >> .env.prod
+          echo "VITE_SOCK_URL=${{ secrets.VITE_SOCK_URL }}" >> .env.prod
+          echo "VITE_CLIENT_PORT=${{ secrets.VITE_CLIENT_PORT }}" >> .env.prod
+          echo "VITE_KAKAO_RESTAPI_KEY=${{ secrets.VITE_KAKAO_RESTAPI_KEY }}" >> .env.prod
+          echo "VITE_REDIRECT_URI=${{ secrets.VITE_REDIRECT_URI }}" >> .env.prod
 
       - name: Setup Node 22
         uses: actions/setup-node@v4
