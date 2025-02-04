@@ -36,7 +36,10 @@ export type TChatRoomsResponse = TApiResponse<{
 }>;
 
 export type TChatMessageResponse = TApiResponse<{
-  messages: TMessageProps[];
+  messages: (TMessageProps & {
+    _id: string;
+  })[];
+  nextCursor: string | null;
 }>;
 
 export type TChatRoomGenerateRequest = {

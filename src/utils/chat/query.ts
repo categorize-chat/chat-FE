@@ -18,7 +18,7 @@ export const chatRoomsQuery = () => ({
   queryFn: async () => {
     return await API.json
       .get(`/chat`)
-      .then((res) => res.data as TChatRoomsResponse)
+      .then(res => res.data as TChatRoomsResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
@@ -30,20 +30,26 @@ export const chatRoomsQuery = () => ({
   refetchOnWindowFocus: false,
 });
 
-export const chatMessageQuery = (id: string) => ({
+export const chatMessageQuery = (id: string, limit: number = 20) => ({
   queryKey: [chatQueryKeys.message, id],
-  queryFn: async () => {
-    if (!id) return;
-
+  queryFn: async ({ pageParam = null }) => {
     return await API.json
-      .get(`/chat/${id}`)
-      .then((res) => res.data as TChatMessageResponse)
+      .get(`/chat/${id}`, {
+        params: {
+          cursor: pageParam,
+          limit,
+        },
+      })
+      .then(res => res.data as TChatMessageResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
         }
 
-        return result;
+        return {
+          messages: result.messages,
+          nextCursor: result.nextCursor,
+        };
       });
   },
   refetchOnWindowFocus: false,
@@ -54,7 +60,7 @@ export const chatRoomGenerateQuery = () => ({
   mutationFn: async (req: TChatRoomGenerateRequest) => {
     return await API.json
       .post(`/chat`, req)
-      .then((res) => res.data as TChatRoomGenerateResponse)
+      .then(res => res.data as TChatRoomGenerateResponse)
       .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
