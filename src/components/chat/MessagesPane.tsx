@@ -31,9 +31,11 @@ export default function MessagesPane() {
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const messageLimit = 20;
+
   const { data, fetchNextPage, hasNextPage, isError, isFetchingNextPage } =
     useInfiniteQuery({
-      ...chatMessageQuery(chatId || ''),
+      ...chatMessageQuery(chatId || '', messageLimit),
       getNextPageParam: lastPage => lastPage.nextCursor,
     });
 
