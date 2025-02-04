@@ -99,12 +99,21 @@ export default function MessagesPane() {
     setChatMessages(allMessages);
   }, [data]);
 
-  // 스크롤 위치 관리
+  // 채팅방 변경 시 스크롤 초기화
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
 
-    // column-reverse에서는 scrollTop이 0이면 최신 메시지를 보고 있는 상태
+    // column-reverse에서는 scrollTop을 0으로 설정하면 맨 아래로 이동
+    scrollContainer.scrollTop = 0;
+    prevScrollHeight.current = scrollContainer.scrollHeight;
+  }, [chatId]); // chatId가 변경될 때만 실행
+
+  // 기존의 스크롤 위치 관리 useEffect는 그대로 유지
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
     const isAtBottom = scrollContainer.scrollTop === 0;
 
     if (!isAtBottom) {
