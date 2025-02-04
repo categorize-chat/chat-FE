@@ -80,12 +80,43 @@ export default function MessagesPane() {
     });
   };
 
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const prevScrollHeight = useRef<number>(0);
+
+  // 메시지 데이터 업데이트
   useEffect(() => {
     if (!data) return;
 
-    const allMessages = data.pages.flatMap(page => page.messages);
+    // data 꼬임을 방지하기 위해 복사 후 역순으로 평탄화
+    const allMessages = [...data.pages]
+      .reverse()
+      .flatMap(page => page.messages)
+      .filter(
+        (message, index, self) =>
+          index === self.findIndex(m => m.createdAt === message.createdAt),
+      );
+
     setChatMessages(allMessages);
   }, [data]);
+
+  // 스크롤 위치 관리
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    // column-reverse에서는 scrollTop이 0이면 최신 메시지를 보고 있는 상태
+    const isAtBottom = scrollContainer.scrollTop === 0;
+
+    if (!isAtBottom) {
+      const scrollDiff =
+        scrollContainer.scrollHeight - prevScrollHeight.current;
+      if (scrollDiff > 0) {
+        scrollContainer.scrollTop += scrollDiff;
+      }
+    }
+
+    prevScrollHeight.current = scrollContainer.scrollHeight;
+  }, [chatMessages]);
 
   useEffect(() => {
     if (!selectedTopic || !firstTopicIndices[hml] || selectedTopic.index === -1)
@@ -155,6 +186,7 @@ export default function MessagesPane() {
             }}
           >
             <Box
+              ref={scrollContainerRef}
               sx={{
                 display: 'flex',
                 flex: 1,
