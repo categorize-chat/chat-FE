@@ -53,6 +53,8 @@ export const chatMessageQuery = (id: string, limit: number = 20) => ({
       });
   },
   refetchOnWindowFocus: false,
+  cacheTime: 0,
+  staleTime: 0,
 });
 
 export const chatRoomGenerateQuery = () => ({
