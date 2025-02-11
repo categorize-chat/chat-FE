@@ -2,7 +2,8 @@ import React from 'react';
 import ModalBase from '../common/ModalBase';
 import { Typography } from '@mui/material';
 import { TChannelProps } from '../../utils/chat/type';
-
+import SubsButton from '../search/SubsButton';
+import { useNavigate } from 'react-router-dom';
 type TChannelInfoModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +15,18 @@ const ChannelInfoModal = ({
   setOpen,
   channelInfo,
 }: TChannelInfoModalProps) => {
-  const { channelName, description } = channelInfo;
+  const {
+    channelName,
+    description,
+    channelId,
+    _id: channelIdSub,
+  } = channelInfo;
+
+  const navigate = useNavigate();
+
+  const goChatHome = () => {
+    navigate('/chat');
+  };
 
   return (
     <ModalBase open={open} setOpen={setOpen}>
@@ -22,6 +34,14 @@ const ChannelInfoModal = ({
         {channelName}
       </Typography>
       <Typography id="modal-modal-description">{description}</Typography>
+      <SubsButton
+        channelId={channelId || channelIdSub!}
+        callbackFn={() => {
+          goChatHome();
+          window.location.reload();
+          // TODO: reload 가 과연 최선인지?
+        }}
+      />
     </ModalBase>
   );
 };
