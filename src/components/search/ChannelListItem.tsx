@@ -1,8 +1,6 @@
-import { Box, Button, Typography } from '@mui/joy';
+import { Box, Typography } from '@mui/joy';
 import { TChannelProps } from '../../utils/chat/type';
-import { useUserStore } from '../../state/user';
-import { searchApi } from '../../utils/search/api';
-import { useMemo } from 'react';
+import SubsButton from './SubsButton';
 
 type TChannelListItemProps = {
   channel: TChannelProps;
@@ -11,24 +9,6 @@ type TChannelListItemProps = {
 const ChannelListItem = ({ channel }: TChannelListItemProps) => {
   const { channelName, channelId, _id: channelIdSub, description } = channel;
   const channelDescription = description || '설명이 없습니다.';
-
-  const { subscriptions, setSubscriptions } = useUserStore();
-  const isSubscribed = useMemo(() => {
-    const realChannelId = channelId || channelIdSub!;
-
-    return subscriptions.includes(realChannelId);
-  }, [subscriptions, channelId]);
-
-  const handleSubscribe = async () => {
-    const handler = isSubscribed
-      ? searchApi.unsubscribeChannel
-      : searchApi.subscribeChannel;
-
-    const { user } = await handler(channelId);
-    const { subscriptions } = user;
-
-    setSubscriptions(subscriptions);
-  };
 
   return (
     <Box
@@ -50,19 +30,7 @@ const ChannelListItem = ({ channel }: TChannelListItemProps) => {
           <Typography level="h4">
             <b>{channelName}</b>
           </Typography>
-          <Button
-            size="sm"
-            sx={{
-              fontSize: '12px',
-              marginLeft: 'auto',
-              marginRight: 0,
-            }}
-            variant="soft"
-            color={isSubscribed ? 'danger' : 'primary'}
-            onClick={handleSubscribe}
-          >
-            {isSubscribed ? '구독중' : '참여'}
-          </Button>
+          <SubsButton channelId={channelId || channelIdSub!} />
         </Box>
 
         <Typography level="body-sm">{channelDescription}</Typography>
