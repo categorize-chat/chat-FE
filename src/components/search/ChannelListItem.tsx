@@ -20,14 +20,14 @@ const ChannelListItem = ({ channel }: TChannelListItemProps) => {
   }, [subscriptions, channelId]);
 
   const handleSubscribe = async () => {
-    if (isSubscribed) {
-      await searchApi.unsubscribeChannel(channelId);
-    } else {
-      const { user } = await searchApi.subscribeChannel(channelId);
-      const { subscriptions } = user;
+    const handler = isSubscribed
+      ? searchApi.unsubscribeChannel
+      : searchApi.subscribeChannel;
 
-      setSubscriptions(subscriptions);
-    }
+    const { user } = await handler(channelId);
+    const { subscriptions } = user;
+
+    setSubscriptions(subscriptions);
   };
 
   return (

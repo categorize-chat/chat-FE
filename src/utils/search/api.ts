@@ -45,10 +45,12 @@ export const searchApi = {
     return await API.json
       .post(`/unsubscribe/${roomId}`)
       .then(res => res.data)
-      .then(({ code, message }) => {
+      .then(({ code, message, result }) => {
         if (code !== 200) {
           throw new Error(message);
         }
+
+        return result;
       });
   },
 };
