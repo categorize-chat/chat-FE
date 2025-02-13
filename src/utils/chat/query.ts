@@ -1,4 +1,4 @@
-import { API } from '../api';
+import { API, defaultResponseHandler } from '../api';
 import {
   TChatMessageResponse,
   TChatRoomGenerateRequest,
@@ -18,14 +18,7 @@ export const chatRoomsQuery = () => ({
   queryFn: async () => {
     return await API.json
       .get(`/chat`)
-      .then(res => res.data as TChatRoomsResponse)
-      .then(({ code, message, result }) => {
-        if (code !== 200) {
-          throw new Error(message);
-        }
-
-        return result;
-      });
+      .then(defaultResponseHandler<TChatRoomsResponse>);
   },
   refetchOnWindowFocus: false,
 });
@@ -40,19 +33,15 @@ export const chatMessageQuery = (id: string, limit: number = 20) => ({
           limit,
         },
       })
-      .then(res => res.data as TChatMessageResponse)
-      .then(({ code, message, result }) => {
-        if (code !== 200) {
-          throw new Error(message);
-        }
-
-        return {
-          messages: result.messages,
-          nextCursor: result.nextCursor,
-        };
-      });
+      .then(defaultResponseHandler<TChatMessageResponse>)
+      .then(result => ({
+        messages: result.messages,
+        nextCursor: result.nextCursor,
+      }));
   },
   refetchOnWindowFocus: false,
+  cacheTime: 0,
+  staleTime: 0,
 });
 
 export const chatRoomGenerateQuery = () => ({
@@ -60,14 +49,7 @@ export const chatRoomGenerateQuery = () => ({
   mutationFn: async (req: TChatRoomGenerateRequest) => {
     return await API.json
       .post(`/chat`, req)
-      .then(res => res.data as TChatRoomGenerateResponse)
-      .then(({ code, message, result }) => {
-        if (code !== 200) {
-          throw new Error(message);
-        }
-
-        return result;
-      });
+      .then(defaultResponseHandler<TChatRoomGenerateResponse>);
   },
   refetchOnWindowFocus: false,
 });

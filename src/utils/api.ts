@@ -1,4 +1,5 @@
 import axios, { AxiosHeaders } from 'axios';
+import { TApiResponse } from './type';
 
 const axiosApi = (extraHeader: Partial<AxiosHeaders>) =>
   axios.create({
@@ -71,3 +72,16 @@ API.json.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const defaultResponseHandler = <
+  TResponse extends TApiResponse<any>,
+>(res: {
+  data: TResponse;
+}): TResponse['result'] => {
+  const response = res.data;
+  if (response.code !== 200) {
+    throw new Error(response.message);
+  }
+
+  return response.result;
+};
