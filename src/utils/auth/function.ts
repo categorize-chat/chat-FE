@@ -50,10 +50,3 @@ export const validateToken = async ({
 
   return true;
 };
-
-export const searchChatRoom = async () => {
-  API.json
-    .get('/search')
-    .then(res => res.data)
-    .then(console.log);
-};

@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
-import { API } from '../../utils/api';
+import {
+  API,
+  defaultResponseHandler,
+  defaultAxiosErrorHandler,
+} from '../../utils/api';
 import { TUserOAuthResponse } from '../../utils/user/type';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../state/user';
@@ -12,14 +16,8 @@ const OAuthCallback = () => {
   const sendOAuthCode = async (code: string) => {
     const userInfo = await API.json
       .post('/oauth/kakao', { code })
-      .then(res => res.data as TUserOAuthResponse)
-      .then(({ code, message, result }) => {
-        if (code !== 200) {
-          throw new Error(message);
-        }
-
-        return result;
-      });
+      .then(defaultResponseHandler<TUserOAuthResponse>)
+      .catch(defaultAxiosErrorHandler);
 
     // 로그인 성공 시
     localStorage.setItem('accessToken', userInfo.accessToken);

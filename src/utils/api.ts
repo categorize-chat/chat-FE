@@ -1,5 +1,6 @@
 import axios, { AxiosHeaders } from 'axios';
 import { TApiResponse } from './type';
+import Swal from 'sweetalert2';
 
 const axiosApi = (extraHeader: Partial<AxiosHeaders>) =>
   axios.create({
@@ -84,4 +85,19 @@ export const defaultResponseHandler = <
   }
 
   return response.result;
+};
+
+export const defaultAxiosErrorHandler = async (error: any) => {
+  const errorMessage = error.response?.data?.message || error.message;
+
+  await Swal.fire({
+    title: errorMessage || '예상치 못한 에러가 발생했습니다',
+    text: '다시 시도해주세요.',
+    icon: 'error',
+    customClass: {
+      popup: 'swal2-highest-zindex',
+    },
+  });
+
+  return Promise.reject(error);
 };
