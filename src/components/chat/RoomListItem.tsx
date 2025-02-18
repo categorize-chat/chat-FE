@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { TChannelProps } from '../../utils/chat/type';
-import { Paths } from '../../utils/constant';
+import { Paths } from '../../routes/paths';
 
 type TRoomListItemProps = TChannelProps & {
   unread?: boolean;
