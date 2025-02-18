@@ -13,21 +13,17 @@ import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
-
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Paths } from '../../utils/constant';
-import { useUserStore } from '../../state/user';
-import UserAvatar from '../user/UserAvatar';
 import TabItem from './sidebar/TabItem';
+import UserStats from './sidebar/UserStats';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
-  const { nickname, email, profileUrl } = useUserStore();
   const { pathname } = useLocation();
 
   const navigate = useNavigate();
@@ -170,15 +166,7 @@ export default function Sidebar() {
         </List>
       </Box>
       <Divider />
-      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <UserAvatar user={{ nickname, email, profileUrl }} />
-        <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">{nickname}</Typography>
-        </Box>
-        <IconButton size="sm" variant="plain" color="neutral">
-          <LogoutRoundedIcon />
-        </IconButton>
-      </Box>
+      <UserStats />
     </Sheet>
   );
 }
