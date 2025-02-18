@@ -4,7 +4,6 @@ import { useChatStore } from '../../state/chat';
 import { useMutation } from 'react-query';
 import { chatRoomGenerateQuery } from '../../utils/chat/query';
 import { ChangeEvent, useRef } from 'react';
-import Swal from 'sweetalert2';
 import ModalBase from '../common/ModalBase';
 
 type TNewChatModalProps = {
@@ -23,18 +22,7 @@ const NewChatModal = ({ open, setOpen }: TNewChatModalProps) => {
       addChat(chat);
       setOpen(false);
     },
-    onError: async (error: any) => {
-      const errorMessage = error.response?.data?.message;
-      setOpen(false);
-
-      await Swal.fire({
-        title: errorMessage || '채팅방 생성 중 오류가 발생했습니다.',
-        text: '다른 이름을 사용해주세요.',
-        icon: 'error',
-      });
-
-      setOpen(errorMessage);
-    },
+    onError: () => {},
   });
 
   const handleNewChat = () => {
