@@ -18,7 +18,7 @@ import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Paths } from '../../utils/constant';
+import { Paths } from '../../routes/paths';
 import TabItem from './sidebar/TabItem';
 import UserStats from './sidebar/UserStats';
 

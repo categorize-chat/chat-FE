@@ -3,7 +3,7 @@ import UserAvatar from '../../user/UserAvatar';
 import { useUserStore } from '../../../state/user';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { Paths } from '../../../utils/constant';
+import { Paths } from '../../../routes/paths';
 import { Cookies } from 'react-cookie';
 
 const cookies = new Cookies();

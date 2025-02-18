@@ -5,7 +5,7 @@ import { useUserStore } from '../../state/user';
 import { useMutation } from 'react-query';
 import { userJoinQuery } from '../../utils/user/query';
 import { useNavigate } from 'react-router-dom';
-import { Paths } from '../../utils/constant';
+import { Paths } from '../../routes/paths';
 import { Link } from 'react-router-dom';
 import JoinForm from '../../components/user/JoinForm';
 
