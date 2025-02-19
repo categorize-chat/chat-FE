@@ -1,55 +1,41 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
 import { Box, Button, Divider, Input, Typography } from '@mui/joy';
 import React, { ChangeEvent, KeyboardEvent, useRef } from 'react';
-import { useUserStore } from '../../state/user';
-import { useMutation } from 'react-query';
-import { userJoinQuery } from '../../utils/user/query';
-import { useNavigate } from 'react-router-dom';
-import { Paths } from '../../utils/constant';
-import Swal from 'sweetalert2';
+import { Paths } from '../../routes/paths';
 import { Link } from 'react-router-dom';
 import JoinForm from '../../components/user/JoinForm';
-
 import KakaoAuthButton from '../../components/user/KakaoAuthButton';
+import { useAuth } from '../../hooks/useAuth';
 
 const UserJoinPage = () => {
-  const navigate = useNavigate();
   const nickNameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const pwdInputRef = useRef<HTMLInputElement>(null);
-  const { setUserId, setNickname } = useUserStore();
+  const { joinHandler } = useAuth();
 
-  const userJoinMutate = useMutation({
-    ...userJoinQuery(),
-    onSuccess: ({ userId, nickname }) => {
-      // TODO: 스토리지에 박기
-      setUserId(userId);
-      setNickname(nickname);
-
-      navigate(Paths.chat.base());
-    },
-    onError: () => {
-      Swal.fire({
-        title: '중복된 유저이름 입니다',
-        text: '다른 이름을 사용해주세요.',
-        icon: 'error',
-      });
-    },
-  });
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (nickNameInputRef.current === null) return;
+    if (emailInputRef.current === null) return;
+    if (pwdInputRef.current === null) return;
 
     const inputNickname = nickNameInputRef.current.value;
+    const inputEmail = emailInputRef.current.value;
+    const inputPassword = pwdInputRef.current.value;
 
     if (!inputNickname) {
-      alert('Please write down your nickname.');
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (!inputEmail) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
+    if (!inputPassword) {
+      alert('비밀번호를 입력해주세요.');
       return;
     }
 
-    userJoinMutate.mutate({
-      nickname: inputNickname,
-    });
+    await joinHandler(inputNickname, inputEmail, inputPassword);
   };
 
   const handleInputChange =

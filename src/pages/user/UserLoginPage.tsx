@@ -1,57 +1,42 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
-import { Box, Button, Divider, FormControl, Input, Typography } from '@mui/joy';
+import { Box, Button, Divider, Input, Typography } from '@mui/joy';
 import { ChangeEvent, KeyboardEvent, useRef } from 'react';
-import { useUserStore } from '../../state/user';
-import { useMutation } from 'react-query';
-import { userJoinQuery } from '../../utils/user/query';
-import { useNavigate } from 'react-router-dom';
-import { Paths } from '../../utils/constant';
-import Swal from 'sweetalert2';
+import { Paths } from '../../routes/paths';
 import JoinForm from '../../components/user/JoinForm';
 import KakaoAuthButton from '../../components/user/KakaoAuthButton';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const UserLoginPage = () => {
-  const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { setUserId, setNickname } = useUserStore();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const { loginHandler } = useAuth();
 
-  const userJoinMutate = useMutation({
-    ...userJoinQuery(),
-    onSuccess: ({ userId, nickname }) => {
-      // TODO: 스토리지에 박기
-      setUserId(userId);
-      setNickname(nickname);
+  const handleSubmit = async () => {
+    if (emailInputRef.current === null) return;
+    if (passwordInputRef.current === null) return;
 
-      navigate(Paths.chat.base());
-    },
-    onError: () => {
-      Swal.fire({
-        title: '중복된 유저이름 입니다',
-        text: '다른 이름을 사용해주세요.',
-        icon: 'error',
-      });
-    },
-  });
+    const inputEmail = emailInputRef.current.value;
+    const inputPassword = passwordInputRef.current.value;
 
-  const handleSubmit = () => {
-    if (inputRef.current === null) return;
-
-    const inputNickname = inputRef.current.value;
-
-    if (!inputNickname) {
-      alert('Please write down your nickname.');
+    if (!inputEmail) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
+    if (!inputPassword) {
+      alert('비밀번호를 입력해주세요.');
       return;
     }
 
-    userJoinMutate.mutate({
-      nickname: inputNickname,
-    });
+    await loginHandler(inputEmail, inputPassword);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (inputRef.current === null) return;
-    inputRef.current.value = e.target.value;
-  };
+  const handleInputChange =
+    (inputRef: React.RefObject<HTMLInputElement>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (inputRef.current === null) return;
+      inputRef.current.value = e.target.value;
+    };
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -69,8 +54,11 @@ const UserLoginPage = () => {
       <JoinForm>
         <Typography level="h1">Welcome to AI-Chat</Typography>
         <Typography>로그인을 해주세요</Typography>
+        <Typography>
+          <Link to={Paths.user.join()}>아직 회원이 아니신가요?</Link>
+        </Typography>
 
-        <FormControl
+        <Box
           sx={{
             marginTop: 'auto',
             display: 'flex',
@@ -80,13 +68,22 @@ const UserLoginPage = () => {
           }}
         >
           <Input
-            placeholder="Nickname"
-            size="lg"
+            placeholder="이메일"
+            type="email"
             required
             autoFocus
-            onChange={handleInputChange}
+            onChange={handleInputChange(emailInputRef)}
             onKeyDown={handleKeyDown}
-            ref={inputRef}
+            ref={emailInputRef}
+            defaultValue=""
+          />
+          <Input
+            placeholder="비밀번호"
+            type="password"
+            required
+            onChange={handleInputChange(passwordInputRef)}
+            onKeyDown={handleKeyDown}
+            ref={passwordInputRef}
             defaultValue=""
           />
           <Button
@@ -97,6 +94,7 @@ const UserLoginPage = () => {
           >
             로그인
           </Button>
+
           <Divider
             sx={{
               margin: '8px 0',
@@ -106,7 +104,7 @@ const UserLoginPage = () => {
           </Divider>
 
           <KakaoAuthButton />
-        </FormControl>
+        </Box>
       </JoinForm>
     </Box>
   );

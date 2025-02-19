@@ -1,4 +1,4 @@
-import { API, defaultResponseHandler } from '../api';
+import { API, defaultResponseHandler, defaultAxiosErrorHandler } from '../api';
 import {
   TChatMessageResponse,
   TChatRoomGenerateRequest,
@@ -18,7 +18,8 @@ export const chatRoomsQuery = () => ({
   queryFn: async () => {
     return await API.json
       .get(`/chat`)
-      .then(defaultResponseHandler<TChatRoomsResponse>);
+      .then(defaultResponseHandler<TChatRoomsResponse>)
+      .catch(defaultAxiosErrorHandler);
   },
   refetchOnWindowFocus: false,
 });
@@ -49,7 +50,8 @@ export const chatRoomGenerateQuery = () => ({
   mutationFn: async (req: TChatRoomGenerateRequest) => {
     return await API.json
       .post(`/chat`, req)
-      .then(defaultResponseHandler<TChatRoomGenerateResponse>);
+      .then(defaultResponseHandler<TChatRoomGenerateResponse>)
+      .catch(defaultAxiosErrorHandler);
   },
   refetchOnWindowFocus: false,
 });

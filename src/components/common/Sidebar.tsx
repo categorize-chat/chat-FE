@@ -13,21 +13,17 @@ import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
-
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Paths } from '../../utils/constant';
-import { useUserStore } from '../../state/user';
-import UserAvatar from '../user/UserAvatar';
+import { Paths } from '../../routes/paths';
 import TabItem from './sidebar/TabItem';
+import UserStats from './sidebar/UserStats';
 
 export default function Sidebar() {
   const { chats } = useChatStore();
-  const { nickname, email, profileUrl } = useUserStore();
   const { pathname } = useLocation();
 
   const navigate = useNavigate();
@@ -41,6 +37,9 @@ export default function Sidebar() {
   };
   const handleGoSetting = () => {
     navigate(Paths.user.settings());
+  };
+  const handleGoFriends = () => {
+    alert('준비중입니다.');
   };
 
   return (
@@ -148,7 +147,11 @@ export default function Sidebar() {
             onClick={handleGoSearch}
           />
 
-          <TabItem name="친구" icon={<GroupRoundedIcon />} />
+          <TabItem
+            name="친구"
+            icon={<GroupRoundedIcon />}
+            onClick={handleGoFriends}
+          />
         </List>
         <List
           size="sm"
@@ -160,7 +163,13 @@ export default function Sidebar() {
             mb: 2,
           }}
         >
-          <TabItem name="문의" icon={<SupportRoundedIcon />} />
+          <TabItem
+            name="문의"
+            icon={<SupportRoundedIcon />}
+            onClick={() =>
+              (window.location.href = `mailto:${import.meta.env.VITE_EMAIL_SUPPORT}`)
+            }
+          />
 
           <TabItem
             name="설정"
@@ -170,15 +179,7 @@ export default function Sidebar() {
         </List>
       </Box>
       <Divider />
-      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <UserAvatar user={{ nickname, email, profileUrl }} />
-        <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">{nickname}</Typography>
-        </Box>
-        <IconButton size="sm" variant="plain" color="neutral">
-          <LogoutRoundedIcon />
-        </IconButton>
-      </Box>
+      <UserStats />
     </Sheet>
   );
 }
