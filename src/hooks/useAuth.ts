@@ -4,10 +4,17 @@ import userApi from '../utils/user/api';
 import { Paths } from '../routes/paths';
 import { TUserAuthResponse } from '../utils/user/type';
 import { Cookies } from 'react-cookie';
+import { useMemo } from 'react';
 export const useAuth = () => {
   const navigate = useNavigate();
-  const { setNickname, setEmail, setProfileUrl, reset } = useUserStore();
+  const { email, setNickname, setEmail, setProfileUrl, reset } = useUserStore();
   const cookies = new Cookies();
+
+  const isLoggedIn = useMemo(() => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    return email && accessToken;
+  }, [email]);
 
   // 로그인/회원가입 을 통해 받아온 데이터로 유저 정보 업데이트
   const updateUserInfo = (userInfo: TUserAuthResponse['result']) => {
@@ -54,5 +61,11 @@ export const useAuth = () => {
     navigate(Paths.chat.base());
   };
 
-  return { loginHandler, joinHandler, logoutHandler, kakaoLoginHandler };
+  return {
+    loginHandler,
+    joinHandler,
+    logoutHandler,
+    kakaoLoginHandler,
+    isLoggedIn,
+  };
 };
