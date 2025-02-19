@@ -53,7 +53,8 @@ const SearchPage = () => {
         sx={{
           display: 'grid',
           width: '100%',
-          gridTemplateRows: '1fr 3fr',
+          gridTemplateRows: 'auto 1fr',
+          gap: 2,
         }}
       >
         <Sheet sx={{ textAlign: 'center', width: '100%' }}>
@@ -76,11 +77,10 @@ const SearchPage = () => {
         {/* channel 목록들 */}
         <Sheet
           sx={{
-            gap: 2,
-            flexWrap: 'wrap',
-            display: 'flex',
-            flexDirection: 'row',
             padding: 2,
+            maxHeight: '100%',
+            overflowY: 'auto',
+            height: 'calc(100vh - 200px)',
           }}
         >
           {searchedChannels &&
