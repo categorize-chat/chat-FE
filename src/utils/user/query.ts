@@ -1,15 +1,5 @@
-import { TUserInfoResponse, TUserJoinRequest, TUserJoinResponse } from './type';
+import { TUserInfoResponse } from './type';
 import { API, defaultResponseHandler, defaultAxiosErrorHandler } from '../api';
-
-export const userJoinQuery = () => ({
-  mutationFn: async (req: TUserJoinRequest) => {
-    return await API.json
-      .post('/user', req)
-      .then(defaultResponseHandler<TUserJoinResponse>)
-      .catch(defaultAxiosErrorHandler);
-  },
-  refetchOnWindowFocus: false,
-});
 
 export const userInfoQuery = (id: string) => ({
   queryKey: ['userInfo', id],
