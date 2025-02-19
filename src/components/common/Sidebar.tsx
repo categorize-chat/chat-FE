@@ -38,6 +38,9 @@ export default function Sidebar() {
   const handleGoSetting = () => {
     navigate(Paths.user.settings());
   };
+  const handleGoFriends = () => {
+    alert('준비중입니다.');
+  };
 
   return (
     <Sheet
@@ -144,7 +147,11 @@ export default function Sidebar() {
             onClick={handleGoSearch}
           />
 
-          <TabItem name="친구" icon={<GroupRoundedIcon />} />
+          <TabItem
+            name="친구"
+            icon={<GroupRoundedIcon />}
+            onClick={handleGoFriends}
+          />
         </List>
         <List
           size="sm"
@@ -156,7 +163,13 @@ export default function Sidebar() {
             mb: 2,
           }}
         >
-          <TabItem name="문의" icon={<SupportRoundedIcon />} />
+          <TabItem
+            name="문의"
+            icon={<SupportRoundedIcon />}
+            onClick={() =>
+              (window.location.href = `mailto:${import.meta.env.VITE_EMAIL_SUPPORT}`)
+            }
+          />
 
           <TabItem
             name="설정"
