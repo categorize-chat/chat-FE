@@ -8,18 +8,24 @@ export type TUserProps = {
 
 export type TUserJoinRequest = {
   nickname: string;
+  email: string;
+  password: string;
 };
 
-export type TUserJoinResponse = TApiResponse<{
-  userId: string;
-  nickname: string;
-}>;
+export type TUserLoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type TUserKakaoLoginRequest = {
+  code: string;
+};
 
 export type TUserInfoResponse = TApiResponse<{
   nickname: string;
 }>;
 
-export type TUserOAuthResponse = TApiResponse<
+export type TUserAuthResponse = TApiResponse<
   {
     accessToken: string;
   } & TUserProps
