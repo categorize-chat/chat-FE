@@ -1,6 +1,6 @@
 import { Button } from '@mui/joy';
 import { useUserStore } from '../../state/user';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { searchApi } from '../../utils/search/api';
 
 type TSubsButtonProps = {
@@ -10,11 +10,21 @@ type TSubsButtonProps = {
 
 const SubsButton = ({ channelId, callbackFn }: TSubsButtonProps) => {
   const { subscriptions, setSubscriptions } = useUserStore();
+  const [isHovered, setIsHovered] = useState(false);
+
   const isSubscribed = useMemo(() => {
     const realChannelId = channelId;
 
     return subscriptions.includes(realChannelId);
   }, [subscriptions, channelId]);
+
+  const buttonText = useMemo(() => {
+    if (isHovered) {
+      return isSubscribed ? '구독취소' : '참여';
+    }
+
+    return isSubscribed ? '구독중' : '참여';
+  }, [isHovered, isSubscribed]);
 
   const handleSubscribe = async () => {
     const handler = isSubscribed
@@ -40,8 +50,18 @@ const SubsButton = ({ channelId, callbackFn }: TSubsButtonProps) => {
       variant="soft"
       color={isSubscribed ? 'danger' : 'primary'}
       onClick={handleSubscribe}
+      ref={ref => {
+        if (ref) {
+          ref.onmouseenter = () => {
+            setIsHovered(true);
+          };
+          ref.onmouseleave = () => {
+            setIsHovered(false);
+          };
+        }
+      }}
     >
-      {isSubscribed ? '구독중' : '참여'}
+      {buttonText}
     </Button>
   );
 };
