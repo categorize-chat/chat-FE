@@ -1,10 +1,12 @@
 import { Input, Sheet } from '@mui/joy';
 import SearchIcon from '@mui/icons-material/Search';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { searchApi } from '../../utils/search/api';
 import { TChannelProps } from '../../utils/chat/type';
 import ChannelListItem from '../../components/search/ChannelListItem';
 import { debounce } from '../../utils/common/time';
+import { useQuery } from 'react-query';
+import { searchAllRoomsQuery } from '../../utils/search/query';
 
 const SearchPage = () => {
   // 검색어 입력창 ref
@@ -24,15 +26,26 @@ const SearchPage = () => {
     sendSearchRequest(e.target.value);
   }, 500);
 
+  const { data: allRooms } = useQuery({
+    ...searchAllRoomsQuery(),
+  });
+
   const sendSearchRequest = async (keyword: string) => {
     if (!keyword || keyword.length < 1) {
-      setSearchedChannels([]);
+      // 없으면 최신의 채팅방 목록을 보여줌
+      setSearchedChannels(allRooms?.channels || []);
       return;
     }
 
     const { channels } = await searchApi.searchGeneralRooms(keyword);
     setSearchedChannels(channels);
   };
+
+  useEffect(() => {
+    if (allRooms) {
+      setSearchedChannels(allRooms.channels || []);
+    }
+  }, [allRooms]);
 
   return (
     <>
