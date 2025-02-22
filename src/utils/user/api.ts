@@ -6,6 +6,7 @@ import {
   TUserUpdateResponse,
   TUserAuthResponse,
   TUserKakaoLoginRequest,
+  TUserLogoutResponse,
 } from './type';
 
 const userApi = {
@@ -19,6 +20,12 @@ const userApi = {
     return await API.json
       .post(`/user/join`, req)
       .then(defaultResponseHandler<TUserAuthResponse>)
+      .catch(defaultAxiosErrorHandler);
+  },
+  async logout() {
+    return await API.json
+      .post(`/user/logout`)
+      .then(defaultResponseHandler<TUserLogoutResponse>)
       .catch(defaultAxiosErrorHandler);
   },
   async kakaoLogin(req: TUserKakaoLoginRequest) {

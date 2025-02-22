@@ -45,12 +45,14 @@ export const useAuth = () => {
   };
 
   const logoutHandler = async () => {
+    // 쿠키가 삭제됨
+    await userApi.logout();
+
     // 유저 정보 지우기
     reset();
 
     // 엑세스 토큰 지우기
     localStorage.removeItem('accessToken');
-    cookies.remove('refreshToken'); // http only 면 안될듯?
 
     navigate(Paths.user.login());
   };

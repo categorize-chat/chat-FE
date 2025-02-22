@@ -31,6 +31,8 @@ export type TUserAuthResponse = TApiResponse<
   } & TUserProps
 >;
 
+export type TUserLogoutResponse = TApiResponse<null>;
+
 export type TUserUpdateRequest = {
   nickname: string;
 };
