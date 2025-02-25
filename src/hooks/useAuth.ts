@@ -3,12 +3,11 @@ import { useUserStore } from '../state/user';
 import userApi from '../utils/user/api';
 import { Paths } from '../routes/paths';
 import { TUserAuthResponse } from '../utils/user/type';
-import { Cookies } from 'react-cookie';
 import { useMemo } from 'react';
+
 export const useAuth = () => {
   const navigate = useNavigate();
   const { email, setNickname, setEmail, setProfileUrl, reset } = useUserStore();
-  const cookies = new Cookies();
 
   const isLoggedIn = useMemo(() => {
     const accessToken = localStorage.getItem('accessToken');
