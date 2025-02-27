@@ -1,6 +1,6 @@
 import { Typography } from '@mui/joy';
 import { Box } from '@mui/material';
-import { TChannelProps } from '../../utils/chat/type';
+import { TChannelProps } from '../../api/chat/type';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import ChannelInfoModal from './ChannelInfoModal';

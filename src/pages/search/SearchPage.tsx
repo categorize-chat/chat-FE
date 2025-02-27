@@ -1,12 +1,12 @@
 import { Input, Sheet } from '@mui/joy';
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { searchApi } from '../../utils/search/api';
-import { TChannelProps } from '../../utils/chat/type';
+import { searchApi } from '../../api/search/api';
+import { TChannelProps } from '../../api/chat/type';
 import ChannelListItem from '../../components/search/ChannelListItem';
 import { debounce } from '../../utils/common/time';
 import { useQuery } from 'react-query';
-import { searchAllRoomsQuery } from '../../utils/search/query';
+import { searchAllRoomsQuery } from '../../api/search/query';
 
 const SearchPage = () => {
   // 검색어 입력창 ref

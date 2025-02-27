@@ -6,9 +6,9 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { TMessageProps } from '../../utils/chat/type';
+import { TMessageProps } from '../../api/chat/type';
 import { useAIStore } from '../../state/ai';
-import { TUserProps } from '../../utils/user/type';
+import { TUserProps } from '../../api/user/type';
 
 type TMessageBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';

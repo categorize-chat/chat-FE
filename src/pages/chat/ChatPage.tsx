@@ -1,6 +1,6 @@
 import { Box, Sheet } from '@mui/joy';
 import { useQuery } from 'react-query';
-import { chatRoomsQuery } from '../../utils/chat/query';
+import { chatRoomsQuery } from '../../api/chat/query';
 import { useChatStore, useSocket } from '../../state/chat';
 import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '../../components/chat/NewChatModal';

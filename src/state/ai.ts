@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { TAiSummaryResponse, THmlKey } from '../utils/ai/type';
-import { TMessageProps } from '../utils/chat/type';
+import { TAiSummaryResponse, THmlKey } from '../api/ai/type';
+import { TMessageProps } from '../api/chat/type';
 
 type TSelectedTopic = {
   index: number;
