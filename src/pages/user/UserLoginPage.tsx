@@ -1,11 +1,11 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
 import { Box, Button, Divider, Input, Typography } from '@mui/joy';
 import { ChangeEvent, KeyboardEvent, useRef } from 'react';
-import { Paths } from '../../routes/paths';
-import JoinForm from '../../components/user/JoinForm';
-import KakaoAuthButton from '../../components/user/KakaoAuthButton';
+import { Paths } from '@/routes/paths';
+import JoinForm from '@/components/user/JoinForm';
+import KakaoAuthButton from '@/components/user/KakaoAuthButton';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 const UserLoginPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);

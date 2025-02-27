@@ -1,6 +1,4 @@
-import { TApiResponse } from '../type';
-import { TUserProps } from '../user/type';
-// import { TUserProps } from '../user/type';
+import { TUserProps } from '@/types';
 
 export type TMessageProps = {
   // id: number;
@@ -30,21 +28,3 @@ export type TChannelProps = {
 };
 
 export type TChatProps = TMessageProps[];
-
-export type TChatRoomsResponse = TApiResponse<{
-  channels: TChannelProps[];
-}>;
-
-export type TChatMessageResponse = TApiResponse<{
-  messages: (TMessageProps & {
-    _id: string;
-  })[];
-  nextCursor: string | null;
-}>;
-
-export type TChatRoomGenerateRequest = {
-  channelName: string;
-  description: string;
-};
-
-export type TChatRoomGenerateResponse = TApiResponse<TChannelProps>;

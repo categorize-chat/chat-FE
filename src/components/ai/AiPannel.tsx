@@ -1,7 +1,7 @@
 import { Box, Sheet, Stack, Typography } from '@mui/joy';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useMutation } from 'react-query';
-import { AiSummaryQuery } from '../../utils/ai/query';
+import { AiSummaryQuery } from '../../api/ai/query';
 import { useChatStore } from '../../state/chat';
 import AiInit from './AiInit';
 import AiLoading from './AiLoading';

@@ -7,10 +7,10 @@ import {
   Input,
   Typography,
 } from '@mui/joy';
-import { useUserStore } from '../../state/user';
+import { useUserStore } from '@/state/user';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
-import userApi from '../../utils/user/api';
+import userApi from '@/api/user/api';
 import Divider from '@mui/joy/Divider';
 const Settings = () => {
   const { nickname, profileUrl, email, setNickname } = useUserStore();

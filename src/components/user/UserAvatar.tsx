@@ -1,5 +1,5 @@
 import { Box } from '@mui/joy';
-import { TUserProps } from '../../utils/user/type';
+import { TUserProps } from '@/types';
 
 interface TUserAvatarProps {
   user: TUserProps | null;

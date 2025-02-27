@@ -1,8 +1,8 @@
 import { Box, IconButton, Typography } from '@mui/joy';
 import UserAvatar from '../../user/UserAvatar';
-import { useUserStore } from '../../../state/user';
+import { useUserStore } from '@/state/user';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 const UserStats = () => {
   const { nickname, email, profileUrl } = useUserStore();
