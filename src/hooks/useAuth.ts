@@ -3,12 +3,11 @@ import { useUserStore } from '../state/user';
 import userApi from '../utils/user/api';
 import { Paths } from '../routes/paths';
 import { TUserAuthResponse } from '../utils/user/type';
-import { Cookies } from 'react-cookie';
 import { useMemo } from 'react';
+
 export const useAuth = () => {
   const navigate = useNavigate();
   const { email, setNickname, setEmail, setProfileUrl, reset } = useUserStore();
-  const cookies = new Cookies();
 
   const isLoggedIn = useMemo(() => {
     const accessToken = localStorage.getItem('accessToken');
@@ -45,12 +44,14 @@ export const useAuth = () => {
   };
 
   const logoutHandler = async () => {
+    // 쿠키가 삭제됨
+    await userApi.logout();
+
     // 유저 정보 지우기
     reset();
 
     // 엑세스 토큰 지우기
     localStorage.removeItem('accessToken');
-    cookies.remove('refreshToken'); // http only 면 안될듯?
 
     navigate(Paths.user.login());
   };
