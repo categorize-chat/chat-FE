@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/joy';
-import { TChannelProps } from '../../api/chat/type';
+import { TChannelProps } from '@/api/chat/type';
 import SubsButton from './SubsButton';
 
 type TChannelListItemProps = {

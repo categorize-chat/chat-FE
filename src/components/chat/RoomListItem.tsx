@@ -8,10 +8,10 @@ import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
-import { toggleMessagesPane } from '../../utils/chat';
-import { useChatStore } from '../../state/chat';
-import { TChannelProps } from '../../api/chat/type';
-import { Paths } from '../../routes/paths';
+import { toggleMessagesPane } from '@/utils/chat';
+import { useChatStore } from '@/state/chat';
+import { TChannelProps } from '@/api/chat/type';
+import { Paths } from '@/routes/paths';
 
 type TRoomListItemProps = TChannelProps & {
   unread?: boolean;

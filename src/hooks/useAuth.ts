@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../state/user';
-import userApi from '../api/user/api';
-import { Paths } from '../routes/paths';
-import { TUserAuthResponse } from '../api/user/type';
+import { useUserStore } from '@/state/user';
+import userApi from '@/api/user/api';
+import { Paths } from '@/routes/paths';
+import { TUserAuthResponse } from '@/api/user/type';
 import { useMemo } from 'react';
 
 export const useAuth = () => {

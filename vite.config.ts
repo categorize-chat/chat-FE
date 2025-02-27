@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from '@svgr/rollup';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -10,7 +11,7 @@ export default ({ mode }) => {
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),
     },
-    plugins: [react(), svgr()],
+    plugins: [react(), svgr(), tsconfigPaths()],
     server: {
       port: +env.VITE_CLIENT_PORT,
       proxy: {

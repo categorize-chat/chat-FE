@@ -1,13 +1,13 @@
 import { Box, Sheet } from '@mui/joy';
 import { useQuery } from 'react-query';
-import { chatRoomsQuery } from '../../api/chat/query';
-import { useChatStore, useSocket } from '../../state/chat';
+import { chatRoomsQuery } from '@/api/chat/query';
+import { useChatStore, useSocket } from '@/state/chat';
 import { useEffect, useCallback, useState } from 'react';
-import NewChatModal from '../../components/chat/NewChatModal';
-import { useUserStore } from '../../state/user';
+import NewChatModal from '@/components/chat/NewChatModal';
+import { useUserStore } from '@/state/user';
 import { useParams } from 'react-router-dom';
-import ChatSidebar from '../../components/chat/ChatSidebar';
-import MessagesPane from '../../components/chat/MessagesPane';
+import ChatSidebar from '@/components/chat/ChatSidebar';
+import MessagesPane from '@/components/chat/MessagesPane';
 
 export const ChatPage = () => {
   const { data: chatRoomsData, isError: chatRoomsError } =
