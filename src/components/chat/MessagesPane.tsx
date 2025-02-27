@@ -6,7 +6,7 @@ import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import AiPannel from '../ai/AiPannel';
 import { useChatStore, useSocket } from '@/state/chat';
-import { TMessageProps } from '@/api/chat/type';
+import { TMessageProps } from '@/types';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
 import { chatMessageQuery } from '@/api/chat/query';

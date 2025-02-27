@@ -2,7 +2,7 @@ import { Input, Sheet } from '@mui/joy';
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { searchApi } from '@/api/search/api';
-import { TChannelProps } from '@/api/chat/type';
+import { TChannelProps } from '@/types';
 import ChannelListItem from '@/components/search/ChannelListItem';
 import { debounce } from '@/utils/common/time';
 import { useQuery } from 'react-query';

@@ -1,6 +1,5 @@
-import { TChannelProps } from '../chat/type';
+import { TChannelProps, TUserProps } from '@/types';
 import { TApiResponse } from '../type';
-import { TUserProps } from '../user/type';
 
 export type TSearchRoomsRequest = {
   keyword: string;

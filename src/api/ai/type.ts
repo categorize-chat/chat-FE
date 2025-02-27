@@ -1,12 +1,10 @@
-import { TMessageProps } from '../chat/type';
+import { THmlKey, TMessageProps } from '@/types';
 import { TApiResponse } from '../type';
 
 export type TAiSummaryRequest = {
   channelId: string;
   howmany: number;
 };
-
-export type THmlKey = 'high' | 'mid' | 'low';
 
 export type TAiSummaryResponse = TApiResponse<{
   refChat: TMessageProps;

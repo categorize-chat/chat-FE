@@ -10,7 +10,7 @@ import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
 import { toggleMessagesPane } from '@/utils/chat';
 import { useChatStore } from '@/state/chat';
-import { TChannelProps } from '@/api/chat/type';
+import { TChannelProps } from '@/types';
 import { Paths } from '@/routes/paths';
 
 type TRoomListItemProps = TChannelProps & {

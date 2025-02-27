@@ -8,14 +8,12 @@ import {
   Stack,
   Typography,
 } from '@mui/joy';
-import { TAIStore, TColorMaps, useAIStore } from '../../state/ai';
+import { TAIStore, TColorMaps, useAIStore } from '@/state/ai';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
-import { useChatStore } from '../../state/chat';
-import { TMessageProps } from '../../utils/chat/type';
-import _ from 'lodash';
+import { useChatStore } from '@/state/chat';
 import { Circle } from '@mui/icons-material';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { THmlKey } from '../../utils/ai/type';
+import { THmlKey, TMessageProps } from '@/types';
 
 const AiResult = () => {
   const { aiResult, init } = useAIStore();
