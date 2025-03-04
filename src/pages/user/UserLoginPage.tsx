@@ -1,16 +1,41 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
-import { Box, Button, Divider, Input, Typography } from '@mui/joy';
-import { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import { Alert, Box, Button, Divider, Input, Typography } from '@mui/joy';
+import { ChangeEvent, KeyboardEvent, useRef, useState, useEffect } from 'react';
 import { Paths } from '@/routes/paths';
 import JoinForm from '@/components/user/JoinForm';
 import KakaoAuthButton from '@/components/user/KakaoAuthButton';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import MailIcon from '@mui/icons-material/Mail';
 
 const UserLoginPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const { loginHandler } = useAuth();
+  const location = useLocation();
+  const [emailAlertState, setEmailAlertState] = useState(
+    location.state?.emailValidated,
+  );
+  const [alertVisible, setAlertVisible] = useState(true);
+
+  // 이메일 인증 알림을 5초 후에 사라지게 하는 효과
+  useEffect(() => {
+    setAlertVisible(true);
+    const timer = setTimeout(() => {
+      setAlertVisible(false);
+      // 애니메이션이 끝난 후에 실제 요소를 DOM에서 제거
+      setTimeout(() => {
+        setEmailAlertState(undefined);
+      }, 500); // 트랜지션 시간과 동일하게 설정
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [emailAlertState]);
+
+  useEffect(() => {
+    console.log(emailAlertState);
+  }, [emailAlertState]);
 
   const handleSubmit = async () => {
     if (emailInputRef.current === null) return;
@@ -46,11 +71,45 @@ const UserLoginPage = () => {
   return (
     <Box
       sx={{
+        position: 'relative',
         display: 'flex',
         minHeight: '100dvh',
         alignItems: 'center',
       }}
     >
+      {emailAlertState === true ? (
+        <Alert
+          color="success"
+          sx={{
+            position: 'absolute',
+            top: '16px',
+            left: '50%',
+            transform: `translateX(-50%) translateY(${alertVisible ? '0' : '-100px'})`,
+            opacity: alertVisible ? 1 : 0,
+            transition: 'transform 0.5s ease, opacity 0.5s ease',
+          }}
+          startDecorator={<MarkEmailReadIcon />}
+        >
+          이메일 인증이 완료되었습니다.
+        </Alert>
+      ) : emailAlertState === false ? (
+        <Alert
+          color="danger"
+          sx={{
+            position: 'absolute',
+            top: '16px',
+            left: '50%',
+            transform: `translateX(-50%) translateY(${alertVisible ? '0' : '-100px'})`,
+            opacity: alertVisible ? 1 : 0,
+            transition: 'transform 0.5s ease, opacity 0.5s ease',
+          }}
+          startDecorator={<MailIcon />}
+        >
+          이메일 인증이 완료되지 않았습니다.
+        </Alert>
+      ) : (
+        <></>
+      )}
       <JoinForm>
         <Typography level="h1">Welcome to AI-Chat</Typography>
         <Typography>로그인을 해주세요</Typography>

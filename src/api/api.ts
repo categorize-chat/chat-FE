@@ -2,19 +2,11 @@ import axios, { AxiosHeaders, AxiosInstance } from 'axios';
 import { TApiResponse } from './type';
 import Swal from 'sweetalert2';
 
-// Helper function to get tokens from localStorage
 const getAccessToken = () => localStorage.getItem('accessToken');
-const getRefreshToken = () => localStorage.getItem('refreshToken');
 
-// Refresh token function
 const refreshAccessToken = async () => {
   try {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) throw new Error('No refresh token available');
-
-    const response = await axios.post('/api/oauth/refresh', {
-      refreshToken,
-    });
+    const response = await axios.post('/api/oauth/refresh');
     const { accessToken } = response.data;
     localStorage.setItem('accessToken', accessToken);
     return accessToken;
@@ -36,6 +28,7 @@ const axiosApi = (extraHeader: Partial<AxiosHeaders>): AxiosInstance => {
   });
 
   // 요청 인터셉터 설정
+  // 매 응답 시 accessToken 추가
   instance.interceptors.request.use(
     config => {
       const token = getAccessToken();
@@ -76,6 +69,8 @@ export const API = {
     'Content-Type': 'application/json',
   }),
 };
+
+// ************ 핸들러 ************
 
 export const defaultResponseHandler = <
   TResponse extends TApiResponse<any>,
