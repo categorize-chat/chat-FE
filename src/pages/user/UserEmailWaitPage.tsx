@@ -8,7 +8,7 @@ const UserEmailWaitPage = () => {
   const navigate = useNavigate();
 
   const handleGotoLogin = () => {
-    navigate(Paths.user.login());
+    navigate(Paths.user.login(), { state: { emailValidated: false } });
   };
 
   return (

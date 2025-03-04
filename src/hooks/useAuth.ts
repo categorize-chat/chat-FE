@@ -42,8 +42,8 @@ export const useAuth = () => {
     // 회원가입 시에는 accessToken 을 받지 않음
     await userApi.join({ nickname, email, password });
 
-    // 회원가입 후 로그인 화면으로 이동
-    navigate(Paths.user.login());
+    // 회원가입 후 대기 화면으로 이동
+    navigate(Paths.user.emailWait());
   };
 
   const logoutHandler = async () => {
