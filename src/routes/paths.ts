@@ -16,4 +16,7 @@ export const Paths = {
   search: {
     base: () => '/search',
   },
+  auth: {
+    emailValidation: () => '/verify-email',
+  },
 } as const;

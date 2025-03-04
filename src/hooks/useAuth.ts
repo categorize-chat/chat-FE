@@ -4,6 +4,7 @@ import userApi from '@/api/user/api';
 import { Paths } from '@/routes/paths';
 import { TUserAuthResponse } from '@/api/user/type';
 import { useMemo } from 'react';
+import authApi from '@/api/auth/api';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -38,9 +39,11 @@ export const useAuth = () => {
     email: string,
     password: string,
   ) => {
-    await userApi.join({ nickname, email, password }).then(updateUserInfo);
+    // 회원가입 시에는 accessToken 을 받지 않음
+    await userApi.join({ nickname, email, password });
 
-    navigate(Paths.chat.base());
+    // 회원가입 후 로그인 화면으로 이동
+    navigate(Paths.user.login());
   };
 
   const logoutHandler = async () => {
@@ -62,11 +65,23 @@ export const useAuth = () => {
     navigate(Paths.chat.base());
   };
 
+  const emailValidateionHandler = async (code: string) => {
+    try {
+      await authApi.validateEmail(code);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+    navigate(Paths.user.login(), { state: { emailValidated: true } });
+  };
+
   return {
     loginHandler,
     joinHandler,
     logoutHandler,
     kakaoLoginHandler,
+    emailValidateionHandler,
     isLoggedIn,
   };
 };
