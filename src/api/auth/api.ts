@@ -8,6 +8,13 @@ const authApi = {
       .then(defaultResponseHandler<TValidateEmailResponse>)
       .catch(defaultAxiosErrorHandler);
   },
+
+  async resendEmail(email: string) {
+    return await API.json
+      .post('/oauth/resend-verification', { email })
+      .then(defaultResponseHandler<TValidateEmailResponse>)
+      .catch(defaultAxiosErrorHandler);
+  },
 };
 
 export default authApi;

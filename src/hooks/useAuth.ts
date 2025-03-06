@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/state/user';
 import userApi from '@/api/user/api';
 import { Paths } from '@/routes/paths';
 import { TUserAuthResponse } from '@/api/user/type';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import authApi from '@/api/auth/api';
 
 export const useAuth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { email, setNickname, setEmail, setProfileUrl, reset } = useUserStore();
 
   const isLoggedIn = useMemo(() => {
@@ -15,6 +16,26 @@ export const useAuth = () => {
 
     return email && accessToken;
   }, [email]);
+
+  // 이메일 대기 화면에서 필요한 이메일 정보
+  const emailWaiting = useMemo(() => {
+    const emailFromStorage = localStorage.getItem('tempEmail');
+    const emailFromLocation = location.state?.email;
+
+    if (!emailFromStorage && !emailFromLocation) {
+      return undefined;
+    }
+
+    if (emailFromLocation) {
+      localStorage.setItem('tempEmail', emailFromLocation);
+    }
+
+    return emailFromLocation || emailFromStorage;
+  }, [location.state]);
+
+  const removeTempEmail = useCallback(() => {
+    localStorage.removeItem('tempEmail');
+  }, []);
 
   // 로그인/회원가입 을 통해 받아온 데이터로 유저 정보 업데이트
   const updateUserInfo = (userInfo: TUserAuthResponse['result']) => {
@@ -43,7 +64,7 @@ export const useAuth = () => {
     await userApi.join({ nickname, email, password });
 
     // 회원가입 후 대기 화면으로 이동
-    navigate(Paths.user.emailWait());
+    navigate(Paths.user.emailWait(), { state: { email } });
   };
 
   const logoutHandler = async () => {
@@ -73,7 +94,24 @@ export const useAuth = () => {
       throw error;
     }
 
+    // 성공했을 때에는 임시 이메일 정보 삭제
+    removeTempEmail();
     navigate(Paths.user.login(), { state: { emailValidated: true } });
+  };
+
+  const emailResendHandler = async () => {
+    try {
+      const tempEmail = emailWaiting;
+
+      if (!tempEmail) {
+        throw new Error('이메일이 존재하지 않습니다.');
+      }
+
+      await authApi.resendEmail(tempEmail);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 
   return {
@@ -83,5 +121,7 @@ export const useAuth = () => {
     kakaoLoginHandler,
     emailValidateionHandler,
     isLoggedIn,
+    emailResendHandler,
+    emailWaiting,
   };
 };
