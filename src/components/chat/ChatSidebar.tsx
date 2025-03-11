@@ -51,7 +51,7 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
             }
             sx={{ mr: 'auto' }}
           >
-            메세지
+            채팅
           </Typography>
           <IconButton
             variant="plain"

@@ -21,7 +21,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Paths } from '../../routes/paths';
 import TabItem from './sidebar/TabItem';
 import UserStats from './sidebar/UserStats';
-
+import { useMemo } from 'react';
 export default function Sidebar() {
   const { chats } = useChatStore();
   const { pathname } = useLocation();
@@ -41,6 +41,12 @@ export default function Sidebar() {
   const handleGoFriends = () => {
     alert('준비중입니다.');
   };
+
+  const unreadCount = useMemo(() => {
+    return chats?.reduce((acc, chat) => {
+      return acc + chat.unreadCount;
+    }, 0);
+  }, [chats]);
 
   return (
     <Sheet
@@ -135,9 +141,11 @@ export default function Sidebar() {
             icon={<QuestionAnswerRoundedIcon />}
             onClick={handleGoHome}
           >
-            <Chip size="sm" color="primary" variant="solid">
-              {chats?.length}
-            </Chip>
+            {unreadCount > 0 && (
+              <Chip size="sm" color="primary" variant="solid">
+                {unreadCount}
+              </Chip>
+            )}
           </TabItem>
 
           <TabItem
