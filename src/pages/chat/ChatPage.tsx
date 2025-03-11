@@ -1,6 +1,6 @@
 import { Box, Sheet } from '@mui/joy';
-import { useQuery } from 'react-query';
-import { chatRoomsQuery } from '@/api/chat/query';
+import { useQuery, useQueryClient } from 'react-query';
+import { chatRoomsQuery, chatQueryKeys } from '@/api/chat/query';
 import { useChatStore, useSocket } from '@/state/chat';
 import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '@/components/chat/NewChatModal';
@@ -12,6 +12,7 @@ import MessagesPane from '@/components/chat/MessagesPane';
 export const ChatPage = () => {
   const { data: chatRoomsData, isError: chatRoomsError } =
     useQuery(chatRoomsQuery());
+  const queryClient = useQueryClient();
   const { chats, setChats } = useChatStore();
   const { setSubscriptions } = useUserStore();
 
@@ -39,13 +40,6 @@ export const ChatPage = () => {
     updateSelectedChat(chatId, chats);
   }, [chatId, chats, updateSelectedChat]);
 
-  useEffect(() => {
-    if (!socket || !chatId) return;
-
-    // 채팅방에 입장
-    socket.emit('join', chatId);
-  }, [socket, chatId]);
-
   // 소켓 연결
   useEffect(() => {
     const socketUrl = `${import.meta.env.VITE_SOCK_URL}/chat`;
@@ -56,7 +50,18 @@ export const ChatPage = () => {
       secure: true,
       auth: { token: localStorage.getItem('accessToken') },
     });
-  }, [chatId]);
+  }, []);
+
+  // 소켓 이벤트 및 채팅방 입장
+  useEffect(() => {
+    if (!socket || !chatId) return;
+
+    // 채팅방에 입장
+    socket.emit('join', chatId);
+    socket.emit('view', chatId);
+
+    queryClient.invalidateQueries(chatQueryKeys.rooms);
+  }, [socket, chatId, queryClient]);
 
   // 받아온 채널 설정
   useEffect(() => {

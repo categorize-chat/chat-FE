@@ -25,6 +25,8 @@ export type TChannelProps = {
   description: string;
   owner: TUserProps;
   participants: TUserProps[];
+  totalMessageCount: number;
+  unreadCount: number;
 };
 
 export type TChatProps = TMessageProps[];
