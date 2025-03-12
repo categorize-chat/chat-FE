@@ -2,7 +2,7 @@ import GlobalStyles from '@mui/joy/GlobalStyles';
 import IconButton from '@mui/joy/IconButton';
 import Sheet from '@mui/joy/Sheet';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import { toggleSidebar } from '../../utils/chat';
+import { toggleSidebar } from '@/utils/chat';
 
 export default function Header() {
   return (

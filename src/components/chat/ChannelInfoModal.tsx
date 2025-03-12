@@ -1,9 +1,10 @@
 import React from 'react';
 import ModalBase from '../common/ModalBase';
 import { Typography } from '@mui/material';
-import { TChannelProps } from '../../utils/chat/type';
 import SubsButton from '../search/SubsButton';
 import { useNavigate } from 'react-router-dom';
+import { TChannelProps } from '@/types';
+
 type TChannelInfoModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

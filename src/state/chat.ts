@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
-import { TChannelProps, TMessageProps } from '../utils/chat/type';
+import { TChannelProps, TMessageProps } from '@/types';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 type TChatStore = {

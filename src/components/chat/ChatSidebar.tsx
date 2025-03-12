@@ -7,8 +7,8 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RoomListItem from './RoomListItem';
-import { useChatStore } from '../../state/chat';
-import { toggleMessagesPane } from '../../utils/chat';
+import { useChatStore } from '@/state/chat';
+import { toggleMessagesPane } from '@/utils/chat';
 
 type TChatSidebarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,7 +51,7 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
             }
             sx={{ mr: 'auto' }}
           >
-            메세지
+            채팅
           </Typography>
           <IconButton
             variant="plain"

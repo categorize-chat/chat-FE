@@ -1,10 +1,5 @@
 import { TApiResponse } from '../type';
-
-export type TUserProps = {
-  nickname: string;
-  email: string;
-  profileUrl: string;
-};
+import { TUserProps } from '@/types';
 
 export type TUserJoinRequest = {
   nickname: string;
@@ -30,6 +25,8 @@ export type TUserAuthResponse = TApiResponse<
     accessToken: string;
   } & TUserProps
 >;
+
+export type TUserLogoutResponse = TApiResponse<null>;
 
 export type TUserUpdateRequest = {
   nickname: string;

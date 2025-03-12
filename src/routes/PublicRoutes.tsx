@@ -4,6 +4,8 @@ import UserLoginPage from '../pages/user/UserLoginPage';
 import OAuthCallback from '../pages/user/OAuthCallback';
 import { Paths } from './paths';
 import { useAuth } from '../hooks/useAuth';
+import EmailValidationCallback from '@/pages/user/EmailValidationCallback';
+import UserEmailWaitPage from '@/pages/user/UserEmailWaitPage';
 
 const RootRedirect = () => {
   const { isLoggedIn } = useAuth();
@@ -20,6 +22,11 @@ export const PublicRoutes = (
     <Route path={Paths.base()} element={<RootRedirect />} />
     <Route path={Paths.user.join()} element={<UserJoinPage />} />
     <Route path={Paths.user.login()} element={<UserLoginPage />} />
+    <Route path={Paths.user.emailWait()} element={<UserEmailWaitPage />} />
     <Route path={Paths.user.oauth.kakao()} element={<OAuthCallback />} />
+    <Route
+      path={Paths.auth.emailValidation()}
+      element={<EmailValidationCallback />}
+    />
   </>
 );

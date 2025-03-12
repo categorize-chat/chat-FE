@@ -1,8 +1,8 @@
 import { Box, Button, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { Typography } from '@mui/material';
-import { useChatStore } from '../../state/chat';
+import { useChatStore } from '@/state/chat';
 import { useMutation } from 'react-query';
-import { chatRoomGenerateQuery } from '../../utils/chat/query';
+import { chatRoomGenerateQuery } from '@/api/chat/query';
 import { ChangeEvent, useRef } from 'react';
 import ModalBase from '../common/ModalBase';
 

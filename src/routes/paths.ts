@@ -4,6 +4,7 @@ export const Paths = {
     base: () => '/user',
     join: () => '/join',
     login: () => '/login',
+    emailWait: () => '/email-wait',
     settings: () => '/settings',
     oauth: {
       kakao: () => '/user/oauth/kakao',
@@ -15,5 +16,8 @@ export const Paths = {
   },
   search: {
     base: () => '/search',
+  },
+  auth: {
+    emailValidation: () => '/verify-email',
   },
 } as const;

@@ -5,20 +5,18 @@ import ListItem from '@mui/joy/ListItem';
 import ListItemButton from '@mui/joy/ListItemButton';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
-import { toggleMessagesPane } from '../../utils/chat';
-import { useChatStore } from '../../state/chat';
-import { TChannelProps } from '../../utils/chat/type';
-import { Paths } from '../../routes/paths';
+import { toggleMessagesPane } from '@/utils/chat';
+import { useChatStore } from '@/state/chat';
+import { TChannelProps } from '@/types';
+import { Paths } from '@/routes/paths';
+import { Chip } from '@mui/joy';
 
-type TRoomListItemProps = TChannelProps & {
-  unread?: boolean;
-};
+type TRoomListItemProps = TChannelProps;
 
 export default function RoomListItem(props: TRoomListItemProps) {
-  const { channelId, channelName, unread } = props;
+  const { channelId, channelName, unreadCount } = props;
   const navigate = useNavigate();
 
   const selectedId = useChatStore(state => state.selectedId);
@@ -55,7 +53,11 @@ export default function RoomListItem(props: TRoomListItemProps) {
                 textAlign: 'right',
               }}
             >
-              {unread && <CircleIcon sx={{ fontSize: 12 }} color="primary" />}
+              {unreadCount > 0 && (
+                <Chip color="primary" size="sm">
+                  {unreadCount}
+                </Chip>
+              )}
             </Box>
           </Stack>
           <Typography

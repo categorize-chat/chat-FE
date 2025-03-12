@@ -1,7 +1,7 @@
 import { Button } from '@mui/joy';
-import { useUserStore } from '../../state/user';
+import { useUserStore } from '@/state/user';
 import { useMemo, useState } from 'react';
-import { searchApi } from '../../utils/search/api';
+import { searchApi } from '@/api/search/api';
 
 type TSubsButtonProps = {
   channelId: string;
