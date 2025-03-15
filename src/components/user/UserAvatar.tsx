@@ -1,4 +1,4 @@
-import { Box } from '@mui/joy';
+import { Avatar, Box } from '@mui/joy';
 import { TUserProps } from '@/types';
 
 interface TUserAvatarProps {
@@ -14,7 +14,7 @@ const UserAvatar = ({ user }: TUserAvatarProps) => {
       }}
     >
       {user && (
-        <img
+        <Avatar
           src={user.profileUrl}
           style={{
             width: '100%',
