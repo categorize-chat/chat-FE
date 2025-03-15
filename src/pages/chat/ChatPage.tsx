@@ -30,26 +30,7 @@ export const ChatPage = () => {
     }
   }, []);
 
-  const handleChatsUpdate = (message: TMessageProps) => {
-    const currentChats = chats;
-
-    if (currentChats) {
-      const updatedChats = currentChats.map(chat => {
-        if (chat.channelId === message.room) {
-          return {
-            ...chat,
-            unreadCount: chat.unreadCount + 1,
-            totalMessageCount: chat.totalMessageCount + 1,
-          };
-        }
-        return chat;
-      });
-
-      setChats(updatedChats);
-    }
-  };
-
-  const handleViewChats = (id: string) => {
+  const handleRoomView = (id: string) => {
     const newChats = chats.map(chat => {
       if (chat.channelId === id) {
         return {
@@ -65,11 +46,35 @@ export const ChatPage = () => {
   };
 
   // 메시지 수신 이벤트 핸들러
-  const handleChatMessage = (newMessage: TMessageProps) => {
+  const handleIncomingMessage = (newMessage: TMessageProps) => {
     // 현재 채팅방이 아닌 다른 채팅방에서 온 메시지인 경우 읽지 않은 메시지 수 업데이트
     if (newMessage.room && newMessage.room !== chatId) {
-      handleChatsUpdate(newMessage);
+      const updatedChats = chats.map(chat => {
+        if (chat.channelId === newMessage.room) {
+          return {
+            ...chat,
+            unreadCount: chat.unreadCount + 1,
+            totalMessageCount: chat.totalMessageCount + 1,
+            lastMessage: newMessage,
+          };
+        }
+        return chat;
+      });
+
+      setChats(updatedChats);
     } else {
+      const updatedChats = chats.map(chat => {
+        if (chat.channelId === newMessage.room) {
+          return {
+            ...chat,
+            lastMessage: newMessage,
+          };
+        }
+        return chat;
+      });
+
+      setChats(updatedChats);
+
       // 메시지 추가
       addNewMessage(newMessage);
     }
@@ -111,19 +116,19 @@ export const ChatPage = () => {
     // 채팅방에 입장
     if (chatId) {
       socket.emit('view', chatId);
-      handleViewChats(chatId);
+      handleRoomView(chatId);
     }
   }, [chatId]);
 
   useEffect(() => {
     // 이벤트 리스너 등록
-    socket.on('chat', handleChatMessage);
+    socket.on('chat', handleIncomingMessage);
 
     // cleanup 함수: 컴포넌트 언마운트 또는 의존성 변경 시 이벤트 리스너 제거
     return () => {
-      socket.off('chat', handleChatMessage);
+      socket.off('chat', handleIncomingMessage);
     };
-  }, [handleChatMessage]);
+  }, [handleIncomingMessage]);
 
   if (chatRoomsError) {
     return <></>;
