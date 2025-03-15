@@ -12,32 +12,86 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import userApi from '@/api/user/api';
 import Divider from '@mui/joy/Divider';
+import Swal from 'sweetalert2';
+
 const Settings = () => {
-  const { nickname, profileUrl, email, setNickname } = useUserStore();
+  const { nickname, profileUrl, email, setNickname, setProfileUrl } =
+    useUserStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [nicknameInput, setNicknameInput] = useState(nickname);
 
   const handleEditNickname = async () => {
-    await userApi.updateUserInfo({ nickname: nicknameInput });
+    await userApi.updateNickname({ nickname: nicknameInput });
 
     setIsEditing(false);
     setNickname(nicknameInput);
   };
+
   const handleEditProfileImage = async () => {
-    alert('준비중입니다.');
-    return;
+    try {
+      // 파일 선택 다이얼로그 열기
+      const file = await (window as any).showOpenFilePicker({
+        types: [
+          {
+            description: '이미지 파일',
+            accept: {
+              'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
+            },
+          },
+        ],
+        multiple: false,
+      });
 
-    const file = await (window as any).showOpenFilePicker();
-    const fileHandle = file[0];
-    const fileData = await fileHandle.getFile();
-    const fileBlob = new Blob([fileData], { type: fileData.type });
+      const fileHandle = file[0];
+      const fileData = await fileHandle.getFile();
 
-    const formData = new FormData();
-    formData.append('file', fileBlob, fileData.name);
+      // 파일 크기 제한 (5MB)
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+      if (fileData.size > MAX_FILE_SIZE) {
+        await Swal.fire({
+          title: '파일 크기 초과',
+          text: '프로필 이미지는 5MB 이하여야 합니다.',
+          icon: 'error',
+        });
+        return;
+      }
 
-    // TODO: form data 처리
-    // const response = await userApi.updateUserInfo(formData);
+      // 이미지 파일 타입 확인
+      if (!fileData.type.startsWith('image/')) {
+        await Swal.fire({
+          title: '지원되지 않는 파일 형식',
+          text: '이미지 파일만 업로드 가능합니다.',
+          icon: 'error',
+        });
+        return;
+      }
+
+      // API 호출
+      const response = await userApi.updateProfileImage({ file: fileData });
+
+      // 프로필 이미지 업데이트 성공 시 상태 업데이트
+      if (response) {
+        setProfileUrl(response.profileUrl || profileUrl);
+        await Swal.fire({
+          title: '성공',
+          text: '프로필 이미지가 업데이트되었습니다.',
+          icon: 'success',
+        });
+      }
+    } catch (error) {
+      console.error('프로필 이미지 업데이트 실패:', error);
+      // 사용자가 파일 선택을 취소한 경우 에러 메시지를 표시하지 않음
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+
+      await Swal.fire({
+        title: '오류',
+        text: '프로필 이미지 업데이트 중 오류가 발생했습니다.',
+        icon: 'error',
+      });
+    }
   };
 
   return (

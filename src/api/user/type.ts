@@ -32,6 +32,11 @@ export type TUserUpdateRequest = {
   nickname: string;
 };
 
+export type TUserUpdateProfileImageRequest = {
+  file: File;
+};
+
 export type TUserUpdateResponse = TApiResponse<{
   nickname: string;
+  profileUrl?: string;
 }>;
