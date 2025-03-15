@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
 import { TChannelProps, TMessageProps } from '@/types';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -17,14 +16,6 @@ type TChatStore = {
   setModalOpen: (modalOpen: boolean) => void;
   setChatMessages: (chatMessages: TMessageProps[]) => void;
   addNewMessage: (newMessage: TMessageProps) => void;
-};
-
-type TSocketStore = {
-  socket: Socket | undefined;
-  connectSocket: (
-    url: string,
-    opts?: Partial<ManagerOptions & SocketOptions>,
-  ) => void;
 };
 
 const initChatState = {
@@ -62,8 +53,3 @@ export const useChatStore = create<TChatStore>()(
     },
   ),
 );
-
-export const useSocket = create<TSocketStore>(set => ({
-  socket: undefined,
-  connectSocket: (url, opts?) => set(() => ({ socket: io(url, opts) })),
-}));
