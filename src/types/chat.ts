@@ -13,6 +13,7 @@ export type TMessageProps = {
   // };
 
   user: TUserProps;
+  room: string;
   createdAt: string;
   content: string;
   topic: number;
@@ -27,6 +28,7 @@ export type TChannelProps = {
   participants: TUserProps[];
   totalMessageCount: number;
   unreadCount: number;
+  lastMessage: TMessageProps;
 };
 
 export type TChatProps = TMessageProps[];

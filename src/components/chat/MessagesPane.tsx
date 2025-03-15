@@ -5,7 +5,7 @@ import Stack from '@mui/joy/Stack';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import AiPannel from '../ai/AiPannel';
-import { useChatStore, useSocket } from '@/state/chat';
+import { useChatStore } from '@/state/chat';
 import { TMessageProps } from '@/types';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
@@ -17,17 +17,15 @@ import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '@/state/ai';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
+import { socket } from '@/utils/socket';
 
 const MemoizedMessagesPaneHeader = memo(MessagesPaneHeader);
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, selectedChat, setChatMessages, addNewMessage } =
-    useChatStore();
+  const { chatMessages, selectedChat, setChatMessages } = useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
-
-  const socket = useSocket(state => state.socket);
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -72,11 +70,11 @@ export default function MessagesPane() {
       content: textAreaValue,
       createdAt: new Date().toISOString(),
       topic: -1,
+      room: chatId || '',
     };
 
     socket.emit('message', {
       ...newMessage,
-      roomId: chatId,
     });
   };
 
@@ -137,23 +135,6 @@ export default function MessagesPane() {
       behavior: 'smooth',
     });
   }, [selectedTopic, firstTopicIndices]);
-
-  useEffect(() => {
-    if (socket === undefined) return;
-
-    // 메시지 수신 이벤트 핸들러
-    const handleChatMessage = (newMessage: TMessageProps) => {
-      addNewMessage(newMessage);
-    };
-
-    // 이벤트 리스너 등록
-    socket.on('chat', handleChatMessage);
-
-    // cleanup 함수: 컴포넌트 언마운트 또는 의존성 변경 시 이벤트 리스너 제거
-    return () => {
-      socket.off('chat', handleChatMessage);
-    };
-  }, [socket, addNewMessage]); // addNewMessage도 의존성 배열에 추가
 
   if (isError) {
     return <></>;
