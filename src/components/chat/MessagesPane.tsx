@@ -17,7 +17,7 @@ import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '@/state/ai';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { socket } from '@/utils/socket';
+import { getSocket } from '@/utils/socket';
 
 const MemoizedMessagesPaneHeader = memo(MessagesPaneHeader);
 
@@ -63,6 +63,7 @@ export default function MessagesPane() {
   }, [nickname, email, profileUrl]);
 
   const handleChatSend = async () => {
+    const socket = getSocket();
     if (!socket) return;
 
     const newMessage: TMessageProps = {
