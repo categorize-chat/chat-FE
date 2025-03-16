@@ -8,7 +8,7 @@ import { useUserStore } from '@/state/user';
 import { useParams } from 'react-router-dom';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import MessagesPane from '@/components/chat/MessagesPane';
-import { socket } from '@/utils/socket';
+import { getSocket, connectSocket } from '@/utils/socket';
 import { TMessageProps } from '@/types';
 
 export const ChatPage = () => {
@@ -46,39 +46,54 @@ export const ChatPage = () => {
   };
 
   // 메시지 수신 이벤트 핸들러
-  const handleIncomingMessage = (newMessage: TMessageProps) => {
-    // 현재 채팅방이 아닌 다른 채팅방에서 온 메시지인 경우 읽지 않은 메시지 수 업데이트
-    if (newMessage.room && newMessage.room !== chatId) {
-      const updatedChats = chats.map(chat => {
-        if (chat.channelId === newMessage.room) {
-          return {
-            ...chat,
-            unreadCount: chat.unreadCount + 1,
-            totalMessageCount: chat.totalMessageCount + 1,
-            lastMessage: newMessage,
-          };
-        }
-        return chat;
-      });
+  const handleIncomingMessage = useCallback(
+    (newMessage: TMessageProps) => {
+      // 현재 채팅방이 아닌 다른 채팅방에서 온 메시지인 경우 읽지 않은 메시지 수 업데이트
+      if (newMessage.room && newMessage.room !== chatId) {
+        const updatedChats = chats.map(chat => {
+          if (chat.channelId === newMessage.room) {
+            return {
+              ...chat,
+              unreadCount: chat.unreadCount + 1,
+              totalMessageCount: chat.totalMessageCount + 1,
+              lastMessage: newMessage,
+            };
+          }
+          return chat;
+        });
 
-      setChats(updatedChats);
-    } else {
-      const updatedChats = chats.map(chat => {
-        if (chat.channelId === newMessage.room) {
-          return {
-            ...chat,
-            lastMessage: newMessage,
-          };
-        }
-        return chat;
-      });
+        setChats(updatedChats);
+      } else {
+        const updatedChats = chats.map(chat => {
+          if (chat.channelId === newMessage.room) {
+            return {
+              ...chat,
+              lastMessage: newMessage,
+            };
+          }
+          return chat;
+        });
 
-      setChats(updatedChats);
+        setChats(updatedChats);
 
-      // 메시지 추가
-      addNewMessage(newMessage);
+        // 메시지 추가
+        addNewMessage(newMessage);
+      }
+    },
+    [chatId, chats, setChats, addNewMessage],
+  );
+
+  // 컴포넌트 마운트 시 소켓 연결 확인
+  useEffect(() => {
+    // 소켓이 연결되어 있지 않으면 연결 시도
+    if (!getSocket()) {
+      try {
+        connectSocket();
+      } catch (error) {
+        console.error('소켓 연결 실패:', error);
+      }
     }
-  };
+  }, []);
 
   // 받아온 채널 설정
   useEffect(() => {
@@ -103,7 +118,8 @@ export const ChatPage = () => {
   }, [chatId, chats, updateSelectedChat]);
 
   useEffect(() => {
-    if (!socket) return;
+    const socket = getSocket();
+    if (!socket || !subscriptions.length) return;
 
     // 구독하고 있는 모든 채팅방에 입장
     socket.emit('join', subscriptions);
@@ -111,16 +127,18 @@ export const ChatPage = () => {
 
   // 채팅방 입장 관련 처리
   useEffect(() => {
-    if (!socket) return;
+    const socket = getSocket();
+    if (!socket || !chatId) return;
 
     // 채팅방에 입장
-    if (chatId) {
-      socket.emit('view', chatId);
-      handleRoomView(chatId);
-    }
+    socket.emit('view', chatId);
+    handleRoomView(chatId);
   }, [chatId]);
 
   useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
     // 이벤트 리스너 등록
     socket.on('chat', handleIncomingMessage);
 
