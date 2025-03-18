@@ -46,12 +46,12 @@ const Settings = () => {
       const fileHandle = file[0];
       const fileData = await fileHandle.getFile();
 
-      // 파일 크기 제한 (5MB)
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+      // 파일 크기 제한 (10MB)
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
       if (fileData.size > MAX_FILE_SIZE) {
         await Swal.fire({
           title: '파일 크기 초과',
-          text: '프로필 이미지는 5MB 이하여야 합니다.',
+          text: '프로필 이미지는 10MB 이하여야 합니다.',
           icon: 'error',
         });
         return;
