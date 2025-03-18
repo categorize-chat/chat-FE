@@ -1,13 +1,20 @@
 import axios, { AxiosHeaders, AxiosInstance } from 'axios';
 import { TApiResponse } from './type';
 import Swal from 'sweetalert2';
+import { disconnectSocket } from '@/utils/socket';
 
 const getAccessToken = () => localStorage.getItem('accessToken');
+
+const handleTokenRefreshFailure = () => {
+  disconnectSocket();
+  localStorage.removeItem('accessToken');
+  window.location.href = '/login';
+};
 
 const refreshAccessToken = async () => {
   try {
     const response = await axios.post('/api/oauth/refresh');
-    const { accessToken } = response.data;
+    const { accessToken } = response.data.result;
     localStorage.setItem('accessToken', accessToken);
     return accessToken;
   } catch (error) {
@@ -54,6 +61,9 @@ const axiosApi = (extraHeader: Partial<AxiosHeaders>): AxiosInstance => {
           return instance(originalRequest); // Retry the request with the new token
         } catch (refreshError) {
           console.error('Token refresh failed:', refreshError);
+
+          handleTokenRefreshFailure();
+
           return Promise.reject(refreshError);
         }
       }
