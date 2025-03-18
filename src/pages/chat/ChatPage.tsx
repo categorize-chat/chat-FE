@@ -1,24 +1,24 @@
 import { Box, Sheet } from '@mui/joy';
-import { useQuery, useQueryClient } from 'react-query';
-import { chatRoomsQuery, chatQueryKeys } from '@/api/chat/query';
-import { useChatStore, useSocket } from '@/state/chat';
+import { useQuery } from 'react-query';
+import { chatRoomsQuery } from '@/api/chat/query';
+import { useChatStore } from '@/state/chat';
 import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '@/components/chat/NewChatModal';
 import { useUserStore } from '@/state/user';
 import { useParams } from 'react-router-dom';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import MessagesPane from '@/components/chat/MessagesPane';
+import { getSocket, connectSocket } from '@/utils/socket';
+import { TMessageProps } from '@/types';
 
 export const ChatPage = () => {
   const { data: chatRoomsData, isError: chatRoomsError } =
     useQuery(chatRoomsQuery());
-  const queryClient = useQueryClient();
   const { chats, setChats } = useChatStore();
-  const { setSubscriptions } = useUserStore();
+  const { subscriptions, setSubscriptions } = useUserStore();
 
   const { id: chatId } = useParams();
-  const { setSelectedId, setSelectedChat } = useChatStore();
-  const { socket, connectSocket } = useSocket();
+  const { setSelectedId, setSelectedChat, addNewMessage } = useChatStore();
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -30,38 +30,70 @@ export const ChatPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!chatId) return;
+  const handleRoomView = (id: string) => {
+    const newChats = chats.map(chat => {
+      if (chat.channelId === id) {
+        return {
+          ...chat,
+          unreadCount: 0,
+        };
+      }
 
-    setSelectedId(chatId);
-
-    if (!chats) return;
-
-    updateSelectedChat(chatId, chats);
-  }, [chatId, chats, updateSelectedChat]);
-
-  // 소켓 연결
-  useEffect(() => {
-    const socketUrl = `${import.meta.env.VITE_SOCK_URL}/chat`;
-
-    connectSocket(socketUrl, {
-      path: '/socket.io',
-      withCredentials: true,
-      secure: true,
-      auth: { token: localStorage.getItem('accessToken') },
+      return chat;
     });
-  }, []);
 
-  // 소켓 이벤트 및 채팅방 입장
+    setChats(newChats);
+  };
+
+  // 메시지 수신 이벤트 핸들러
+  const handleIncomingMessage = useCallback(
+    (newMessage: TMessageProps) => {
+      // 현재 채팅방이 아닌 다른 채팅방에서 온 메시지인 경우 읽지 않은 메시지 수 업데이트
+      if (newMessage.room && newMessage.room !== chatId) {
+        const updatedChats = chats.map(chat => {
+          if (chat.channelId === newMessage.room) {
+            return {
+              ...chat,
+              unreadCount: chat.unreadCount + 1,
+              totalMessageCount: chat.totalMessageCount + 1,
+              lastMessage: newMessage,
+            };
+          }
+          return chat;
+        });
+
+        setChats(updatedChats);
+      } else {
+        const updatedChats = chats.map(chat => {
+          if (chat.channelId === newMessage.room) {
+            return {
+              ...chat,
+              lastMessage: newMessage,
+            };
+          }
+          return chat;
+        });
+
+        setChats(updatedChats);
+
+        // 메시지 추가
+        addNewMessage(newMessage);
+      }
+    },
+    [chatId, chats, setChats, addNewMessage],
+  );
+
+  // 컴포넌트 마운트 시 소켓 연결 확인
   useEffect(() => {
-    if (!socket || !chatId) return;
-
-    // 채팅방에 입장
-    socket.emit('join', chatId);
-    socket.emit('view', chatId);
-
-    queryClient.invalidateQueries(chatQueryKeys.rooms);
-  }, [socket, chatId, queryClient]);
+    // 소켓이 연결되어 있지 않으면 연결 시도
+    if (!getSocket()) {
+      try {
+        connectSocket();
+      } catch (error) {
+        console.error('소켓 연결 실패:', error);
+      }
+    }
+  }, []);
 
   // 받아온 채널 설정
   useEffect(() => {
@@ -74,6 +106,47 @@ export const ChatPage = () => {
 
     setSubscriptions(channels.map(channel => channel.channelId));
   }, [chatRoomsData, setChats]);
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    setSelectedId(chatId);
+
+    if (!chats) return;
+
+    updateSelectedChat(chatId, chats);
+  }, [chatId, chats, updateSelectedChat]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket || !subscriptions.length) return;
+
+    // 구독하고 있는 모든 채팅방에 입장
+    socket.emit('join', subscriptions);
+  }, [subscriptions]);
+
+  // 채팅방 입장 관련 처리
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket || !chatId) return;
+
+    // 채팅방에 입장
+    socket.emit('view', chatId);
+    handleRoomView(chatId);
+  }, [chatId]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    // 이벤트 리스너 등록
+    socket.on('chat', handleIncomingMessage);
+
+    // cleanup 함수: 컴포넌트 언마운트 또는 의존성 변경 시 이벤트 리스너 제거
+    return () => {
+      socket.off('chat', handleIncomingMessage);
+    };
+  }, [handleIncomingMessage]);
 
   if (chatRoomsError) {
     return <></>;

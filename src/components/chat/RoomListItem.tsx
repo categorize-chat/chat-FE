@@ -16,7 +16,7 @@ import { Chip } from '@mui/joy';
 type TRoomListItemProps = TChannelProps;
 
 export default function RoomListItem(props: TRoomListItemProps) {
-  const { channelId, channelName, unreadCount } = props;
+  const { channelId, channelName, unreadCount, lastMessage } = props;
   const navigate = useNavigate();
 
   const selectedId = useChatStore(state => state.selectedId);
@@ -25,6 +25,10 @@ export default function RoomListItem(props: TRoomListItemProps) {
   const chatListClick = (roomId: string) => {
     navigate(`${Paths.chat.base()}/${roomId}`);
   };
+
+  const lastMessageContent = lastMessage
+    ? `${lastMessage.user.nickname}: ${lastMessage.content}`
+    : `${channelName} 톡방입니다`;
 
   return (
     <Fragment>
@@ -64,12 +68,14 @@ export default function RoomListItem(props: TRoomListItemProps) {
             level="body-sm"
             sx={{
               display: '-webkit-box',
-              WebkitLineClamp: '2',
+              WebkitLineClamp: '1',
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
             }}
-          >{`${channelName} 톡방입니다`}</Typography>
+          >
+            {lastMessageContent}
+          </Typography>
         </ListItemButton>
       </ListItem>
       <ListDivider sx={{ margin: 0 }} />

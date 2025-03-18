@@ -5,6 +5,7 @@ import { Paths } from '@/routes/paths';
 import { TUserAuthResponse } from '@/api/user/type';
 import { useCallback, useMemo } from 'react';
 import authApi from '@/api/auth/api';
+import { connectSocket, disconnectSocket } from '@/utils/socket';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -46,6 +47,13 @@ export const useAuth = () => {
     setEmail(userInfo.email);
     setProfileUrl(userInfo.profileUrl);
 
+    // 소켓 연결
+    try {
+      connectSocket();
+    } catch (error) {
+      console.error('소켓 연결 실패:', error);
+    }
+
     return userInfo;
   };
 
@@ -68,6 +76,9 @@ export const useAuth = () => {
   };
 
   const logoutHandler = async () => {
+    // 소켓 연결 해제
+    disconnectSocket();
+
     // 쿠키가 삭제됨
     await userApi.logout();
 
