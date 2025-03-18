@@ -68,6 +68,9 @@ export const API = {
   json: axiosApi({
     'Content-Type': 'application/json',
   }),
+  formData: axiosApi({
+    'Content-Type': 'multipart/form-data',
+  }),
 };
 
 // ************ 핸들러 ************

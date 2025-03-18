@@ -7,6 +7,7 @@ import {
   TUserAuthResponse,
   TUserKakaoLoginRequest,
   TUserLogoutResponse,
+  TUserUpdateProfileImageRequest,
 } from './type';
 
 const userApi = {
@@ -35,9 +36,18 @@ const userApi = {
       .catch(defaultAxiosErrorHandler);
   },
 
-  async updateUserInfo(req: TUserUpdateRequest) {
+  async updateNickname(req: TUserUpdateRequest) {
     return await API.json
       .post(`/settings/nickname-change`, req)
+      .then(defaultResponseHandler<TUserUpdateResponse>)
+      .catch(defaultAxiosErrorHandler);
+  },
+  async updateProfileImage(req: TUserUpdateProfileImageRequest) {
+    const formData = new FormData();
+    formData.append('profileImage', req.file);
+
+    return await API.formData
+      .post(`/settings/profile-image`, formData)
       .then(defaultResponseHandler<TUserUpdateResponse>)
       .catch(defaultAxiosErrorHandler);
   },
