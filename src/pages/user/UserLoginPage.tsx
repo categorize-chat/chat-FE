@@ -8,6 +8,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import MailIcon from '@mui/icons-material/Mail';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const UserLoginPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -18,6 +20,7 @@ const UserLoginPage = () => {
     location.state?.emailValidated,
   );
   const [alertVisible, setAlertVisible] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   // 이메일 인증 알림을 5초 후에 사라지게 하는 효과
   useEffect(() => {
@@ -138,12 +141,28 @@ const UserLoginPage = () => {
           />
           <Input
             placeholder="비밀번호"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             required
             onChange={handleInputChange(passwordInputRef)}
             onKeyDown={handleKeyDown}
             ref={passwordInputRef}
             defaultValue=""
+            endDecorator={
+              <Box
+                onClick={() => setShowPassword(!showPassword)}
+                sx={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  opacity: 0.5,
+                  '&:hover': {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </Box>
+            }
           />
           <Button
             endDecorator={<KeyboardArrowRight />}
