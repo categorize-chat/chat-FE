@@ -1,17 +1,20 @@
 import { KeyboardArrowRight } from '@mui/icons-material';
 import { Box, Button, Divider, Input, Typography } from '@mui/joy';
-import React, { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import React, { ChangeEvent, KeyboardEvent, useRef, useState } from 'react';
 import { Paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
 import JoinForm from '@/components/user/JoinForm';
 import KakaoAuthButton from '@/components/user/KakaoAuthButton';
 import { useAuth } from '@/hooks/useAuth';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const UserJoinPage = () => {
   const nickNameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const pwdInputRef = useRef<HTMLInputElement>(null);
   const { joinHandler } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async () => {
     if (nickNameInputRef.current === null) return;
@@ -98,11 +101,27 @@ const UserJoinPage = () => {
             placeholder="비밀번호"
             size="md"
             required
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             onChange={handleInputChange(pwdInputRef)}
             onKeyDown={handleKeyDown}
             ref={pwdInputRef}
             defaultValue=""
+            endDecorator={
+              <Box
+                onClick={() => setShowPassword(!showPassword)}
+                sx={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  opacity: 0.5,
+                  '&:hover': {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </Box>
+            }
           />
           <Button
             endDecorator={<KeyboardArrowRight />}
