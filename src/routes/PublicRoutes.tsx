@@ -14,7 +14,7 @@ const RootRedirect = () => {
   if (isLoggedIn) {
     return <Navigate replace to={Paths.chat.base()} />;
   }
-  return <Navigate replace to={Paths.user.join()} />;
+  return <Navigate replace to={Paths.user.login()} />;
 };
 
 export const PublicRoutes = (
