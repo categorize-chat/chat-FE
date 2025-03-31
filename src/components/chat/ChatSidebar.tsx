@@ -7,6 +7,7 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RoomListItem from './RoomListItem';
 import { useChatStore } from '@/state/chat';
+import { useUIStore } from '@/state/ui';
 
 type TChatSidebarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,11 +15,19 @@ type TChatSidebarProps = {
 
 export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
   const { chats } = useChatStore();
-
+  const { isMessagesPaneOpen } = useUIStore();
   return (
     <>
       <Sheet
         sx={{
+          position: { xs: 'fixed', sm: 'sticky' },
+          transform: {
+            xs: isMessagesPaneOpen ? 'translateX(0)' : 'translateX(-100%)',
+            sm: 'none',
+          },
+          transition: 'transform 0.4s, width 0.4s',
+          zIndex: 100,
+          width: '100%',
           borderRight: '1px solid',
           borderColor: 'divider',
           height: 'calc(100dvh - var(--Header-height))',

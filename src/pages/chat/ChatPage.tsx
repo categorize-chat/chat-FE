@@ -17,8 +17,7 @@ export const ChatPage = () => {
     useQuery(chatRoomsQuery());
   const { chats, setChats } = useChatStore();
   const { subscriptions, setSubscriptions } = useUserStore();
-  const { isMessagesPaneOpen, openMessagesPane, closeMessagesPane } =
-    useUIStore();
+  const { openMessagesPane, closeMessagesPane } = useUIStore();
   const location = useLocation();
 
   const { id: chatId } = useParams();
@@ -178,29 +177,15 @@ export const ChatPage = () => {
             flex: 1,
             width: '100%',
             mx: 'auto',
-            pt: { xs: 'var(--Header-height)', sm: 0 },
             display: 'grid',
             gridTemplateColumns: {
               xs: '1fr',
               sm: 'minmax(min-content, min(30%, 360px)) 1fr',
             },
+            height: '100dvh',
           }}
         >
-          <Sheet
-            sx={{
-              position: { xs: 'fixed', sm: 'sticky' },
-              transform: {
-                xs: isMessagesPaneOpen ? 'translateX(0)' : 'translateX(-100%)',
-                sm: 'none',
-              },
-              transition: 'transform 0.4s, width 0.4s',
-              zIndex: 100,
-              width: '100%',
-              top: 52,
-            }}
-          >
-            <ChatSidebar setOpen={setModalOpen} />
-          </Sheet>
+          <ChatSidebar setOpen={setModalOpen} />
           {chatId ? <MessagesPane /> : <></>}
         </Sheet>
       </Box>
