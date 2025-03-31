@@ -17,7 +17,7 @@ const JoinForm = ({ children }: IJoinFormProps) => {
         flexDirection: 'column',
         gap: '16px',
         alignItems: 'center',
-        backgroundColor: '#eaf2f7',
+        bgcolor: 'neutral.softBg',
         borderRadius: '16px',
       }}
     >
