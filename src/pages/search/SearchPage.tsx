@@ -1,4 +1,4 @@
-import { Input, Sheet } from '@mui/joy';
+import { Input, Sheet, Typography } from '@mui/joy';
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { searchApi } from '@/api/search/api';
@@ -51,21 +51,31 @@ const SearchPage = () => {
     <>
       <Sheet
         sx={{
-          display: 'grid',
+          display: 'flex',
+          flexDirection: 'column',
           width: '100%',
-          gridTemplateRows: 'auto 1fr',
           gap: 2,
+          padding: 2,
+          height: '100dvh',
         }}
       >
-        <Sheet sx={{ textAlign: 'center', width: '100%' }}>
-          <h1>채팅방 검색</h1>
+        <Sheet
+          sx={{
+            msHyphenateLimitChars: 4,
+            textAlign: 'center',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          <Typography level="h2">채팅방 검색</Typography>
 
           <Input
-            size="lg"
             placeholder="원하는 채팅방을 검색해서 찾아보세요! (이름, 키워드...)"
             sx={{
               '--Input-radius': '100px',
-              width: '500px',
+              width: { xs: '100%', md: '500px' },
               margin: '0 auto',
             }}
             endDecorator={<SearchIcon />}
@@ -77,10 +87,8 @@ const SearchPage = () => {
         {/* channel 목록들 */}
         <Sheet
           sx={{
-            padding: 2,
             maxHeight: '100%',
             overflowY: 'auto',
-            height: 'calc(100vh - 200px)',
           }}
         >
           {searchedChannels &&
