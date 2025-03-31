@@ -7,6 +7,7 @@ import ChannelListItem from '@/components/search/ChannelListItem';
 import { debounce } from '@/utils/common/time';
 import { useQuery } from 'react-query';
 import { searchAllRoomsQuery } from '@/api/search/query';
+import ToggleSidebarButton from '@/components/common/header/ToggleSidebarButton';
 
 const SearchPage = () => {
   // 검색어 입력창 ref
@@ -49,6 +50,8 @@ const SearchPage = () => {
 
   return (
     <>
+      <ToggleSidebarButton float />
+
       <Sheet
         sx={{
           display: 'flex',
@@ -75,7 +78,7 @@ const SearchPage = () => {
             placeholder="원하는 채팅방을 검색해서 찾아보세요! (이름, 키워드...)"
             sx={{
               '--Input-radius': '100px',
-              width: { xs: '100%', md: '500px' },
+              width: { xs: '100%', sm: '500px' },
               margin: '0 auto',
             }}
             endDecorator={<SearchIcon />}

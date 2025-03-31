@@ -18,7 +18,7 @@ const ChannelListItem = ({ channel }: TChannelListItemProps) => {
         margin: 1,
         borderRadius: '8px',
         border: '1px solid #ccc',
-        width: { xs: 'calc(100% - 20px)', md: '300px' },
+        width: { xs: 'calc(100% - 20px)', scrollMarginBlockEnd: '300px' },
         height: '120px',
         alignSelf: 'flex-start',
         overflow: 'hidden',
