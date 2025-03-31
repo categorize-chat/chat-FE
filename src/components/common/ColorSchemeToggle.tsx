@@ -5,8 +5,12 @@ import IconButton, { IconButtonProps } from '@mui/joy/IconButton';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
-export default function ColorSchemeToggle(props: IconButtonProps) {
-  const { onClick, sx, ...other } = props;
+type TColorSchemeToggleProps = {
+  float?: boolean;
+} & IconButtonProps;
+
+export default function ColorSchemeToggle(props: TColorSchemeToggleProps) {
+  const { onClick, sx, float = false, ...other } = props;
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
@@ -31,7 +35,7 @@ export default function ColorSchemeToggle(props: IconButtonProps) {
       variant="outlined"
       color="neutral"
       {...other}
-      onClick={(event) => {
+      onClick={event => {
         if (mode === 'light') {
           setMode('dark');
         } else {
@@ -47,6 +51,12 @@ export default function ColorSchemeToggle(props: IconButtonProps) {
           '& > *:last-of-type': {
             display: mode === 'light' ? 'none' : 'initial',
           },
+          ...(float && {
+            position: 'fixed',
+            top: 10,
+            right: 10,
+            zIndex: 1000,
+          }),
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
