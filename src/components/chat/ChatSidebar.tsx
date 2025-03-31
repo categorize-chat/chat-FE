@@ -8,6 +8,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RoomListItem from './RoomListItem';
 import { useChatStore } from '@/state/chat';
 import { useUIStore } from '@/state/ui';
+import ToggleSidebarButton from '../common/header/ToggleSidebarButton';
 
 type TChatSidebarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,6 +43,7 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
           p={2}
           pb={1.5}
         >
+          <ToggleSidebarButton />
           <Typography
             fontSize={{ xs: 'md', md: 'lg' }}
             component="h1"
