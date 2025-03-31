@@ -42,6 +42,7 @@ const UserEmailWaitPage = () => {
 
   return (
     <Box
+      p={2}
       sx={{
         display: 'flex',
         minHeight: '100dvh',
@@ -49,7 +50,17 @@ const UserEmailWaitPage = () => {
       }}
     >
       <JoinForm>
-        <Typography level="h1">이메일 인증이 필요합니다</Typography>
+        <Typography
+          level="h1"
+          sx={{
+            fontSize: {
+              xs: '24px',
+              sm: '32px',
+            },
+          }}
+        >
+          이메일 인증이 필요합니다
+        </Typography>
         <Typography>받은 이메일을 확인해보세요</Typography>
 
         <Box
@@ -57,17 +68,21 @@ const UserEmailWaitPage = () => {
             marginTop: '32px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px',
+            gap: '8px',
+            alignItems: 'center',
             width: '100%',
           }}
         >
-          <Typography>이메일이 도착하지 않았나요?</Typography>
+          <Typography level="body-sm">이메일이 도착하지 않았나요?</Typography>
           <Button
             endDecorator={<KeyboardArrowRight />}
             type="submit"
             color="primary"
             onClick={handleResendEmail}
             disabled={resendTime > 0}
+            sx={{
+              width: '100%',
+            }}
           >
             {resendTime > 0 ? `${resendTime}초 후 재전송` : '이메일 재전송'}
           </Button>

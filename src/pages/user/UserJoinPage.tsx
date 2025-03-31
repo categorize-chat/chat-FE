@@ -3,11 +3,11 @@ import { Box, Button, Divider, Input, Typography } from '@mui/joy';
 import React, { ChangeEvent, KeyboardEvent, useRef, useState } from 'react';
 import { Paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
-import JoinForm from '@/components/user/JoinForm';
 import KakaoAuthButton from '@/components/user/KakaoAuthButton';
 import { useAuth } from '@/hooks/useAuth';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import JoinForm from '@/components/user/JoinForm';
 
 const UserJoinPage = () => {
   const nickNameInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +55,7 @@ const UserJoinPage = () => {
 
   return (
     <Box
+      p={2}
       sx={{
         display: 'flex',
         minHeight: '100dvh',
@@ -62,7 +63,17 @@ const UserJoinPage = () => {
       }}
     >
       <JoinForm>
-        <Typography level="h1">Welcome to AI-Chat</Typography>
+        <Typography
+          level="h1"
+          sx={{
+            fontSize: {
+              xs: '24px',
+              sm: '32px',
+            },
+          }}
+        >
+          Welcome to AI-Chat
+        </Typography>
         <Typography>가입하고 모든 기능을 누려보세요!</Typography>
         <Typography>
           <Link to={Paths.user.login()}>이미 계정이 있으신가요?</Link>
