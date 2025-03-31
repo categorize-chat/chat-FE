@@ -5,10 +5,8 @@ import { Box, Chip, IconButton, Input } from '@mui/joy';
 import List from '@mui/joy/List';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RoomListItem from './RoomListItem';
 import { useChatStore } from '@/state/chat';
-import { toggleMessagesPane } from '@/utils/chat';
 
 type TChatSidebarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -59,21 +57,8 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
             color="neutral"
             size="sm"
             onClick={() => setOpen(true)}
-            sx={{ display: { xs: 'none', sm: 'unset' } }}
           >
             <AddCommentIcon />
-          </IconButton>
-          <IconButton
-            variant="plain"
-            aria-label="edit"
-            color="neutral"
-            size="sm"
-            onClick={() => {
-              toggleMessagesPane();
-            }}
-            sx={{ display: { sm: 'none' } }}
-          >
-            <CloseRoundedIcon />
           </IconButton>
         </Stack>
         <Box sx={{ px: 2, pb: 1.5 }}>

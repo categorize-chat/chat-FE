@@ -15,16 +15,18 @@ import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
 import ColorSchemeToggle from './ColorSchemeToggle';
-import { closeSidebar } from '../../utils/chat';
 import { useChatStore } from '../../state/chat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Paths } from '../../routes/paths';
 import TabItem from './sidebar/TabItem';
 import UserStats from './sidebar/UserStats';
 import { useMemo } from 'react';
+import { useUIStore } from '../../state/ui';
+
 export default function Sidebar() {
   const { chats } = useChatStore();
   const { pathname } = useLocation();
+  const { isSidebarOpen, closeSidebar } = useUIStore();
 
   const navigate = useNavigate();
   const parsedPath = pathname.split('/')[1];
@@ -54,7 +56,7 @@ export default function Sidebar() {
       sx={{
         position: { xs: 'fixed', md: 'sticky' },
         transform: {
-          xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
+          xs: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
           md: 'none',
         },
         transition: 'transform 0.4s, width 0.4s',
@@ -81,25 +83,23 @@ export default function Sidebar() {
           },
         })}
       />
-      <Box
-        className="Sidebar-overlay"
-        sx={{
-          position: 'fixed',
-          zIndex: 9998,
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          opacity: 'var(--SideNavigation-slideIn)',
-          backgroundColor: 'var(--joy-palette-background-backdrop)',
-          transition: 'opacity 0.4s',
-          transform: {
-            xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))',
-            lg: 'translateX(-100%)',
-          },
-        }}
-        onClick={() => closeSidebar()}
-      />
+      {isSidebarOpen && (
+        <Box
+          className="Sidebar-overlay"
+          sx={{
+            position: 'fixed',
+            zIndex: 9998,
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'var(--joy-palette-background-backdrop)',
+            transition: 'opacity 0.4s',
+            display: { xs: 'block', md: 'none' },
+          }}
+          onClick={closeSidebar}
+        />
+      )}
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <IconButton variant="soft" color="primary" size="sm">
           <BrightnessAutoRoundedIcon />
