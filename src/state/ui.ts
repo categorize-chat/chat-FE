@@ -9,6 +9,8 @@ interface UIState {
   openMessagesPane: () => void;
   closeMessagesPane: () => void;
   toggleMessagesPane: () => void;
+  isAiPannelOpen: boolean;
+  toggleAiPannel: () => void;
 }
 
 export const useUIStore = create<UIState>(set => ({
@@ -23,4 +25,8 @@ export const useUIStore = create<UIState>(set => ({
   closeMessagesPane: () => set({ isMessagesPaneOpen: false }),
   toggleMessagesPane: () =>
     set(state => ({ isMessagesPaneOpen: !state.isMessagesPaneOpen })),
+
+  isAiPannelOpen: false,
+  toggleAiPannel: () =>
+    set(state => ({ isAiPannelOpen: !state.isAiPannelOpen })),
 }));

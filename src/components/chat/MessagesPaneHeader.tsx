@@ -4,6 +4,8 @@ import { TChannelProps } from '@/types';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import ChannelInfoModal from './ChannelInfoModal';
+import ToggleSidebarButton from '../common/header/ToggleSidebarButton';
+import ToggleAiPannelButton from '../common/header/ToggleAiPannelButton';
 
 type TMessagesPaneHeaderProps = {
   channel: TChannelProps;
@@ -27,16 +29,22 @@ const MessagesPaneHeader = ({ channel }: TMessagesPaneHeaderProps) => {
         borderBottom: '1px solid var(--joy-palette-neutral-300)',
       }}
     >
-      <Typography fontSize={{ xs: 'md', md: 'lg' }} fontWeight="lg">
-        {channel.channelName}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <ToggleSidebarButton />
+        <Typography fontSize={{ xs: 'md', md: 'lg' }} fontWeight="lg">
+          {channel.channelName}
+        </Typography>
+      </Box>
 
-      <InfoIcon
-        sx={{
-          cursor: 'pointer',
-        }}
-        onClick={handleInfoOpen}
-      />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <InfoIcon
+          sx={{
+            cursor: 'pointer',
+          }}
+          onClick={handleInfoOpen}
+        />
+        <ToggleAiPannelButton />
+      </Box>
       <ChannelInfoModal
         open={isInfoOpen}
         setOpen={setIsInfoOpen}
