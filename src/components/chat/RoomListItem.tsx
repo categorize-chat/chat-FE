@@ -7,15 +7,17 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import AvatarWithStatus from '../common/AvatarWithStatus';
 import { useNavigate } from 'react-router-dom';
-import { toggleMessagesPane } from '@/utils/chat';
 import { useChatStore } from '@/state/chat';
 import { TChannelProps } from '@/types';
 import { Paths } from '@/routes/paths';
 import { Chip } from '@mui/joy';
+import { useUIStore } from '@/state/ui';
 
 type TRoomListItemProps = TChannelProps;
 
 export default function RoomListItem(props: TRoomListItemProps) {
+  const { toggleMessagesPane } = useUIStore();
+
   const { channelId, channelName, unreadCount, lastMessage } = props;
   const navigate = useNavigate();
 

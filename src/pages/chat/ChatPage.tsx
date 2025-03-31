@@ -5,22 +5,39 @@ import { useChatStore } from '@/state/chat';
 import { useEffect, useCallback, useState } from 'react';
 import NewChatModal from '@/components/chat/NewChatModal';
 import { useUserStore } from '@/state/user';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import MessagesPane from '@/components/chat/MessagesPane';
 import { getSocket, connectSocket } from '@/utils/socket';
 import { TMessageProps } from '@/types';
+import { useUIStore } from '@/state/ui';
 
 export const ChatPage = () => {
   const { data: chatRoomsData, isError: chatRoomsError } =
     useQuery(chatRoomsQuery());
   const { chats, setChats } = useChatStore();
   const { subscriptions, setSubscriptions } = useUserStore();
+  const { openMessagesPane, closeMessagesPane } = useUIStore();
+  const location = useLocation();
 
   const { id: chatId } = useParams();
   const { setSelectedId, setSelectedChat, addNewMessage } = useChatStore();
 
   const [modalOpen, setModalOpen] = useState(false);
+
+  // URL 경로에 따라 모바일에서 사이드바 표시 여부 결정
+  useEffect(() => {
+    if (!chatId) {
+      // /chat 경로에서는 사이드바 표시
+      openMessagesPane();
+    } else {
+      // /chat/:id 경로에서는 사이드바 숨김 (모바일 환경에서만)
+      const isMobile = window.matchMedia('(max-width: 600px)').matches;
+      if (isMobile) {
+        closeMessagesPane();
+      }
+    }
+  }, [chatId, location.pathname, openMessagesPane, closeMessagesPane]);
 
   // setSelectedChat을 메모이제이션
   const updateSelectedChat = useCallback((chatId: string, chats: any[]) => {
@@ -160,29 +177,15 @@ export const ChatPage = () => {
             flex: 1,
             width: '100%',
             mx: 'auto',
-            pt: { xs: 'var(--Header-height)', sm: 0 },
             display: 'grid',
             gridTemplateColumns: {
               xs: '1fr',
               sm: 'minmax(min-content, min(30%, 360px)) 1fr',
             },
+            height: '100dvh',
           }}
         >
-          <Sheet
-            sx={{
-              position: { xs: 'fixed', sm: 'sticky' },
-              transform: {
-                xs: 'translateX(calc(100% * (var(--MessagesPane-slideIn, 0) - 1)))',
-                sm: 'none',
-              },
-              transition: 'transform 0.4s, width 0.4s',
-              zIndex: 100,
-              width: '100%',
-              top: 52,
-            }}
-          >
-            <ChatSidebar setOpen={setModalOpen} />
-          </Sheet>
+          <ChatSidebar setOpen={setModalOpen} />
           {chatId ? <MessagesPane /> : <></>}
         </Sheet>
       </Box>

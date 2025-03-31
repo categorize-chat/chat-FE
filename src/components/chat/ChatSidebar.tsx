@@ -5,10 +5,10 @@ import { Box, Chip, IconButton, Input } from '@mui/joy';
 import List from '@mui/joy/List';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import RoomListItem from './RoomListItem';
 import { useChatStore } from '@/state/chat';
-import { toggleMessagesPane } from '@/utils/chat';
+import { useUIStore } from '@/state/ui';
+import ToggleSidebarButton from '../common/header/ToggleSidebarButton';
 
 type TChatSidebarProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,11 +16,19 @@ type TChatSidebarProps = {
 
 export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
   const { chats } = useChatStore();
-
+  const { isMessagesPaneOpen } = useUIStore();
   return (
     <>
       <Sheet
         sx={{
+          position: { xs: 'fixed', sm: 'sticky' },
+          transform: {
+            xs: isMessagesPaneOpen ? 'translateX(0)' : 'translateX(-100%)',
+            sm: 'none',
+          },
+          transition: 'transform 0.4s, width 0.4s',
+          zIndex: 100,
+          width: '100%',
           borderRight: '1px solid',
           borderColor: 'divider',
           height: 'calc(100dvh - var(--Header-height))',
@@ -35,6 +43,7 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
           p={2}
           pb={1.5}
         >
+          <ToggleSidebarButton />
           <Typography
             fontSize={{ xs: 'md', md: 'lg' }}
             component="h1"
@@ -59,21 +68,8 @@ export default function ChatSidebar({ setOpen }: TChatSidebarProps) {
             color="neutral"
             size="sm"
             onClick={() => setOpen(true)}
-            sx={{ display: { xs: 'none', sm: 'unset' } }}
           >
             <AddCommentIcon />
-          </IconButton>
-          <IconButton
-            variant="plain"
-            aria-label="edit"
-            color="neutral"
-            size="sm"
-            onClick={() => {
-              toggleMessagesPane();
-            }}
-            sx={{ display: { sm: 'none' } }}
-          >
-            <CloseRoundedIcon />
           </IconButton>
         </Stack>
         <Box sx={{ px: 2, pb: 1.5 }}>

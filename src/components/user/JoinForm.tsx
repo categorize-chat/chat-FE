@@ -1,4 +1,5 @@
 import { QuestionAnswerRounded } from '@mui/icons-material';
+import { Box } from '@mui/joy';
 
 interface IJoinFormProps {
   children: React.ReactNode;
@@ -6,14 +7,16 @@ interface IJoinFormProps {
 
 const JoinForm = ({ children }: IJoinFormProps) => {
   return (
-    <div
-      style={{
-        textAlign: 'center',
+    <Box
+      p={2}
+      sx={{
+        width: '100%',
+        maxWidth: '400px',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
-        padding: '64px',
+        alignItems: 'center',
         backgroundColor: '#eaf2f7',
         borderRadius: '16px',
       }}
@@ -26,7 +29,7 @@ const JoinForm = ({ children }: IJoinFormProps) => {
         color="primary"
       />
       {children}
-    </div>
+    </Box>
   );
 };
 

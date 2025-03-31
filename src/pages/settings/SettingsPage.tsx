@@ -13,6 +13,7 @@ import { useState } from 'react';
 import userApi from '@/api/user/api';
 import Divider from '@mui/joy/Divider';
 import Swal from 'sweetalert2';
+import ToggleSidebarButton from '@/components/common/header/ToggleSidebarButton';
 
 const Settings = () => {
   const { nickname, profileUrl, email, setNickname, setProfileUrl } =
@@ -95,90 +96,93 @@ const Settings = () => {
   };
 
   return (
-    <Box padding={2} width="100%">
-      <Box
-        marginX="auto"
-        width="100%"
-        maxWidth="500px"
-        marginTop={10}
-        display="flex"
-        flexDirection="column"
-        gap={2}
-      >
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Box sx={{ position: 'relative' }}>
-            <Avatar
-              src={profileUrl}
-              size="lg"
-              sx={{ width: '100px', height: '100px' }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                backgroundColor: 'background.surface',
-                borderRadius: '100%',
-                padding: '4px',
-                cursor: 'pointer',
-                width: '24px',
-                height: '24px',
-                boxShadow: 'sm',
-                '&:hover': {
-                  backgroundColor: 'background.level1',
-                },
-              }}
-              onClick={handleEditProfileImage}
-            >
-              <EditIcon
-                sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+    <>
+      <ToggleSidebarButton float />
+      <Box padding={2} width="100%">
+        <Box
+          marginX="auto"
+          width="100%"
+          maxWidth="500px"
+          marginTop={10}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Box sx={{ position: 'relative' }}>
+              <Avatar
+                src={profileUrl}
+                size="lg"
+                sx={{ width: '100px', height: '100px' }}
               />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  backgroundColor: 'background.surface',
+                  borderRadius: '100%',
+                  padding: '4px',
+                  cursor: 'pointer',
+                  width: '24px',
+                  height: '24px',
+                  boxShadow: 'sm',
+                  '&:hover': {
+                    backgroundColor: 'background.level1',
+                  },
+                }}
+                onClick={handleEditProfileImage}
+              >
+                <EditIcon
+                  sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+                />
+              </Box>
+            </Box>
+            <Typography marginY={2}>
+              환영합니다, <b>{nickname}</b>님!
+            </Typography>
+          </Box>
+
+          <Divider />
+
+          <Typography level="h4">회원 정보</Typography>
+          <Box display="flex" alignItems="center" gap={2} width="100%">
+            <Box width="100%" display="flex" flexDirection="column" gap={1}>
+              <FormControl>
+                <FormLabel>닉네임</FormLabel>
+                <Input
+                  value={nicknameInput}
+                  size="md"
+                  endDecorator={
+                    <EditIcon
+                      sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+                    />
+                  }
+                  onChange={e => {
+                    setIsEditing(true);
+                    setNicknameInput(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>이메일</FormLabel>
+                <Input value={email} size="md" disabled />
+              </FormControl>
             </Box>
           </Box>
-          <Typography marginY={2}>
-            환영합니다, <b>{nickname}</b>님!
-          </Typography>
+
+          {isEditing && (
+            <Button
+              sx={{ marginTop: 2 }}
+              variant="outlined"
+              onClick={handleEditNickname}
+            >
+              회원 정보 수정
+            </Button>
+          )}
         </Box>
-
-        <Divider />
-
-        <Typography level="h4">회원 정보</Typography>
-        <Box display="flex" alignItems="center" gap={2} width="100%">
-          <Box width="100%" display="flex" flexDirection="column" gap={1}>
-            <FormControl>
-              <FormLabel>닉네임</FormLabel>
-              <Input
-                value={nicknameInput}
-                size="md"
-                endDecorator={
-                  <EditIcon
-                    sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
-                  />
-                }
-                onChange={e => {
-                  setIsEditing(true);
-                  setNicknameInput(e.target.value);
-                }}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>이메일</FormLabel>
-              <Input value={email} size="md" disabled />
-            </FormControl>
-          </Box>
-        </Box>
-
-        {isEditing && (
-          <Button
-            sx={{ marginTop: 2 }}
-            variant="outlined"
-            onClick={handleEditNickname}
-          >
-            회원 정보 수정
-          </Button>
-        )}
       </Box>
-    </Box>
+    </>
   );
 };
 

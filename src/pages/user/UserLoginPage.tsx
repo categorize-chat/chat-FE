@@ -2,7 +2,6 @@ import { KeyboardArrowRight } from '@mui/icons-material';
 import { Alert, Box, Button, Divider, Input, Typography } from '@mui/joy';
 import { ChangeEvent, KeyboardEvent, useRef, useState, useEffect } from 'react';
 import { Paths } from '@/routes/paths';
-import JoinForm from '@/components/user/JoinForm';
 import KakaoAuthButton from '@/components/user/KakaoAuthButton';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +9,7 @@ import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import MailIcon from '@mui/icons-material/Mail';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import JoinForm from '@/components/user/JoinForm';
 
 const UserLoginPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -73,10 +73,10 @@ const UserLoginPage = () => {
 
   return (
     <Box
+      p={2}
       sx={{
-        position: 'relative',
         display: 'flex',
-        minHeight: '100dvh',
+        height: '100dvh',
         alignItems: 'center',
       }}
     >
@@ -114,7 +114,17 @@ const UserLoginPage = () => {
         <></>
       )}
       <JoinForm>
-        <Typography level="h1">Welcome to AI-Chat</Typography>
+        <Typography
+          level="h1"
+          sx={{
+            fontSize: {
+              xs: '24px',
+              sm: '32px',
+            },
+          }}
+        >
+          Welcome to AI-Chat
+        </Typography>
         <Typography>로그인을 해주세요</Typography>
         <Typography>
           <Link to={Paths.user.join()}>아직 회원이 아니신가요?</Link>
