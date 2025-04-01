@@ -10,6 +10,7 @@ import {
   TUserLogoutResponse,
   TUserUpdateProfileImageRequest,
   TUserRequestPasswordResetRequest,
+  TUserValidatePasswordResetResponse,
 } from './type';
 
 const userApi = {
@@ -57,6 +58,12 @@ const userApi = {
     return await API.json
       .post(`/oauth/password-change-request`, req)
       .then(defaultResponseHandler<TApiResponse<null>>)
+      .catch(defaultAxiosErrorHandler);
+  },
+  async validatePasswordReset(code: string) {
+    return await API.json
+      .get(`/oauth/password-change-request/${code}`)
+      .then(defaultResponseHandler<TUserValidatePasswordResetResponse>)
       .catch(defaultAxiosErrorHandler);
   },
 };

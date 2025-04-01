@@ -127,6 +127,24 @@ export const useAuth = () => {
     }
   };
 
+  const passwordResetHandler = async (email: string) => {
+    try {
+      await userApi.requestPasswordReset({ email });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const passwordResetCallbackHandler = async (code: string) => {
+    try {
+      const { result } = await userApi.validatePasswordReset(code);
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
   return {
     loginHandler,
     joinHandler,
@@ -136,5 +154,7 @@ export const useAuth = () => {
     isLoggedIn,
     emailResendHandler,
     emailWaiting,
+    passwordResetHandler,
+    passwordResetCallbackHandler,
   };
 };
