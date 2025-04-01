@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserStore } from '@/state/user';
 import PasswordResetModal from '@/components/user/PasswordResetModal';
 import Swal from 'sweetalert2';
 
@@ -10,7 +9,6 @@ const PasswordResetCallback = () => {
     passwordResetSubmitHandler,
     logoutHandler,
   } = useAuth();
-  const { email } = useUserStore();
   const [token, setToken] = useState('');
 
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,16 +19,14 @@ const PasswordResetCallback = () => {
       new URL(document.location.toString()).searchParams.get('token') || '';
 
     // 벡엔드 서버로 보내기
-    passwordResetCallbackHandler(code).then(({ email: responseEmail }) => {
-      if (email === responseEmail) {
-        setToken(code);
-        setIsSuccess(true);
+    passwordResetCallbackHandler(code).then(() => {
+      setToken(code);
+      setIsSuccess(true);
 
-        // URL에서 token 쿼리 파라미터 제거
-        const url = new URL(window.location.href);
-        url.searchParams.delete('token');
-        window.history.replaceState({}, document.title, url.toString());
-      }
+      // URL에서 token 쿼리 파라미터 제거
+      const url = new URL(window.location.href);
+      url.searchParams.delete('token');
+      window.history.replaceState({}, document.title, url.toString());
     });
   }, []);
 

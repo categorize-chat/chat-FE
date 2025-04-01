@@ -11,6 +11,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import JoinForm from '@/components/user/JoinForm';
 import ColorSchemeToggle from '@/components/common/ColorSchemeToggle';
+import userApi from '@/api/user/api';
+import Swal from 'sweetalert2';
 
 const UserLoginPage = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -72,6 +74,22 @@ const UserLoginPage = () => {
     }
   };
 
+  const handleRequestPasswordReset = async () => {
+    const { value: email } = await Swal.fire({
+      title: '이메일을 입력해주세요',
+      input: 'email',
+      inputPlaceholder: '이메일 인증을 위해 이메일을 입력해주세요',
+    });
+
+    if (!email) return;
+
+    const { message } = await userApi.requestPasswordReset({ email });
+    await Swal.fire({
+      title: '비밀번호 초기화 요청',
+      text: message,
+      icon: 'success',
+    });
+  };
   return (
     <>
       <ColorSchemeToggle float />
@@ -177,6 +195,18 @@ const UserLoginPage = () => {
                 </Box>
               }
             />
+            <Typography
+              level="body-xs"
+              sx={{
+                textAlign: 'right',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                color: 'primary',
+              }}
+              onClick={handleRequestPasswordReset}
+            >
+              비밀번호를 잊으셨나요?
+            </Typography>
             <Button
               endDecorator={<KeyboardArrowRight />}
               type="submit"

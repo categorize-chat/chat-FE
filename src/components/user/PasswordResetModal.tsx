@@ -28,26 +28,24 @@ const PasswordResetModal = ({ open, onSubmit }: TPasswordResetModalProps) => {
             onChange={e => setPassword(e.target.value)}
           />
         </FormControl>
-        {password && password.length > 0 && (
-          <>
-            <FormControl>
-              <FormLabel>새로운 비밀번호 확인</FormLabel>
-              <Input
-                type="password"
-                value={passwordConfirm}
-                onChange={e => setPasswordConfirm(e.target.value)}
-              />
-            </FormControl>
-            <Button
-              onClick={() => {
-                onSubmit(password);
-              }}
-              disabled={password !== passwordConfirm}
-            >
-              비밀번호 초기화
-            </Button>
-          </>
-        )}
+        <>
+          <FormControl>
+            <FormLabel>새로운 비밀번호 확인</FormLabel>
+            <Input
+              type="password"
+              value={passwordConfirm}
+              onChange={e => setPasswordConfirm(e.target.value)}
+            />
+          </FormControl>
+          <Button
+            onClick={() => {
+              onSubmit(password);
+            }}
+            disabled={password !== passwordConfirm || password.length === 0}
+          >
+            비밀번호 초기화
+          </Button>
+        </>
       </ModalDialog>
     </Modal>
   );
