@@ -10,7 +10,7 @@ import { useState } from 'react';
 
 type TPasswordResetModalProps = {
   open: boolean;
-  onSubmit: () => void;
+  onSubmit: (password: string) => void;
 };
 
 const PasswordResetModal = ({ open, onSubmit }: TPasswordResetModalProps) => {
@@ -38,7 +38,14 @@ const PasswordResetModal = ({ open, onSubmit }: TPasswordResetModalProps) => {
                 onChange={e => setPasswordConfirm(e.target.value)}
               />
             </FormControl>
-            <Button onClick={onSubmit}>비밀번호 초기화</Button>
+            <Button
+              onClick={() => {
+                onSubmit(password);
+              }}
+              disabled={password !== passwordConfirm}
+            >
+              비밀번호 초기화
+            </Button>
           </>
         )}
       </ModalDialog>

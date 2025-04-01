@@ -38,7 +38,7 @@ export const useUserStore = create<TUserStore>()(
     }),
     {
       name: 'userStorage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
 
       partialize: state => ({
         nickname: state.nickname,

@@ -135,7 +135,6 @@ export const useAuth = () => {
       throw error;
     }
   };
-
   const passwordResetCallbackHandler = async (code: string) => {
     try {
       const { result } = await userApi.validatePasswordReset(code);
@@ -145,6 +144,18 @@ export const useAuth = () => {
       throw error;
     }
   };
+  const passwordResetSubmitHandler = async (
+    token: string,
+    password: string,
+  ) => {
+    try {
+      return await userApi.resetPassword({ token, password });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return {
     loginHandler,
     joinHandler,
@@ -156,5 +167,6 @@ export const useAuth = () => {
     emailWaiting,
     passwordResetHandler,
     passwordResetCallbackHandler,
+    passwordResetSubmitHandler,
   };
 };

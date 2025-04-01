@@ -45,7 +45,7 @@ export const useChatStore = create<TChatStore>()(
     }),
     {
       name: 'chatStorage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
 
       partialize: state => ({
         chats: state.chats,

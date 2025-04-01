@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore } from '@/state/user';
 import PasswordResetModal from '@/components/user/PasswordResetModal';
+import Swal from 'sweetalert2';
 
 const PasswordResetCallback = () => {
-  const { passwordResetCallbackHandler } = useAuth();
+  const {
+    passwordResetCallbackHandler,
+    passwordResetSubmitHandler,
+    logoutHandler,
+  } = useAuth();
   const { email } = useUserStore();
   const [token, setToken] = useState('');
 
@@ -29,13 +34,25 @@ const PasswordResetCallback = () => {
     });
   }, []);
 
-  const handleResetPassword = () => {
-    if (!token) return;
-  };
+  const handleResetPassword = useCallback(
+    async (password: string) => {
+      if (!token) return;
+
+      const { message } = await passwordResetSubmitHandler(token, password);
+      Swal.fire({
+        title: '비밀번호 초기화 성공',
+        text: message,
+        icon: 'success',
+      }).finally(() => {
+        logoutHandler();
+      });
+    },
+    [token],
+  );
 
   return (
     <>
-      {isSuccess ? (
+      {!isSuccess ? (
         <div>Validating...</div>
       ) : (
         <>

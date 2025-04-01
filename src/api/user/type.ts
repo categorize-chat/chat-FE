@@ -48,3 +48,8 @@ export type TUserRequestPasswordResetRequest = {
 export type TUserValidatePasswordResetResponse = TApiResponse<{
   email: string;
 }>;
+
+export type TUserResetPasswordRequest = {
+  token: string;
+  password: string;
+};
