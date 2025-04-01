@@ -55,7 +55,7 @@ const userApi = {
   },
   async requestPasswordReset(req: TUserRequestPasswordResetRequest) {
     return await API.json
-      .post(`/user/password-reset`, req)
+      .post(`/oauth/password-change-request`, req)
       .then(defaultResponseHandler<TApiResponse<null>>)
       .catch(defaultAxiosErrorHandler);
   },

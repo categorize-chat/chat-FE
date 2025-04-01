@@ -95,6 +95,15 @@ const Settings = () => {
     }
   };
 
+  const handleRequestPasswordReset = async () => {
+    const { message } = await userApi.requestPasswordReset({ email });
+    await Swal.fire({
+      title: '비밀번호 초기화 요청',
+      text: message,
+      icon: 'success',
+    });
+  };
+
   return (
     <>
       <ToggleSidebarButton float />
@@ -184,7 +193,7 @@ const Settings = () => {
                       textDecoration: 'underline',
                       cursor: 'pointer',
                     }}
-                    onClick={() => {}}
+                    onClick={handleRequestPasswordReset}
                   >
                     변경하기
                   </span>

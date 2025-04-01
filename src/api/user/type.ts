@@ -41,6 +41,6 @@ export type TUserUpdateResponse = TApiResponse<{
   profileUrl?: string;
 }>;
 
-export type TUserRequestPasswordResetRequest = TApiResponse<{
+export type TUserRequestPasswordResetRequest = {
   email: string;
-}>;
+};
