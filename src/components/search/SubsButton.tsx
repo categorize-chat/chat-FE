@@ -31,7 +31,9 @@ const SubsButton = ({ channelId, callbackFn }: TSubsButtonProps) => {
       ? searchApi.unsubscribeChannel
       : searchApi.subscribeChannel;
 
-    const { user } = await handler(channelId);
+    const {
+      result: { user },
+    } = await handler(channelId);
     const { subscriptions } = user;
 
     setSubscriptions(subscriptions);

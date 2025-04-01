@@ -6,6 +6,7 @@ import { Paths } from './paths';
 import { useAuth } from '../hooks/useAuth';
 import EmailValidationCallback from '@/pages/user/EmailValidationCallback';
 import UserEmailWaitPage from '@/pages/user/UserEmailWaitPage';
+import PasswordResetCallback from '@/pages/user/PasswordResetCallback';
 
 const RootRedirect = () => {
   const { isLoggedIn } = useAuth();
@@ -27,6 +28,10 @@ export const PublicRoutes = (
     <Route
       path={Paths.auth.emailValidation()}
       element={<EmailValidationCallback />}
+    />
+    <Route
+      path={Paths.user.passwordResetCallback()}
+      element={<PasswordResetCallback />}
     />
   </>
 );

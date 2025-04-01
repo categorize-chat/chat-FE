@@ -144,7 +144,7 @@ export default function MessagesPane() {
   return (
     <Sheet
       sx={{
-        height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
+        height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'background.level1',
@@ -153,7 +153,10 @@ export default function MessagesPane() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: '1fr minmax(min-content, min(50%, 400px))',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: '1fr minmax(min-content, min(50%, 400px))',
+          },
           overflowY: 'auto',
           height: '100%',
         }}

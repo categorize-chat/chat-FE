@@ -1,5 +1,4 @@
 import { Box, Sheet, Stack, Typography } from '@mui/joy';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useMutation } from 'react-query';
 import { AiSummaryQuery } from '../../api/ai/query';
 import { useChatStore } from '../../state/chat';
@@ -9,12 +8,16 @@ import { useEffect } from 'react';
 import AiResult from './AiResult';
 import { useParams } from 'react-router-dom';
 import { useAIStore } from '../../state/ai';
+import { useUIStore } from '@/state/ui';
+import ToggleAiPannelButton from '../common/header/ToggleAiPannelButton';
 
 export default function AiPannel() {
   const { id: chatId } = useParams();
 
   const { selectedId } = useChatStore();
   const { init: initAIStore, aiResult, setAiResult } = useAIStore();
+
+  const { isAiPannelOpen } = useUIStore();
 
   const aiSummaryMutation = useMutation({
     ...AiSummaryQuery(),
@@ -47,13 +50,21 @@ export default function AiPannel() {
         borderColor: 'divider',
         display: 'flex',
         flexDirection: 'column',
+        position: { xs: 'fixed', sm: 'sticky' },
+        transform: {
+          xs: isAiPannelOpen ? 'translateX(0)' : 'translateX(100%)',
+          sm: 'none',
+        },
+        transition: 'transform 0.4s, width 0.4s',
+        width: '100%',
+        height: '100dvh',
+        overflowY: 'auto',
       }}
     >
       <Stack
         direction="row"
         spacing={1}
         alignItems="center"
-        justifyContent="space-between"
         p={2}
         sx={{
           borderBottom: '1px solid',
@@ -61,12 +72,12 @@ export default function AiPannel() {
           backgroundColor: 'background.body',
         }}
       >
+        <ToggleAiPannelButton />
         <Typography
           fontSize={{ xs: 'md', md: 'lg' }}
           component="h1"
           fontWeight="lg"
           sx={{ mr: 'auto' }}
-          startDecorator={<SmartToyIcon />}
         >
           인공지능 비서
         </Typography>

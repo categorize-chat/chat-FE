@@ -13,6 +13,7 @@ import { useState } from 'react';
 import userApi from '@/api/user/api';
 import Divider from '@mui/joy/Divider';
 import Swal from 'sweetalert2';
+import ToggleSidebarButton from '@/components/common/header/ToggleSidebarButton';
 
 const Settings = () => {
   const { nickname, profileUrl, email, setNickname, setProfileUrl } =
@@ -68,11 +69,11 @@ const Settings = () => {
       }
 
       // API 호출
-      const response = await userApi.updateProfileImage({ file: fileData });
+      const { result } = await userApi.updateProfileImage({ file: fileData });
 
       // 프로필 이미지 업데이트 성공 시 상태 업데이트
-      if (response) {
-        setProfileUrl(response.profileUrl || profileUrl);
+      if (result) {
+        setProfileUrl(result.profileUrl || profileUrl);
         await Swal.fire({
           title: '성공',
           text: '프로필 이미지가 업데이트되었습니다.',
@@ -94,91 +95,126 @@ const Settings = () => {
     }
   };
 
+  const handleRequestPasswordReset = async () => {
+    const { message } = await userApi.requestPasswordReset({ email });
+    await Swal.fire({
+      title: '비밀번호 초기화 요청',
+      text: message,
+      icon: 'success',
+    });
+  };
+
   return (
-    <Box padding={2} width="100%">
-      <Box
-        marginX="auto"
-        width="100%"
-        maxWidth="500px"
-        marginTop={10}
-        display="flex"
-        flexDirection="column"
-        gap={2}
-      >
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <Box sx={{ position: 'relative' }}>
-            <Avatar
-              src={profileUrl}
-              size="lg"
-              sx={{ width: '100px', height: '100px' }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                backgroundColor: 'background.surface',
-                borderRadius: '100%',
-                padding: '4px',
-                cursor: 'pointer',
-                width: '24px',
-                height: '24px',
-                boxShadow: 'sm',
-                '&:hover': {
-                  backgroundColor: 'background.level1',
-                },
-              }}
-              onClick={handleEditProfileImage}
-            >
-              <EditIcon
-                sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+    <>
+      <ToggleSidebarButton float />
+      <Box padding={2} width="100%">
+        <Box
+          marginX="auto"
+          width="100%"
+          maxWidth="500px"
+          marginTop={10}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Box sx={{ position: 'relative' }}>
+              <Avatar
+                src={profileUrl}
+                size="lg"
+                sx={{ width: '100px', height: '100px' }}
               />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  backgroundColor: 'background.surface',
+                  borderRadius: '100%',
+                  padding: '4px',
+                  cursor: 'pointer',
+                  width: '24px',
+                  height: '24px',
+                  boxShadow: 'sm',
+                  '&:hover': {
+                    backgroundColor: 'background.level1',
+                  },
+                }}
+                onClick={handleEditProfileImage}
+              >
+                <EditIcon
+                  sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+                />
+              </Box>
+            </Box>
+            <Typography marginY={2}>
+              환영합니다, <b>{nickname}</b>님!
+            </Typography>
+          </Box>
+
+          <Divider />
+
+          <Typography level="h4">회원 정보</Typography>
+          <Box display="flex" alignItems="center" gap={2} width="100%">
+            <Box width="100%" display="flex" flexDirection="column" gap={1}>
+              <FormControl>
+                <FormLabel>닉네임</FormLabel>
+                <Input
+                  value={nicknameInput}
+                  size="md"
+                  endDecorator={
+                    <EditIcon
+                      sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
+                    />
+                  }
+                  onChange={e => {
+                    setIsEditing(true);
+                    setNicknameInput(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>이메일</FormLabel>
+                <Input value={email} size="md" disabled />
+              </FormControl>
+              <FormControl>
+                <FormLabel
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ display: 'inline-block' }}>비밀번호</span>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                    }}
+                    onClick={handleRequestPasswordReset}
+                  >
+                    변경하기
+                  </span>
+                </FormLabel>
+                <Input value={'********'} size="md" type="password" disabled />
+              </FormControl>
             </Box>
           </Box>
-          <Typography marginY={2}>
-            환영합니다, <b>{nickname}</b>님!
-          </Typography>
+
+          {isEditing && (
+            <Button
+              sx={{ marginTop: 2 }}
+              variant="outlined"
+              onClick={handleEditNickname}
+            >
+              회원 정보 수정
+            </Button>
+          )}
         </Box>
-
-        <Divider />
-
-        <Typography level="h4">회원 정보</Typography>
-        <Box display="flex" alignItems="center" gap={2} width="100%">
-          <Box width="100%" display="flex" flexDirection="column" gap={1}>
-            <FormControl>
-              <FormLabel>닉네임</FormLabel>
-              <Input
-                value={nicknameInput}
-                size="md"
-                endDecorator={
-                  <EditIcon
-                    sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
-                  />
-                }
-                onChange={e => {
-                  setIsEditing(true);
-                  setNicknameInput(e.target.value);
-                }}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>이메일</FormLabel>
-              <Input value={email} size="md" disabled />
-            </FormControl>
-          </Box>
-        </Box>
-
-        {isEditing && (
-          <Button
-            sx={{ marginTop: 2 }}
-            variant="outlined"
-            onClick={handleEditNickname}
-          >
-            회원 정보 수정
-          </Button>
-        )}
       </Box>
-    </Box>
+    </>
   );
 };
 
