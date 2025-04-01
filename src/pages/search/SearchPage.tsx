@@ -38,7 +38,9 @@ const SearchPage = () => {
       return;
     }
 
-    const { channels } = await searchApi.searchGeneralRooms(keyword);
+    const {
+      result: { channels },
+    } = await searchApi.searchGeneralRooms(keyword);
     setSearchedChannels(channels);
   };
 

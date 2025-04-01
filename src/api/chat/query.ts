@@ -16,10 +16,12 @@ export const chatQueryKeys = {
 export const chatRoomsQuery = () => ({
   queryKey: [chatQueryKeys.rooms],
   queryFn: async () => {
-    return await API.json
+    const { result } = await API.json
       .get(`/chat`)
       .then(defaultResponseHandler<TChatRoomsResponse>)
       .catch(defaultAxiosErrorHandler);
+
+    return result;
   },
   refetchOnWindowFocus: false,
 });
@@ -35,7 +37,7 @@ export const chatMessageQuery = (id: string, limit: number = 20) => ({
         },
       })
       .then(defaultResponseHandler<TChatMessageResponse>)
-      .then(result => ({
+      .then(({ result }) => ({
         messages: result.messages,
         nextCursor: result.nextCursor,
       }));
@@ -48,10 +50,12 @@ export const chatMessageQuery = (id: string, limit: number = 20) => ({
 export const chatRoomGenerateQuery = () => ({
   mutationKey: [chatQueryKeys.roomGenerate],
   mutationFn: async (req: TChatRoomGenerateRequest) => {
-    return await API.json
+    const { result } = await API.json
       .post(`/chat`, req)
       .then(defaultResponseHandler<TChatRoomGenerateResponse>)
       .catch(defaultAxiosErrorHandler);
+
+    return result;
   },
   refetchOnWindowFocus: false,
 });

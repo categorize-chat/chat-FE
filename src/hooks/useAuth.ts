@@ -58,7 +58,8 @@ export const useAuth = () => {
   };
 
   const loginHandler = async (email: string, password: string) => {
-    await userApi.login({ email, password }).then(updateUserInfo);
+    const { result } = await userApi.login({ email, password });
+    updateUserInfo(result);
 
     navigate(Paths.chat.base());
   };
@@ -92,7 +93,8 @@ export const useAuth = () => {
   };
 
   const kakaoLoginHandler = async (code: string) => {
-    await userApi.kakaoLogin({ code }).then(updateUserInfo);
+    const { result } = await userApi.kakaoLogin({ code });
+    updateUserInfo(result);
 
     navigate(Paths.chat.base());
   };

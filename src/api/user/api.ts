@@ -1,4 +1,5 @@
 import { API, defaultAxiosErrorHandler, defaultResponseHandler } from '../api';
+import { TApiResponse } from '../type';
 import {
   TUserLoginRequest,
   TUserJoinRequest,
@@ -8,6 +9,7 @@ import {
   TUserKakaoLoginRequest,
   TUserLogoutResponse,
   TUserUpdateProfileImageRequest,
+  TUserRequestPasswordResetRequest,
 } from './type';
 
 const userApi = {
@@ -49,6 +51,12 @@ const userApi = {
     return await API.formData
       .post(`/settings/profile-image`, formData)
       .then(defaultResponseHandler<TUserUpdateResponse>)
+      .catch(defaultAxiosErrorHandler);
+  },
+  async requestPasswordReset(req: TUserRequestPasswordResetRequest) {
+    return await API.json
+      .post(`/user/password-reset`, req)
+      .then(defaultResponseHandler<TApiResponse<null>>)
       .catch(defaultAxiosErrorHandler);
   },
 };
