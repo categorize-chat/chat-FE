@@ -27,7 +27,8 @@ export const validateToken = async ({
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    .then(defaultResponseHandler<TUserAuthResponse>);
+    .then(defaultResponseHandler<TUserAuthResponse>)
+    .then(({ result }) => result);
 
   if (!userInfo) return false;
 

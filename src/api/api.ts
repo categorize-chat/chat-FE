@@ -89,13 +89,13 @@ export const defaultResponseHandler = <
   TResponse extends TApiResponse<any>,
 >(res: {
   data: TResponse;
-}): TResponse['result'] => {
+}): TResponse => {
   const response = res.data;
   if (response.code !== 200) {
     throw new Error(response.message);
   }
 
-  return response.result;
+  return response;
 };
 
 export const defaultAxiosErrorHandler = async (error: any) => {

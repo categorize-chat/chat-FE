@@ -7,7 +7,8 @@ export const searchQueryKeys = {
 export const searchAllRoomsQuery = () => ({
   queryKey: [searchQueryKeys.searchAllRooms],
   queryFn: async () => {
-    return await searchApi.searchAllRooms();
+    const { result } = await searchApi.searchAllRooms();
+    return result;
   },
   staleTime: 1000 * 10,
   cacheTime: 1000 * 60,

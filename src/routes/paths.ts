@@ -9,6 +9,7 @@ export const Paths = {
     oauth: {
       kakao: () => '/user/oauth/kakao',
     },
+    passwordResetCallback: () => '/reset-password',
   },
   chat: {
     base: () => '/chat',

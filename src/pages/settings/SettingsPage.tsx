@@ -69,11 +69,11 @@ const Settings = () => {
       }
 
       // API 호출
-      const response = await userApi.updateProfileImage({ file: fileData });
+      const { result } = await userApi.updateProfileImage({ file: fileData });
 
       // 프로필 이미지 업데이트 성공 시 상태 업데이트
-      if (response) {
-        setProfileUrl(response.profileUrl || profileUrl);
+      if (result) {
+        setProfileUrl(result.profileUrl || profileUrl);
         await Swal.fire({
           title: '성공',
           text: '프로필 이미지가 업데이트되었습니다.',
@@ -93,6 +93,15 @@ const Settings = () => {
         icon: 'error',
       });
     }
+  };
+
+  const handleRequestPasswordReset = async () => {
+    const { message } = await userApi.requestPasswordReset({ email });
+    await Swal.fire({
+      title: '비밀번호 초기화 요청',
+      text: message,
+      icon: 'success',
+    });
   };
 
   return (
@@ -167,6 +176,29 @@ const Settings = () => {
               <FormControl>
                 <FormLabel>이메일</FormLabel>
                 <Input value={email} size="md" disabled />
+              </FormControl>
+              <FormControl>
+                <FormLabel
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ display: 'inline-block' }}>비밀번호</span>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                    }}
+                    onClick={handleRequestPasswordReset}
+                  >
+                    변경하기
+                  </span>
+                </FormLabel>
+                <Input value={'********'} size="md" type="password" disabled />
               </FormControl>
             </Box>
           </Box>
