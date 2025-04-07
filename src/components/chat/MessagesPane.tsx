@@ -19,7 +19,10 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
-const MemoizedMessagesPaneHeader = memo(MessagesPaneHeader);
+const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
+  return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
+});
+const MemoizedMessageInput = memo(MessageInput);
 
 export default function MessagesPane() {
   const { id: chatId } = useParams();
@@ -167,9 +170,7 @@ export default function MessagesPane() {
             overflowY: 'auto',
           }}
         >
-          {selectedChat && (
-            <MemoizedMessagesPaneHeader channel={selectedChat} />
-          )}
+          {selectedChat && <MessagesPaneHeader channel={selectedChat} />}
           <Box
             sx={{
               display: 'flex',
@@ -227,7 +228,7 @@ export default function MessagesPane() {
                         id={`${i}`}
                         ref={el => (messageRefs.current[i] = el)}
                       >
-                        <UserAvatar user={message.user} />
+                        <MemoizedUserAvatar user={message.user} />
                         <MessageBubble
                           variant={isYou ? 'sent' : 'received'}
                           {...message}
@@ -242,7 +243,7 @@ export default function MessagesPane() {
 
               <div ref={ref} style={{ height: '10px' }} />
             </Box>
-            <MessageInput onSubmit={handleChatSend} />
+            <MemoizedMessageInput onSubmit={handleChatSend} />
           </Box>
         </Box>
         <AiPannel />

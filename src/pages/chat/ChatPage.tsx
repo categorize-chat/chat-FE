@@ -41,6 +41,8 @@ export const ChatPage = () => {
 
   // setSelectedChat을 메모이제이션
   const updateSelectedChat = useCallback((chatId: string, chats: any[]) => {
+    setSelectedId(chatId);
+
     const channel = chats.find(channel => channel.channelId === chatId);
     if (channel) {
       setSelectedChat(channel);
@@ -125,11 +127,7 @@ export const ChatPage = () => {
   }, [chatRoomsData, setChats]);
 
   useEffect(() => {
-    if (!chatId) return;
-
-    setSelectedId(chatId);
-
-    if (!chats) return;
+    if (!chatId || !chats) return;
 
     updateSelectedChat(chatId, chats);
   }, [chatId, chats, updateSelectedChat]);
