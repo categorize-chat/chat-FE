@@ -9,34 +9,34 @@ import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
 import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 export type MessageInputProps = {
-  textAreaValue: string;
-  setTextAreaValue: (value: string) => void;
-  onSubmit: () => void;
+  onSubmit: (inputMessage: string) => void;
 };
 
 export default function MessageInput(props: MessageInputProps) {
-  const { textAreaValue, setTextAreaValue, onSubmit } = props;
-  const textAreaRef = useRef<HTMLDivElement>(null);
+  const { onSubmit } = props;
+
+  const [textAreaValue, setTextAreaValue] = useState('');
+
   const handleClick = () => {
-    if (textAreaValue.trim() !== '') {
-      onSubmit();
-      setTextAreaValue('');
-    }
+    if (textAreaValue.trim() === '') return;
+
+    onSubmit(textAreaValue);
+    setTextAreaValue('');
   };
+
   return (
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
         <Textarea
           placeholder="보낼 메세지를 입력해주세요..."
           aria-label="Message"
-          ref={textAreaRef}
+          value={textAreaValue}
           onChange={e => {
             setTextAreaValue(e.target.value);
           }}
-          value={textAreaValue}
           minRows={3}
           maxRows={10}
           endDecorator={
