@@ -83,7 +83,7 @@ export default function MessageBubble({
     >
       <Stack
         direction="row"
-        justifyContent="space-between"
+        justifyContent={isSent ? 'flex-end' : 'flex-start'}
         spacing={2}
         sx={{ mb: 0.25 }}
       >
