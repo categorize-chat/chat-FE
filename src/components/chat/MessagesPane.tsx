@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef, useMemo, memo } from 'react';
+import { useEffect, Fragment, useRef, useMemo, memo, useCallback } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
@@ -26,9 +26,18 @@ export default function MessagesPane() {
 
   const { chatMessages, selectedChat, setChatMessages } = useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
+  const { nickname, email, profileUrl } = useUserStore();
+
+  // 현재 메세지 보내는 유저
+  const user = useMemo(() => {
+    return {
+      nickname,
+      email,
+      profileUrl,
+    };
+  }, [nickname, email, profileUrl]);
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
-
   const messageLimit = 20;
 
   const { data, fetchNextPage, hasNextPage, isError, isFetchingNextPage } =
@@ -49,35 +58,25 @@ export default function MessagesPane() {
     },
   );
 
-  const { nickname, email, profileUrl } = useUserStore();
+  const handleChatSend = useCallback(
+    async (inputMessage: string) => {
+      const socket = getSocket();
+      if (!socket) return;
 
-  const [textAreaValue, setTextAreaValue] = useState('');
+      const newMessage: TMessageProps = {
+        user,
+        content: inputMessage,
+        createdAt: new Date().toISOString(),
+        topic: -1,
+        room: chatId || '',
+      };
 
-  // 현재 메세지 보내는 유저
-  const user = useMemo(() => {
-    return {
-      nickname,
-      email,
-      profileUrl,
-    };
-  }, [nickname, email, profileUrl]);
-
-  const handleChatSend = async () => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    const newMessage: TMessageProps = {
-      user,
-      content: textAreaValue,
-      createdAt: new Date().toISOString(),
-      topic: -1,
-      room: chatId || '',
-    };
-
-    socket.emit('message', {
-      ...newMessage,
-    });
-  };
+      socket.emit('message', {
+        ...newMessage,
+      });
+    },
+    [chatId, email, nickname, profileUrl],
+  );
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const prevScrollHeight = useRef<number>(0);
@@ -243,11 +242,7 @@ export default function MessagesPane() {
 
               <div ref={ref} style={{ height: '10px' }} />
             </Box>
-            <MessageInput
-              textAreaValue={textAreaValue}
-              setTextAreaValue={setTextAreaValue}
-              onSubmit={handleChatSend}
-            />
+            <MessageInput onSubmit={handleChatSend} />
           </Box>
         </Box>
         <AiPannel />
