@@ -12,6 +12,7 @@ export type TMessageProps = {
   //   size: string;
   // };
 
+  _id?: string;
   user: TUserProps;
   room: string;
   createdAt: string;

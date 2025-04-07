@@ -19,6 +19,9 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
+const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
+  return prevProps.messageId === nextProps.messageId;
+});
 const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
   return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
 });
@@ -229,8 +232,9 @@ export default function MessagesPane() {
                         ref={el => (messageRefs.current[i] = el)}
                       >
                         <MemoizedUserAvatar user={message.user} />
-                        <MessageBubble
+                        <MemoizedMessageBubble
                           variant={isYou ? 'sent' : 'received'}
+                          messageId={message._id || ''}
                           {...message}
                           date={date}
                           time={time}
