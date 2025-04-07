@@ -6,14 +6,14 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { TMessageProps, TUserProps } from '@/types';
+import { TMessageProps } from '@/types';
 import { useAIStore } from '@/state/ai';
 
 type TMessageBubbleProps = TMessageProps & {
   variant: 'sent' | 'received';
   date: string;
   time: string;
-  user: TUserProps;
+  messageId: string;
 };
 
 export default function MessageBubble({
@@ -83,7 +83,7 @@ export default function MessageBubble({
     >
       <Stack
         direction="row"
-        justifyContent="space-between"
+        justifyContent={isSent ? 'flex-end' : 'flex-start'}
         spacing={2}
         sx={{ mb: 0.25 }}
       >

@@ -9,7 +9,7 @@ import {
 } from '@mui/joy';
 import { useUserStore } from '@/state/user';
 import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import userApi from '@/api/user/api';
 import Divider from '@mui/joy/Divider';
 import Swal from 'sweetalert2';
@@ -21,6 +21,7 @@ const Settings = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [nicknameInput, setNicknameInput] = useState(nickname);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEditNickname = async () => {
     await userApi.updateNickname({ nickname: nicknameInput });
@@ -29,23 +30,21 @@ const Settings = () => {
     setNickname(nicknameInput);
   };
 
-  const handleEditProfileImage = async () => {
-    try {
-      // 파일 선택 다이얼로그 열기
-      const file = await (window as any).showOpenFilePicker({
-        types: [
-          {
-            description: '이미지 파일',
-            accept: {
-              'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
-            },
-          },
-        ],
-        multiple: false,
-      });
+  const handleEditProfileImage = () => {
+    // input 요소 클릭 이벤트 트리거
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
-      const fileHandle = file[0];
-      const fileData = await fileHandle.getFile();
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    try {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const fileData = files[0];
 
       // 파일 크기 제한 (10MB)
       const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -82,16 +81,17 @@ const Settings = () => {
       }
     } catch (error) {
       console.error('프로필 이미지 업데이트 실패:', error);
-      // 사용자가 파일 선택을 취소한 경우 에러 메시지를 표시하지 않음
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
 
       await Swal.fire({
         title: '오류',
         text: '프로필 이미지 업데이트 중 오류가 발생했습니다.',
         icon: 'error',
       });
+    }
+
+    // 파일 입력 초기화 (같은 파일 다시 선택 가능하도록)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -146,6 +146,13 @@ const Settings = () => {
                   sx={{ fontSize: '1rem', aspectRatio: '1/1', margin: '0' }}
                 />
               </Box>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                accept="image/*"
+                onChange={handleFileChange}
+              />
             </Box>
             <Typography marginY={2}>
               환영합니다, <b>{nickname}</b>님!
