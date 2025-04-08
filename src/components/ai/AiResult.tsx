@@ -48,14 +48,7 @@ const AiResult = () => {
     for (i = reference.length - topics.length; i >= 0; i--) {
       const target = reference[i];
 
-      const targetTime = new Date(target.createdAt);
-      const comparerTime = new Date(comparer.createdAt);
-
-      if (
-        target.content === comparer.content &&
-        targetTime.getTime() === comparerTime.getTime() &&
-        target.user.nickname === comparer.user.nickname
-      ) {
+      if (target._id && comparer._id && target._id === comparer._id) {
         break;
       }
     }

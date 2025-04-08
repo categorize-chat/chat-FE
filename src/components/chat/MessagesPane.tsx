@@ -22,7 +22,8 @@ import { getSocket } from '@/utils/socket';
 const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
   return (
     prevProps.messageId === nextProps.messageId &&
-    prevProps.user === nextProps.user
+    prevProps.user === nextProps.user &&
+    prevProps.topic === nextProps.topic
   );
 });
 const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
