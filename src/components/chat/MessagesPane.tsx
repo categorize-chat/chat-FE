@@ -20,7 +20,10 @@ import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
 const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
-  return prevProps.messageId === nextProps.messageId;
+  return (
+    prevProps.messageId === nextProps.messageId &&
+    prevProps.user === nextProps.user
+  );
 });
 const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
   return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
