@@ -12,6 +12,7 @@ import { TChannelProps } from '@/types';
 import { Paths } from '@/routes/paths';
 import { Chip } from '@mui/joy';
 import { useUIStore } from '@/state/ui';
+import { truncateText } from '@/utils/common/function';
 
 type TRoomListItemProps = TChannelProps;
 
@@ -31,6 +32,8 @@ export default function RoomListItem(props: TRoomListItemProps) {
   const lastMessageContent = lastMessage
     ? `${lastMessage.user.nickname}: ${lastMessage.content}`
     : `${channelName} 톡방입니다`;
+
+  const truncatedLastMessageContent = truncateText(lastMessageContent);
 
   return (
     <Fragment>
@@ -74,9 +77,11 @@ export default function RoomListItem(props: TRoomListItemProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              wordBreak: 'break-word',
+              maxWidth: '100%',
             }}
           >
-            {lastMessageContent}
+            {truncatedLastMessageContent}
           </Typography>
         </ListItemButton>
       </ListItem>

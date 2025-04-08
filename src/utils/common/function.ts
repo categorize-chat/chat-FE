@@ -12,6 +12,11 @@ export const parseRawDateAndTime = (rawDate: string) => {
   };
 };
 
+export const truncateText = (text: string, maxLength = 20) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + '...';
+};
+
 export const hashString = (str: string, min: number, max: number) => {
   let hash = 0;
   for (var i = 0; i < str.length; i++) {
