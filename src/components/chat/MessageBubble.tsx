@@ -106,6 +106,8 @@ export default function MessageBubble({
             borderTopLeftRadius: isSent ? 'lg' : 0,
             backgroundColor: bubbleColor,
             cursor: topic !== -1 ? 'pointer' : '',
+            wordBreak: 'keep-all',
+            wordWrap: 'break-word',
           }}
         >
           <Typography
