@@ -21,7 +21,8 @@ export const ChatPage = () => {
   const location = useLocation();
 
   const { id: chatId } = useParams();
-  const { setSelectedId, setSelectedChat, addNewMessage } = useChatStore();
+  const { setSelectedId, setSelectedChat, addNewMessage, clearTempMessages } =
+    useChatStore();
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -126,9 +127,11 @@ export const ChatPage = () => {
     setSubscriptions(channels.map(channel => channel.channelId));
   }, [chatRoomsData, setChats]);
 
+  // 채팅방 진입 시 채팅방 선택
   useEffect(() => {
     if (!chatId || !chats) return;
 
+    // 채팅방 선택
     updateSelectedChat(chatId, chats);
   }, [chatId, chats, updateSelectedChat]);
 
@@ -144,6 +147,9 @@ export const ChatPage = () => {
   useEffect(() => {
     const socket = getSocket();
     if (!socket || !chatId) return;
+
+    // 임시 메시지 삭제
+    clearTempMessages();
 
     // 채팅방에 입장
     socket.emit('view', chatId);

@@ -20,7 +20,10 @@ import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
 const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
-  return prevProps.messageId === nextProps.messageId;
+  return (
+    prevProps.messageId === nextProps.messageId &&
+    prevProps.user === nextProps.user
+  );
 });
 const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
   return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
@@ -30,7 +33,8 @@ const MemoizedMessageInput = memo(MessageInput);
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, selectedChat, setChatMessages } = useChatStore();
+  const { chatMessages, selectedChat, setChatMessages, tempMessages } =
+    useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
   const { nickname, email, profileUrl } = useUserStore();
 
@@ -92,7 +96,7 @@ export default function MessagesPane() {
     if (!data) return;
 
     // data 꼬임을 방지하기 위해 복사 후 역순으로 평탄화
-    const allMessages = [...data.pages]
+    const fetchedMessages = [...data.pages]
       .reverse()
       .flatMap(page => page.messages)
       .filter(
@@ -100,8 +104,14 @@ export default function MessagesPane() {
           index === self.findIndex(m => m.createdAt === message.createdAt),
       );
 
+    const allMessages = [...fetchedMessages, ...tempMessages];
+
     setChatMessages(allMessages);
-  }, [data]);
+  }, [data, tempMessages]);
+
+  // useEffect(() => {
+  //   console.log(chatMessages);
+  // }, [chatMessages]);
 
   // 채팅방 변경 시 스크롤 초기화
   useEffect(() => {
