@@ -63,7 +63,7 @@ const UserLoginPage = () => {
   };
 
   const handleInputChange =
-    (inputRef: React.RefObject<HTMLInputElement>) =>
+    (inputRef: React.RefObject<HTMLInputElement | null>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
       if (inputRef.current === null) return;
       inputRef.current.value = e.target.value;

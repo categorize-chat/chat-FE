@@ -235,22 +235,28 @@ export default function MessagesPane() {
                           </Divider>
                         </Stack>
                       )}
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        flexDirection={isYou ? 'row-reverse' : 'row'}
-                        id={`${i}`}
-                        ref={el => (messageRefs.current[i] = el)}
+                      <div
+                        ref={el => {
+                          messageRefs.current[i] = el;
+                        }}
                       >
-                        <MemoizedUserAvatar user={message.user} />
-                        <MemoizedMessageBubble
-                          variant={isYou ? 'sent' : 'received'}
-                          messageId={message._id || ''}
-                          {...message}
-                          date={date}
-                          time={time}
-                        />
-                      </Stack>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          flexDirection={isYou ? 'row-reverse' : 'row'}
+                          id={`${i}`}
+                        ref={el => (messageRefs.current[i] = el)}
+                        >
+                          <MemoizedUserAvatar user={message.user} />
+                          <MemoizedMessageBubble
+                            variant={isYou ? 'sent' : 'received'}
+                            messageId={message._id || ''}
+                            {...message}
+                            date={date}
+                            time={time}
+                          />
+                        </Stack>
+                      </div>
                     </Fragment>
                   );
                 })}

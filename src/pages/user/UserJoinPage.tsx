@@ -42,7 +42,7 @@ const UserJoinPage = () => {
   };
 
   const handleInputChange =
-    (ref: React.RefObject<HTMLInputElement>) =>
+    (ref: React.RefObject<HTMLInputElement | null>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
       if (ref.current === null) return;
       ref.current.value = e.target.value;
