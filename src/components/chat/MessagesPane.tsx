@@ -89,7 +89,13 @@ export default function MessagesPane() {
   useEffect(() => {
     if (!data) return;
 
-    // 새로운 페이지가 들어오면, 그것만 업데이트 해주면 됨
+    // 받아온 페이지가 하나라면 그것만 업데이트
+    if (data.pages.length === 1) {
+      setChatMessages(data.pages[0].messages);
+      return;
+    }
+
+    // 새로운 페이지가 들어오면 append
     const recentMessages = data.pages[data.pages.length - 1].messages;
     setChatMessages(state => [...recentMessages, ...state]);
 
@@ -103,6 +109,9 @@ export default function MessagesPane() {
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
+
+    // 채팅방 변경 시 messageRefs 초기화
+    messageRefs.current = [];
 
     // column-reverse에서는 scrollTop을 0으로 설정하면 맨 아래로 이동
     scrollContainer.scrollTop = 0;
