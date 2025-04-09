@@ -8,8 +8,13 @@ import {
   Stack,
   Typography,
 } from '@mui/joy';
-import { TAIStore, TColorMaps, useAIStore } from '@/state/ai';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import {
+  TAIStore,
+  TColorMaps,
+  TReplacedPartMessages,
+  useAIStore,
+} from '@/state/ai';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useChatStore } from '@/state/chat';
 import { Circle } from '@mui/icons-material';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -22,21 +27,25 @@ const AiResult = () => {
   const { chatMessages, setChatMessages } = useChatStore();
   const {
     setColorMaps,
-    setFirstTopicIndices,
+    setFirstTopicRelativeIndices,
     setSelectedTopic,
     hml,
     setHml,
-    replacedPartMessages,
-    setReplacedPartMessages,
+    startIndexAnchor,
+    setStartIndexAnchor,
   } = useAIStore();
 
-  const [startIndex, setStartIndex] = useState(-1);
+  const [replacedPartMessages, setReplacedPartMessages] =
+    useState<TReplacedPartMessages>({} as TReplacedPartMessages);
 
+  // ******************* constants *******************
   const warningText = {
     low: '* 주제간의 충돌이 발생할 수 있습니다.',
     mid: '* 분류가 마음에 들지 않으면 정도를 바꿔보세요.',
     high: '* 제대로 분류되지 않은 채팅이 있을 수 있습니다.',
   } as const;
+
+  const hmlKey = ['high', 'mid', 'low'] as const;
 
   const findStartIndex = (
     reference: TMessageProps[],
@@ -69,9 +78,9 @@ const AiResult = () => {
       }));
   };
 
-  const handleClickReturn = () => {
+  const handleClickReturn = useCallback(() => {
     if (confirm('결과물을 모두 버리고 처음 화면으로 돌아가시겠습니까?')) init();
-  };
+  }, [init]);
 
   useEffect(() => {
     if (!aiResult || !chatMessages) return;
@@ -82,16 +91,14 @@ const AiResult = () => {
 
     const startIndex = findStartIndex(chatMessages, refChat, topics.mid);
 
-    const hmlKey = ['high', 'mid', 'low'] as const;
-
     const replacedPartMessages = Object.fromEntries(
       hmlKey.map(hml => [
         hml,
         getReplacedMessage(chatMessages, startIndex, topics[hml]),
       ]),
-    ) as TAIStore['replacedPartMessages'];
+    ) as TReplacedPartMessages;
 
-    const firstTopicIndices = Object.fromEntries(
+    const firstTopicRelativeIndices = Object.fromEntries(
       hmlKey.map(hml => {
         const topicIndex = Object.keys(summaries[hml]);
 
@@ -103,19 +110,21 @@ const AiResult = () => {
         let k = 0;
 
         for (let i = 0; i < replacedPartMessages[hml].length; i++) {
+          if (k >= topicIndex.length) break;
+
           if (replacedPartMessages[hml][i].topic === +topicIndex[k]) {
-            firstTopicIndex[+topicIndex[k]] = i + startIndex;
+            firstTopicIndex[+topicIndex[k]] = i;
             k++;
           }
         }
 
         return [hml, firstTopicIndex];
       }),
-    ) as TAIStore['firstTopicIndices'];
+    ) as TAIStore['firstTopicRelativeIndices'];
 
-    setStartIndex(startIndex);
+    setStartIndexAnchor(startIndex);
     setReplacedPartMessages(replacedPartMessages);
-    setFirstTopicIndices(firstTopicIndices);
+    setFirstTopicRelativeIndices(firstTopicRelativeIndices);
 
     // 사용 가능한 색 지정
     const colorMaps = Object.fromEntries(
@@ -148,29 +157,29 @@ const AiResult = () => {
     setColorMaps(colorMaps);
   }, [aiResult]);
 
+  // 채팅 메세지 설정
   useEffect(() => {
-    // 채팅 메세지 설정
-
     if (
       !chatMessages ||
       !replacedPartMessages ||
       !replacedPartMessages[hml] ||
-      startIndex === -1
+      startIndexAnchor === -1
     )
       return;
 
     const newChatMessages = [
-      ...chatMessages.slice(0, startIndex),
+      ...chatMessages.slice(0, startIndexAnchor),
       ...replacedPartMessages[hml],
-      ...chatMessages.slice(startIndex + replacedPartMessages[hml].length),
+      ...chatMessages.slice(
+        startIndexAnchor + replacedPartMessages[hml].length,
+      ),
     ];
 
     setChatMessages(newChatMessages);
-  }, [hml, replacedPartMessages, startIndex]);
+  }, [hml, replacedPartMessages, startIndexAnchor]);
 
+  // 토픽 선택 해제
   useEffect(() => {
-    // 토픽 선택 해제
-
     setSelectedTopic({
       index: -1,
       color: '',

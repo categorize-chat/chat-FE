@@ -23,7 +23,13 @@ export default function MessagesPane() {
   const { id: chatId } = useParams();
 
   const { chatMessages, selectedChat, setChatMessages } = useChatStore();
-  const { firstTopicIndices, selectedTopic, hml } = useAIStore();
+  const {
+    firstTopicRelativeIndices,
+    selectedTopic,
+    hml,
+    startIndexAnchor,
+    setStartIndexAnchor,
+  } = useAIStore();
   const { nickname, email, profileUrl } = useUserStore();
 
   // 현재 메세지 보내는 유저
@@ -80,18 +86,18 @@ export default function MessagesPane() {
   const prevScrollHeight = useRef<number>(0);
 
   // 메시지 데이터 업데이트
-  // 새로운 페이지가 들어오면, 그것만 업데이트 해주면 됨
   useEffect(() => {
     if (!data) return;
 
+    // 새로운 페이지가 들어오면, 그것만 업데이트 해주면 됨
     const recentMessages = data.pages[data.pages.length - 1].messages;
-
     setChatMessages(state => [...recentMessages, ...state]);
-  }, [data]);
 
-  // useEffect(() => {
-  //   console.log(chatMessages);
-  // }, [chatMessages]);
+    // startIndexAnchor 업데이트
+    if (startIndexAnchor !== -1) {
+      setStartIndexAnchor(startIndexAnchor + recentMessages.length);
+    }
+  }, [data]);
 
   // 채팅방 변경 시 스크롤 초기화
   useEffect(() => {
@@ -122,15 +128,19 @@ export default function MessagesPane() {
   }, [chatMessages]);
 
   useEffect(() => {
-    if (!selectedTopic || !firstTopicIndices[hml] || selectedTopic.index === -1)
+    if (
+      !selectedTopic ||
+      !firstTopicRelativeIndices[hml] ||
+      selectedTopic.index === -1
+    )
       return;
 
     messageRefs.current[
-      firstTopicIndices[hml][selectedTopic.index]
+      firstTopicRelativeIndices[hml][selectedTopic.index] + startIndexAnchor
     ]?.scrollIntoView({
       behavior: 'smooth',
     });
-  }, [selectedTopic, firstTopicIndices]);
+  }, [selectedTopic, firstTopicRelativeIndices]);
 
   if (isError) {
     return <></>;
