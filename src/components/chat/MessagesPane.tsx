@@ -19,23 +19,10 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
-const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
-  return (
-    prevProps.messageId === nextProps.messageId &&
-    prevProps.user === nextProps.user &&
-    prevProps.topic === nextProps.topic
-  );
-});
-const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
-  return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
-});
-const MemoizedMessageInput = memo(MessageInput);
-
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, selectedChat, setChatMessages, tempMessages } =
-    useChatStore();
+  const { chatMessages, selectedChat, setChatMessages } = useChatStore();
   const { firstTopicIndices, selectedTopic, hml } = useAIStore();
   const { nickname, email, profileUrl } = useUserStore();
 
@@ -93,22 +80,14 @@ export default function MessagesPane() {
   const prevScrollHeight = useRef<number>(0);
 
   // 메시지 데이터 업데이트
+  // 새로운 페이지가 들어오면, 그것만 업데이트 해주면 됨
   useEffect(() => {
     if (!data) return;
 
-    // data 꼬임을 방지하기 위해 복사 후 역순으로 평탄화
-    const fetchedMessages = [...data.pages]
-      .reverse()
-      .flatMap(page => page.messages)
-      .filter(
-        (message, index, self) =>
-          index === self.findIndex(m => m.createdAt === message.createdAt),
-      );
+    const recentMessages = data.pages[data.pages.length - 1].messages;
 
-    const allMessages = [...fetchedMessages, ...tempMessages];
-
-    setChatMessages(allMessages);
-  }, [data, tempMessages]);
+    setChatMessages(state => [...recentMessages, ...state]);
+  }, [data]);
 
   // useEffect(() => {
   //   console.log(chatMessages);
@@ -245,7 +224,6 @@ export default function MessagesPane() {
                           spacing={2}
                           flexDirection={isYou ? 'row-reverse' : 'row'}
                           id={`${i}`}
-                        ref={el => (messageRefs.current[i] = el)}
                         >
                           <MemoizedUserAvatar user={message.user} />
                           <MemoizedMessageBubble
@@ -272,3 +250,15 @@ export default function MessagesPane() {
     </Sheet>
   );
 }
+
+const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
+  return (
+    prevProps.messageId === nextProps.messageId &&
+    prevProps.user === nextProps.user &&
+    prevProps.topic === nextProps.topic
+  );
+});
+const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
+  return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
+});
+const MemoizedMessageInput = memo(MessageInput);
