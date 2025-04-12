@@ -29,6 +29,9 @@ export default function MessagesPane() {
     hml,
     startIndexAnchor,
     setStartIndexAnchor,
+    isSelectingMessages,
+    selectedMessages,
+    setHowmany,
   } = useAIStore();
   const { nickname, email, profileUrl } = useUserStore();
 
@@ -43,6 +46,16 @@ export default function MessagesPane() {
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const messageLimit = 20;
+
+  const selectedMessageIndex = useMemo(() => {
+    if (selectedMessages.start) {
+      return chatMessages.findIndex(
+        message => message._id === selectedMessages.start!._id,
+      );
+    }
+    return -1;
+  }, [chatMessages, selectedMessages]);
+  const howmanyLimit = 100;
 
   const { data, fetchNextPage, hasNextPage, isError, isFetchingNextPage } =
     useInfiniteQuery({
@@ -151,6 +164,19 @@ export default function MessagesPane() {
     });
   }, [selectedTopic, firstTopicRelativeIndices]);
 
+  // AI 요약에 사용될 메시지 개수 업데이트
+  useEffect(() => {
+    if (selectedMessages.start && selectedMessages.end) {
+      const startIndex = chatMessages.findIndex(
+        message => message._id === selectedMessages.start!._id,
+      );
+      const endIndex = chatMessages.findIndex(
+        message => message._id === selectedMessages.end!._id,
+      );
+      setHowmany(endIndex - startIndex + 1);
+    }
+  }, [selectedMessages]);
+
   if (isError) {
     return <></>;
   }
@@ -233,6 +259,19 @@ export default function MessagesPane() {
                           </Divider>
                         </Stack>
                       )}
+                      {isSelectingMessages &&
+                        selectedMessageIndex >= 0 &&
+                        i == selectedMessageIndex + howmanyLimit && (
+                          <Divider>
+                            <Typography
+                              textAlign={'center'}
+                              my={2}
+                              fontWeight={'lg'}
+                            >
+                              여기까지 선택 가능
+                            </Typography>
+                          </Divider>
+                        )}
                       <div
                         ref={el => {
                           messageRefs.current[i] = el;
@@ -247,10 +286,14 @@ export default function MessagesPane() {
                           <MemoizedUserAvatar user={message.user} />
                           <MemoizedMessageBubble
                             variant={isYou ? 'sent' : 'received'}
-                            messageId={message._id || ''}
-                            {...message}
+                            message={message}
                             date={date}
                             time={time}
+                            disabled={
+                              isSelectingMessages &&
+                              selectedMessageIndex >= 0 &&
+                              i >= selectedMessageIndex + howmanyLimit
+                            }
                           />
                         </Stack>
                       </div>
@@ -272,9 +315,8 @@ export default function MessagesPane() {
 
 const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
   return (
-    prevProps.messageId === nextProps.messageId &&
-    prevProps.user === nextProps.user &&
-    prevProps.topic === nextProps.topic
+    prevProps.message._id === nextProps.message._id &&
+    prevProps.message === nextProps.message
   );
 });
 const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {

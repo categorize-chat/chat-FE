@@ -30,10 +30,11 @@ export default function AiPannel() {
     },
   });
 
-  const handleClickAIButton = (howmany: number) => {
+  const handleClickAIButton = (howmany: number, startMessageId: string) => {
     const req = {
       channelId: selectedId,
       howmany,
+      startMessageId,
     };
 
     aiSummaryMutation.mutate(req);

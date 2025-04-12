@@ -36,6 +36,9 @@ export type TAIStore = {
   firstTopicRelativeIndices: TFirstTopicIndices;
   aiResult: TAiSummaryResponse['result'];
   hml: THmlKey;
+  isSelectingMessages: boolean;
+  selectedMessages: Record<'start' | 'end', TMessageProps | null>;
+  howmany: number;
 
   setSelectedTopic: (selectedTopic: TSelectedTopic) => void;
   setColorMaps: (colorMaps: TColorMaps) => void;
@@ -45,7 +48,11 @@ export type TAIStore = {
   ) => void;
   setAiResult: (aiResult: TAiSummaryResponse['result']) => void;
   setHml: (hml: THmlKey) => void;
-
+  setIsSelectingMessages: (isSelectingMessages: boolean) => void;
+  setSelectedMessages: (
+    selectedMessages: Record<'start' | 'end', TMessageProps | null>,
+  ) => void;
+  setHowmany: (howmany: number) => void;
   init: () => void;
 };
 
@@ -59,6 +66,9 @@ const initialAIState = {
   firstTopicRelativeIndices: {} as TAIStore['firstTopicRelativeIndices'],
   aiResult: {} as TAIStore['aiResult'],
   hml: 'mid' as const,
+  isSelectingMessages: false,
+  selectedMessages: { start: null, end: null } as TAIStore['selectedMessages'],
+  howmany: 0,
 };
 
 export const useAIStore = create<TAIStore>(set => ({
@@ -71,6 +81,8 @@ export const useAIStore = create<TAIStore>(set => ({
     set(() => ({ firstTopicRelativeIndices })),
   setAiResult: aiResult => set({ aiResult }),
   setHml: hml => set({ hml }),
-
+  setIsSelectingMessages: isSelectingMessages => set({ isSelectingMessages }),
+  setSelectedMessages: selectedMessages => set({ selectedMessages }),
+  setHowmany: howmany => set({ howmany }),
   init: () => set({ ...initialAIState }),
 }));

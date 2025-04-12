@@ -1,19 +1,54 @@
-import { Box, Button, Input, Stack, Typography } from '@mui/joy';
+import {
+  Box,
+  Button,
+  Stack,
+  Step,
+  StepIndicator,
+  Stepper,
+  Typography,
+} from '@mui/joy';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import { useRef } from 'react';
+import { useMemo } from 'react';
+import { useAIStore } from '@/state/ai';
+import { Check } from '@mui/icons-material';
 
 interface IAiInitProps {
-  handleClickAIButton: (howmany: number) => void;
+  handleClickAIButton: (howmany: number, startMessageId: string) => void;
 }
 
 const AiInit = ({ handleClickAIButton }: IAiInitProps) => {
-  const howmanyInputRef = useRef<HTMLInputElement | null>(null);
+  const {
+    isSelectingMessages,
+    setIsSelectingMessages,
+    selectedMessages,
+    setSelectedMessages,
+    howmany,
+  } = useAIStore();
+
+  const isSelectingEnded = useMemo(() => {
+    return selectedMessages.start && selectedMessages.end;
+  }, [selectedMessages]);
 
   const aiButtonHandler = () => {
-    if (!howmanyInputRef || !howmanyInputRef.current) return;
+    if (!selectedMessages.start || !selectedMessages.start._id) return;
+    setIsSelectingMessages(false);
+    handleClickAIButton(howmany, selectedMessages.start._id);
+  };
 
-    const howmany = +(howmanyInputRef.current as HTMLInputElement).value || 100;
-    handleClickAIButton(howmany);
+  const activeStep = useMemo(() => {
+    if (selectedMessages.start && selectedMessages.end) return 2;
+    if (selectedMessages.start) return 1;
+    return 0;
+  }, [selectedMessages]);
+
+  const steps = ['시작 메시지 선택', '끝 메시지 선택'];
+
+  const handleCancel = () => {
+    setIsSelectingMessages(false);
+    setSelectedMessages({
+      start: null,
+      end: null,
+    });
   };
 
   return (
@@ -49,7 +84,7 @@ const AiInit = ({ handleClickAIButton }: IAiInitProps) => {
         <li>채팅을 요약하고 싶어...</li>
       </ul>
 
-      <Stack
+      {/* <Stack
         sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -73,17 +108,80 @@ const AiInit = ({ handleClickAIButton }: IAiInitProps) => {
             width: 'fit-content',
           }}
         />
-      </Stack>
+      </Stack> */}
+
+      <Stepper
+        sx={{
+          width: '100%',
+          marginTop: 3,
+          marginBottom: 3,
+          display: !isSelectingMessages ? 'none' : 'flex',
+        }}
+        size="sm"
+      >
+        {steps.map((step, index) => (
+          <Step
+            orientation="vertical"
+            key={index}
+            indicator={
+              <StepIndicator
+                variant={activeStep <= index ? 'soft' : 'solid'}
+                color={activeStep < index ? 'neutral' : 'primary'}
+              >
+                {activeStep <= index ? index + 1 : <Check />}
+              </StepIndicator>
+            }
+          >
+            {step}
+          </Step>
+        ))}
+      </Stepper>
 
       <Button
         size="sm"
         color="primary"
-        sx={{ my: 3, alignSelf: 'center', borderRadius: 'sm' }}
+        sx={{
+          display: isSelectingMessages ? 'none' : 'flex',
+          my: 3,
+          alignSelf: 'center',
+          borderRadius: 'sm',
+        }}
         endDecorator={<AutoAwesomeIcon />}
-        onClick={aiButtonHandler}
+        onClick={() => setIsSelectingMessages(true)}
       >
-        주제 요약하기
+        요약할 메시지 선택
       </Button>
+      <Stack direction="row" spacing={2}>
+        <Button
+          size="sm"
+          color="primary"
+          sx={{
+            display: isSelectingMessages ? 'flex' : 'none',
+            my: 3,
+            alignSelf: 'center',
+            borderRadius: 'sm',
+          }}
+          disabled={!isSelectingEnded}
+          endDecorator={<AutoAwesomeIcon />}
+          onClick={aiButtonHandler}
+        >
+          주제 요약하기
+        </Button>
+        <Button
+          size="sm"
+          color="primary"
+          variant="outlined"
+          sx={{
+            display: isSelectingMessages ? 'flex' : 'none',
+            my: 3,
+            alignSelf: 'center',
+            borderRadius: 'sm',
+          }}
+          onClick={handleCancel}
+        >
+          취소
+        </Button>
+      </Stack>
     </Box>
   );
 };
