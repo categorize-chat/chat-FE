@@ -20,6 +20,8 @@ export type TColorMaps = Record<
   }
 >;
 
+export type TReplacedPartMessages = Record<THmlKey, TMessageProps[]>;
+
 type TFirstTopicIndices = Record<
   THmlKey,
   {
@@ -30,20 +32,27 @@ type TFirstTopicIndices = Record<
 export type TAIStore = {
   selectedTopic: TSelectedTopic;
   colorMaps: TColorMaps;
-  firstTopicIndices: TFirstTopicIndices;
+  startIndexAnchor: number;
+  firstTopicRelativeIndices: TFirstTopicIndices;
   aiResult: TAiSummaryResponse['result'];
   hml: THmlKey;
-  replacedPartMessages: Record<THmlKey, TMessageProps[]>;
+  isSelectingMessages: boolean;
+  selectedMessages: Record<'start' | 'end', TMessageProps | null>;
+  howmany: number;
 
   setSelectedTopic: (selectedTopic: TSelectedTopic) => void;
   setColorMaps: (colorMaps: TColorMaps) => void;
-  setFirstTopicIndices: (firstTopicIndices: TFirstTopicIndices) => void;
+  setStartIndexAnchor: (startIndexAnchor: number) => void;
+  setFirstTopicRelativeIndices: (
+    firstTopicRelativeIndices: TFirstTopicIndices,
+  ) => void;
   setAiResult: (aiResult: TAiSummaryResponse['result']) => void;
   setHml: (hml: THmlKey) => void;
-  setReplacedPartMessages: (
-    replacedPartMessages: Record<THmlKey, TMessageProps[]>,
+  setIsSelectingMessages: (isSelectingMessages: boolean) => void;
+  setSelectedMessages: (
+    selectedMessages: Record<'start' | 'end', TMessageProps | null>,
   ) => void;
-
+  setHowmany: (howmany: number) => void;
   init: () => void;
 };
 
@@ -53,10 +62,13 @@ const initialAIState = {
     color: '',
   },
   colorMaps: {} as TAIStore['colorMaps'],
-  firstTopicIndices: {} as TAIStore['firstTopicIndices'],
+  startIndexAnchor: -1,
+  firstTopicRelativeIndices: {} as TAIStore['firstTopicRelativeIndices'],
   aiResult: {} as TAIStore['aiResult'],
   hml: 'mid' as const,
-  replacedPartMessages: {} as TAIStore['replacedPartMessages'],
+  isSelectingMessages: false,
+  selectedMessages: { start: null, end: null } as TAIStore['selectedMessages'],
+  howmany: 0,
 };
 
 export const useAIStore = create<TAIStore>(set => ({
@@ -64,11 +76,13 @@ export const useAIStore = create<TAIStore>(set => ({
 
   setSelectedTopic: selectedTopic => set(() => ({ selectedTopic })),
   setColorMaps: colorMaps => set(() => ({ colorMaps })),
-  setFirstTopicIndices: firstTopicIndices => set(() => ({ firstTopicIndices })),
+  setStartIndexAnchor: startIndexAnchor => set(() => ({ startIndexAnchor })),
+  setFirstTopicRelativeIndices: firstTopicRelativeIndices =>
+    set(() => ({ firstTopicRelativeIndices })),
   setAiResult: aiResult => set({ aiResult }),
   setHml: hml => set({ hml }),
-  setReplacedPartMessages: replacedPartMessages =>
-    set({ replacedPartMessages }),
-
+  setIsSelectingMessages: isSelectingMessages => set({ isSelectingMessages }),
+  setSelectedMessages: selectedMessages => set({ selectedMessages }),
+  setHowmany: howmany => set({ howmany }),
   init: () => set({ ...initialAIState }),
 }));

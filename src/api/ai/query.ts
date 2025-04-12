@@ -1,21 +1,16 @@
-import { API } from '../api';
-import { TAiSummaryRequest, TAiSummaryResponse } from './type';
+import aiApi from './api';
+import { TAiSummaryRequest } from './type';
+
+export const aiQueryKeys = {
+  summary: 'aiSummary',
+};
 
 export const AiSummaryQuery = () => ({
-  mutationKey: [`AI summary`],
+  mutationKey: [aiQueryKeys.summary],
   mutationFn: async (req: TAiSummaryRequest) => {
-    const response = await API.json
-      .post('/chat/summary', req)
-      .then(res => res.data as TAiSummaryResponse)
-      .then(({ code, message, result }) => {
-        if (code !== 200) {
-          throw new Error(message);
-        }
+    const { result } = await aiApi.getSummary(req);
 
-        return result;
-      });
-
-    return response;
+    return result;
   },
   refetchOnWindowFocus: false,
 });

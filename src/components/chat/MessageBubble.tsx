@@ -9,28 +9,59 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { TMessageProps } from '@/types';
 import { useAIStore } from '@/state/ai';
 
-type TMessageBubbleProps = TMessageProps & {
+type TMessageBubbleProps = {
   variant: 'sent' | 'received';
   date: string;
   time: string;
-  messageId: string;
+  message: TMessageProps;
+  disabled?: boolean;
 };
 
 export default function MessageBubble({
-  content,
   variant,
   time,
-  user,
-  topic,
+  message,
+  disabled,
 }: TMessageBubbleProps) {
+  const { user, content, topic } = message;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isCelebrated, setIsCelebrated] = useState<boolean>(false);
 
-  const { selectedTopic, colorMaps, hml, setSelectedTopic } = useAIStore();
+  const {
+    selectedTopic,
+    colorMaps,
+    hml,
+    setSelectedTopic,
+    isSelectingMessages,
+    selectedMessages,
+    setSelectedMessages,
+  } = useAIStore();
+
+  const isSelected = useMemo(() => {
+    if (selectedMessages.start && selectedMessages.end) {
+      return (
+        Date.parse(message.createdAt) >=
+          Date.parse(selectedMessages.start.createdAt) &&
+        Date.parse(message.createdAt) <=
+          Date.parse(selectedMessages.end.createdAt)
+      );
+    }
+    if (selectedMessages.start) {
+      return message._id === selectedMessages.start._id;
+    }
+    return false;
+  }, [selectedMessages, message]);
 
   const bubbleColor = useMemo(() => {
+    if (isSelectingMessages) {
+      if (isSelected) {
+        return 'var(--joy-palette-primary-300)';
+      }
+      return isSent ? 'var(--joy-palette-primary-solidBg)' : 'background.body';
+    }
+
     const { index, color } = selectedTopic;
 
     if (index === -1 || index !== topic) {
@@ -38,7 +69,7 @@ export default function MessageBubble({
     }
 
     return color;
-  }, [selectedTopic, topic, isSent]);
+  }, [selectedTopic, topic, isSent, isSelectingMessages, selectedMessages]);
 
   const isDim = useMemo(() => {
     const { index } = selectedTopic;
@@ -47,6 +78,22 @@ export default function MessageBubble({
   }, [selectedTopic, topic, isSent]);
 
   const chatClickHandler = () => {
+    if (isSelectingMessages) {
+      if (selectedMessages.start) {
+        setSelectedMessages({
+          ...selectedMessages,
+          end: message,
+        });
+      } else {
+        setSelectedMessages({
+          start: message,
+          end: null,
+        });
+      }
+
+      return;
+    }
+
     if (topic === -1) return;
     if (!colorMaps || !colorMaps[hml]) return;
 
@@ -76,7 +123,7 @@ export default function MessageBubble({
         maxWidth: '60%',
         minWidth: 'auto',
         marginRight: `1rem !important`,
-        opacity: isDim ? 0.5 : 1,
+        opacity: isDim || (isSelectingMessages && !isSelected) ? 0.5 : 1,
         transition: 'ease 1s',
       }}
       className="asdf"
@@ -98,14 +145,18 @@ export default function MessageBubble({
         <Sheet
           color={isSent ? 'primary' : 'neutral'}
           variant={isSent ? 'solid' : 'soft'}
-          onClick={chatClickHandler}
+          onClick={disabled ? undefined : chatClickHandler}
           sx={{
             p: 1.25,
             borderRadius: 'lg',
             borderTopRightRadius: isSent ? 0 : 'lg',
             borderTopLeftRadius: isSent ? 'lg' : 0,
             backgroundColor: bubbleColor,
-            cursor: topic !== -1 ? 'pointer' : '',
+            cursor: disabled
+              ? 'not-allowed'
+              : isSelectingMessages || topic !== -1
+                ? 'pointer'
+                : '',
             wordBreak: 'keep-all',
             wordWrap: 'break-word',
           }}

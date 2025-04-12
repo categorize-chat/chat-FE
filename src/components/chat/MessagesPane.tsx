@@ -19,23 +19,20 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { getSocket } from '@/utils/socket';
 
-const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
-  return (
-    prevProps.messageId === nextProps.messageId &&
-    prevProps.user === nextProps.user
-  );
-});
-const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
-  return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
-});
-const MemoizedMessageInput = memo(MessageInput);
-
 export default function MessagesPane() {
   const { id: chatId } = useParams();
 
-  const { chatMessages, selectedChat, setChatMessages, tempMessages } =
-    useChatStore();
-  const { firstTopicIndices, selectedTopic, hml } = useAIStore();
+  const { chatMessages, selectedChat, setChatMessages } = useChatStore();
+  const {
+    firstTopicRelativeIndices,
+    selectedTopic,
+    hml,
+    startIndexAnchor,
+    setStartIndexAnchor,
+    isSelectingMessages,
+    selectedMessages,
+    setHowmany,
+  } = useAIStore();
   const { nickname, email, profileUrl } = useUserStore();
 
   // 현재 메세지 보내는 유저
@@ -49,6 +46,16 @@ export default function MessagesPane() {
 
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const messageLimit = 20;
+
+  const selectedMessageIndex = useMemo(() => {
+    if (selectedMessages.start) {
+      return chatMessages.findIndex(
+        message => message._id === selectedMessages.start!._id,
+      );
+    }
+    return -1;
+  }, [chatMessages, selectedMessages]);
+  const howmanyLimit = 100;
 
   const { data, fetchNextPage, hasNextPage, isError, isFetchingNextPage } =
     useInfiniteQuery({
@@ -95,28 +102,29 @@ export default function MessagesPane() {
   useEffect(() => {
     if (!data) return;
 
-    // data 꼬임을 방지하기 위해 복사 후 역순으로 평탄화
-    const fetchedMessages = [...data.pages]
-      .reverse()
-      .flatMap(page => page.messages)
-      .filter(
-        (message, index, self) =>
-          index === self.findIndex(m => m.createdAt === message.createdAt),
-      );
+    // 받아온 페이지가 하나라면 그것만 업데이트
+    if (data.pages.length === 1) {
+      setChatMessages(data.pages[0].messages);
+      return;
+    }
 
-    const allMessages = [...fetchedMessages, ...tempMessages];
+    // 새로운 페이지가 들어오면 append
+    const recentMessages = data.pages[data.pages.length - 1].messages;
+    setChatMessages(state => [...recentMessages, ...state]);
 
-    setChatMessages(allMessages);
-  }, [data, tempMessages]);
-
-  // useEffect(() => {
-  //   console.log(chatMessages);
-  // }, [chatMessages]);
+    // startIndexAnchor 업데이트
+    if (startIndexAnchor !== -1) {
+      setStartIndexAnchor(startIndexAnchor + recentMessages.length);
+    }
+  }, [data]);
 
   // 채팅방 변경 시 스크롤 초기화
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
+
+    // 채팅방 변경 시 messageRefs 초기화
+    messageRefs.current = [];
 
     // column-reverse에서는 scrollTop을 0으로 설정하면 맨 아래로 이동
     scrollContainer.scrollTop = 0;
@@ -142,15 +150,32 @@ export default function MessagesPane() {
   }, [chatMessages]);
 
   useEffect(() => {
-    if (!selectedTopic || !firstTopicIndices[hml] || selectedTopic.index === -1)
+    if (
+      !selectedTopic ||
+      !firstTopicRelativeIndices[hml] ||
+      selectedTopic.index === -1
+    )
       return;
 
     messageRefs.current[
-      firstTopicIndices[hml][selectedTopic.index]
+      firstTopicRelativeIndices[hml][selectedTopic.index] + startIndexAnchor
     ]?.scrollIntoView({
       behavior: 'smooth',
     });
-  }, [selectedTopic, firstTopicIndices]);
+  }, [selectedTopic, firstTopicRelativeIndices]);
+
+  // AI 요약에 사용될 메시지 개수 업데이트
+  useEffect(() => {
+    if (selectedMessages.start && selectedMessages.end) {
+      const startIndex = chatMessages.findIndex(
+        message => message._id === selectedMessages.start!._id,
+      );
+      const endIndex = chatMessages.findIndex(
+        message => message._id === selectedMessages.end!._id,
+      );
+      setHowmany(endIndex - startIndex + 1);
+    }
+  }, [selectedMessages]);
 
   if (isError) {
     return <></>;
@@ -234,22 +259,44 @@ export default function MessagesPane() {
                           </Divider>
                         </Stack>
                       )}
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        flexDirection={isYou ? 'row-reverse' : 'row'}
-                        id={`${i}`}
-                        ref={el => (messageRefs.current[i] = el)}
+                      {isSelectingMessages &&
+                        selectedMessageIndex >= 0 &&
+                        i == selectedMessageIndex + howmanyLimit && (
+                          <Divider>
+                            <Typography
+                              textAlign={'center'}
+                              my={2}
+                              fontWeight={'lg'}
+                            >
+                              여기까지 선택 가능
+                            </Typography>
+                          </Divider>
+                        )}
+                      <div
+                        ref={el => {
+                          messageRefs.current[i] = el;
+                        }}
                       >
-                        <MemoizedUserAvatar user={message.user} />
-                        <MemoizedMessageBubble
-                          variant={isYou ? 'sent' : 'received'}
-                          messageId={message._id || ''}
-                          {...message}
-                          date={date}
-                          time={time}
-                        />
-                      </Stack>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          flexDirection={isYou ? 'row-reverse' : 'row'}
+                          id={`${i}`}
+                        >
+                          <MemoizedUserAvatar user={message.user} />
+                          <MemoizedMessageBubble
+                            variant={isYou ? 'sent' : 'received'}
+                            message={message}
+                            date={date}
+                            time={time}
+                            disabled={
+                              isSelectingMessages &&
+                              selectedMessageIndex >= 0 &&
+                              i >= selectedMessageIndex + howmanyLimit
+                            }
+                          />
+                        </Stack>
+                      </div>
                     </Fragment>
                   );
                 })}
@@ -265,3 +312,14 @@ export default function MessagesPane() {
     </Sheet>
   );
 }
+
+const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
+  return (
+    prevProps.message._id === nextProps.message._id &&
+    prevProps.message === nextProps.message
+  );
+});
+const MemoizedUserAvatar = memo(UserAvatar, (prevProps, nextProps) => {
+  return prevProps.user?.profileUrl === nextProps.user?.profileUrl;
+});
+const MemoizedMessageInput = memo(MessageInput);

@@ -4,6 +4,7 @@ import { TApiResponse } from '../type';
 export type TAiSummaryRequest = {
   channelId: string;
   howmany: number;
+  startMessageId: string;
 };
 
 export type TAiSummaryResponse = TApiResponse<{
