@@ -4,6 +4,7 @@ import { customTheme } from './style';
 import AppRoutes from './routes/AppRoutes';
 import { useEffect } from 'react';
 import { connectSocket } from './utils/socket';
+import SocketTestPanel from './components/dev/SocketTestPanel';
 
 export default function App() {
   // 앱 시작 시 로그인 상태 확인 및 소켓 연결
@@ -22,6 +23,7 @@ export default function App() {
     <CssVarsProvider disableTransitionOnChange theme={customTheme}>
       <CssBaseline />
       <AppRoutes />
+      <SocketTestPanel />
     </CssVarsProvider>
   );
 }
