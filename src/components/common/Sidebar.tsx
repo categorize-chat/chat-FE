@@ -24,7 +24,7 @@ import { useMemo } from 'react';
 import { useUIStore } from '../../state/ui';
 
 // 데코레이터 함수 정의
-const withCloseSidebar = (fn: Function) => {
+const withCloseSidebar = (fn: (...args: any[]) => void) => {
   return (...args: any[]) => {
     const { closeSidebar } = useUIStore.getState();
     closeSidebar();

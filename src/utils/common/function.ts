@@ -19,7 +19,7 @@ export const truncateText = (text: string, maxLength = 20) => {
 
 export const hashString = (str: string, min: number, max: number) => {
   let hash = 0;
-  for (var i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
     hash = hash & hash;
   }
