@@ -5,6 +5,19 @@ const socketUrl = `${import.meta.env.VITE_SOCK_URL}/chat`;
 // 소켓 인스턴스를 저장할 변수
 let socketInstance: Socket | null = null;
 
+// 재연결 시 실행할 콜백 함수들
+let reconnectCallbacks: (() => void)[] = [];
+
+// 재연결 콜백 등록 함수
+export const addReconnectCallback = (callback: () => void): void => {
+  reconnectCallbacks.push(callback);
+};
+
+// 재연결 콜백 해제 함수
+export const removeReconnectCallback = (callback: () => void): void => {
+  reconnectCallbacks = reconnectCallbacks.filter(cb => cb !== callback);
+};
+
 // 소켓 연결 함수
 export const connectSocket = (): Socket => {
   if (socketInstance && socketInstance.connected) {
@@ -25,12 +38,20 @@ export const connectSocket = (): Socket => {
     secure: true,
     auth: { token },
     reconnection: true,
-    reconnectionAttempts: 5,
     reconnectionDelay: 1000,
   });
 
   socketInstance.on('connect', () => {
     console.debug('소켓 연결 성공:', socketInstance?.id);
+
+    // 재연결 시 콜백 함수들 실행
+    reconnectCallbacks.forEach(callback => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('재연결 콜백 실행 중 오류:', error);
+      }
+    });
   });
 
   socketInstance.on('connect_error', error => {

@@ -17,7 +17,7 @@ import { Divider, Typography } from '@mui/joy';
 import { useAIStore } from '@/state/ai';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { getSocket } from '@/utils/socket';
+import { getSocket, connectSocket } from '@/utils/socket';
 
 const MemoizedMessageBubble = memo(MessageBubble, (prevProps, nextProps) => {
   return (
@@ -70,8 +70,31 @@ export default function MessagesPane() {
 
   const handleChatSend = useCallback(
     async (inputMessage: string) => {
-      const socket = getSocket();
-      if (!socket) return;
+      let socket = getSocket();
+
+      // 소켓이 연결되어 있지 않으면 재연결 시도
+      if (!socket || !socket.connected) {
+        console.warn('소켓이 연결되어 있지 않습니다. 재연결을 시도합니다.');
+        try {
+          socket = connectSocket();
+          // 연결이 완료될 때까지 잠시 대기
+          await new Promise<void>(resolve => {
+            if (socket?.connected) {
+              resolve();
+            } else {
+              socket?.on('connect', () => resolve());
+            }
+          });
+        } catch (error) {
+          console.error('소켓 재연결 실패:', error);
+          return;
+        }
+      }
+
+      if (!socket) {
+        console.error('소켓 연결에 실패했습니다.');
+        return;
+      }
 
       const newMessage: TMessageProps = {
         user,
@@ -81,11 +104,15 @@ export default function MessagesPane() {
         room: chatId || '',
       };
 
-      socket.emit('message', {
-        ...newMessage,
-      });
+      try {
+        socket.emit('message', {
+          ...newMessage,
+        });
+      } catch (error) {
+        console.error('메시지 전송 실패:', error);
+      }
     },
-    [chatId, email, nickname, profileUrl],
+    [chatId, user],
   );
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
